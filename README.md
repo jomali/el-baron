@@ -1,4 +1,4 @@
-# El Barón
+# El barón
 
 Una historia interactiva escrita por **Victor Gijsbers** y publicada bajo la Licencia General GNU en su versión 3 (o cualquier versión posterior). La presente adaptación ha sido desarrollada por **J. Francisco Martín**.
 

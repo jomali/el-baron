@@ -4,7 +4,8 @@
   "description": "Ejecutable de la historia interactiva El barón",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "node builder.js inform6.exe src/baron"
   },
   "keywords": [
     "aventura",
