@@ -1,0 +1,10 @@
+!! Esto es una prueba
+!!
+
+print "\[Prueba\]. []().";
+print "**Percunos** su hacha *favorita*. (`+1 FUERZA`)";
+
+print "[plural: Baron]Plural[else]Singular[fi].";
+print "[if: x === true]Verdadero[else]Falso[fi].";
+
+
