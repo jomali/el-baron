@@ -9,3 +9,9 @@
 *.z5
 *.z8
 *.zblorb
+
+# Intérprete
+**/interpreter
+
+# NPM
+**/node_modules
