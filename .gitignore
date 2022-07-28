@@ -1,0 +1,11 @@
+
+# Herramientas de compilación
+**/inform*
+
+# Ejecutables Máquina-Z/Glulx
+*.blb
+*.gblorb
+*.ulx
+*.z5
+*.z8
+*.zblorb
