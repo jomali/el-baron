@@ -122,7 +122,7 @@ const preprocessor = async () => {
         for (const file of files) {
             const parsedFile = path.parse(file);
             if (parsedFile.ext === '.xinf') {
-                // await fs.unlinkSync(path.join(parsedFile.dir, `${parsedFile.name}.inf`));
+                await fs.unlinkSync(path.join(parsedFile.dir, `${parsedFile.name}.inf`));
                 await preprocessFile(path.join(parsedFile.dir, parsedFile.base), path.join(parsedFile.dir, `${parsedFile.name}.inf`))
             }
         }
@@ -139,31 +139,31 @@ const main = async() => {
     const compiler = args[0];
     const gameFile = args[1];
     
-    const informPath = 'src/libs';
+    const informPath = 'src/libs/DaGWindows,src/libs/Extensions,src/libs/Inform6/library611,src/libs/INFSP6,src/libs/Vorple6';
     
     try {
         console.log('Glulx compilation...');
         await preprocessor();
 
-        // console.log([
-        //     compiler,
-        //     `+include_path=${informPath}`,
-        //     '-G',
-        //     `${gameFile}.inf`,
-        //     `${gameFile}.ulx`
-        // ].join(' '))
+        //  console.log([
+        //      compiler,
+        //      `+include_path=${informPath}`,
+        //      '-G',
+        //      `${gameFile}.inf`,
+        //      `${gameFile}.ulx`
+        //  ].join(' '))
 
-        // const { stdout, stderr } = await exec(compiler, [
-        //     `+include_path=${informPath}`,
-        //     '-G',
-        //     `src/${gameFile}.inf`,
-        //     `${gameFile}.ulx`
-        // ]);
+        //  const { stdout, stderr } = await exec(compiler, [
+        //      `+include_path=${informPath}`,
+        //      '-G',
+        //      `src/${gameFile}.inf`,
+        //      `${gameFile}.ulx`
+        //  ]);
 
-        // if (Boolean(stderr)) {
-        //     console.log(stderr);
-        // }
-        // console.log(stdout)
+        //  if (Boolean(stderr)) {
+        //      console.log(stderr);
+        //  }
+        //  console.log(stdout)
 
         // clear
         // other...
