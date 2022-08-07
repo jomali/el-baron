@@ -14,7 +14,7 @@
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:		0.0
-!!	Fecha:			2021/05/XX
+!!	Fecha:			2022/05/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -37,7 +37,7 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2021, J. Francisco Martín
+!!	Copyright (c) 2022, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 
@@ -233,20 +233,20 @@ Indoors Abismo
 		gender G_MASCULINO,
 		!!
 		description [;
-			Tutorial.hint_highlight_key_a();
-			if (AbismoOscuridad has described) {
-				print "Distingues un débil [AbismoResplandor](fulgor) entre las sombras.";
-			} else {
+			if (AbismoOscuridad hasnt described) {
+				Tutorial.hint_highlight_key_a();
 				print "Todo es [AbismoOscuridad] a tu alrededor. El universo entero reducido a un vacío negro.";
+			} else {
+				print "Distingues un débil [AbismoResplandor](fulgor) entre las sombras.";
 			}
 			new_line;
 			return true;
 		],
 		exits [;
-			if (AbismoOscuridad has described) {
-				print "Todo cuanto puedes distinguir en [la AbismoOscuridad] es ese [AbismoResplandor] indefinido que llega desde algún lugar más [f_obj].";
+			if (AbismoOscuridad hasnt described) {
+				print "No hay ningún lugar al que ir. Nada. Sólo [AbismoOscuridad].";
 			} else {
-				print "No sabrías hacia dónde dirigirte en [la AbismoOscuridad].";
+				print "Todo cuanto puedes distinguir en la oscuridad es ese [AbismoResplandor] indefinido que llega desde algún lugar más [f_obj].";
 			}
 			new_line;
 			return true;
@@ -262,25 +262,23 @@ AdjacentRoom -> DirAbismoAdelante
 		male,
 	with
 		adjacent_room GrutaVestibulo,
-		before [
-			previous_style;
+		before [;
 			Enter:
 				self.AdjacentRoom::onChangeLocation();
 				if (AbismoOscuridad hasnt described) {
 					print "Alcanzas a distinguir un resplandor entre las sombras. ";
 				} else {
-					print "Ha llegado el momento. Después de todo tú eres la única persona que puede acabar con esto.
+					print "Ha llegado el momento. Después de todo tú eres la única persona que puede acabar con la bestia.
 					^^";
 				}
-				print "Tan pronto das un paso en la dirección de la que proviene la luz, las dos grandes puertas de bronce se cierran a tu espalda con un golpe atronador seguido por el chirrido de cerrojos. Ya no hay marcha atrás. Aferras el [Percunos](hacha:REMARKABLE_OBJECT) con firmeza y das otro paso adelante, hacia el calor…";
+				print "Tan pronto das un paso en la dirección de la que proviene la luz, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás. Aferras el [Percunos](hacha:REMARKABLE_OBJECT) con firmeza y das otro paso adelante, hacia el calor…";
 				new_line;
-
+				!! TODO - Pulsar INTRO para continuar
 				self.AdjacentRoom::before();
 				return true;
 		],
-		description [;
-			<<Examine AbismoResplandor>>;
-		],
+		!! No necesita descripción. Al intentar examinarlo entran en juego las
+		!! reglas "react_before" de AbismoOscuridad.
 ;
 
 !! @AbismoOscuridad
@@ -295,13 +293,14 @@ Background -> AbismoOscuridad "oscuridad"
 		adjectives 'negro',
 		!!
 		description [;
-			if (self has described) {
-				<<Look>>;
-			} else {
+			if (self hasnt described) {
 				Tutorial.hint_highlight_key_b();
-				print "Te dejas perder en el abrazo de las [self](sombras). Solo e inmóvil en mitad de la nada, lejos de obligaciones, de rutinas diarias y de reglas sociales inconcebiblemente complejas y agotadoras, casi desearías poder quedarte aquí para siempre. Descansar. Pero no es más que una idea infantil, por supuesto.
+				move AbismoResplandor to Abismo;
+				print "Te dejas llevar por el abrazo de las [self](sombras). Solo e inmóvil en mitad de la nada, lejos de obligaciones, de rutinas diarias, de la gente y sus juicios constantes, casi desearías poder quedarte aquí para siempre. Descansar. Pero no es más que una idea infantil, por supuesto.
 				^^
-				Alcanzas a percibir [un AbismoResplandor] que rompe apenas la oscuridad.";
+				Alcanzas a percibir [un AbismoResplandor] rompiendo apenas la oscuridad.";
+			} else {
+				<<Look>>;
 			}
 			new_line;
 			return true;
@@ -353,7 +352,7 @@ Background -> AbismoOscuridad "oscuridad"
 ;
 
 !! @AbismoResplandor
-Background -> AbismoResplandor "resplandor"
+Background AbismoResplandor "resplandor" Limbo
 	has
 		male,
 	with
@@ -368,6 +367,9 @@ Background -> AbismoResplandor "resplandor"
 			new_line;
 			return true;
 		],
+		reset [;
+			move self to Limbo;
+		],
 ;
 
 
@@ -376,6 +378,12 @@ Background -> AbismoResplandor "resplandor"
 !!	2)	Vestíbulo de la gruta
 !!
 !!------------------------------------------------------------------------------
+
+!! @DirGrutaVestibulo
+AdjacentRoom DirGrutaVestibulo "vestíbulo"
+	has
+		male
+;
 
 !! @GrutaVestibulo
 Indoors GrutaVestibulo
@@ -391,20 +399,280 @@ Indoors GrutaVestibulo
 		gender G_MASCULINO,
 		adjectives 'fresca' 'fresco' 'pequena' 'pequeno' 'rectangular',
 		!!
+		before [;
+			Listen:
+				if (noun == 0 or self) {
+					print "Una especie de reverberación grave y discontinua parece propagarse por las paredes.";
+				} else if (TestScope(noun, player) && ~~noun.before()) {
+					print "Prestas atención [al noun] pero no escuchas nada extraño. El único sonido que llega hasta tus oídos es [if:self.tried_to_listen == true]esa[else]una[fi] especie de gruñido grave que parece surgir de las profundidades de la gruta.";
+				}
+				self.tried_to_listen = true;
+				new_line;
+				return true;
+			Smell:
+				if (noun == 0 or self) {
+					print "Un penetrante olor como a huevos podridos llena la [self](cueva).";
+				} else {
+					print "Un hedor como a huevos podridos lo impregna todo.";
+				}
+				new_line;
+				return true;
+		],
 		description [;
-			print "Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después con planchas de mármol negro. Dos puertas de bronce sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho corredor se interna aún más en las ardientes profundidades de la montaña.";
+			!! TODO - entrada de tutorial
+			print "Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
 			new_line;
 			return true;
 		],
-		! each_turn [;
-		! 	print "[Los GrutaHuesos] del suelo arrojan sombras grotescas en la luz titilante.";
-		! 	new_line;
-		! 	return true;
-		! ],
+		exits [;
+			print "Aparte de la salida bloqueada por las puertas únicamente se puede seguir [f_obj]. Hacia el fuego.";
+			new_line;
+			return true;
+		],
+		f_to [;
+			<<Enter DirGrutaPasadizo>>;
+		],
+		in_to [;
+			<<Enter DirGrutaPasadizo>>;
+		],
+		out_to [;
+			<<Enter GrutaVestibuloPuertas>>;
+		],
+		reset [;
+			self.tried_to_listen = false;
+		],
+	private
+		tried_to_listen false,
 ;
 
-!! @GrutaHuesos
-Atrezzo -> GrutaHuesos "huesos"
+!! @GrutaVestibuloPuertas
+Item -> GrutaVestibuloPuertas
+	has
+		door female openable ~open pluralname scenery transparent,
+	with
+		short_name [;
+			print "[](puertas:REMARKABLE_OBJECT) de bronce";
+			return true;
+		],
+		name_f 'entrada' 'puerta' 'salida',
+		name_fp 'puertas',
+		gender G_FEMENINO + G_PLURAL,
+		adjectives 'bronce' 'cerrada' 'cerradas',
+		!!
+		before [;
+			Attack,
+			KnockOn:
+				if (~~Baron.is_burning()) {
+					print "¿Sin haberte enfrentado antes a la bestia? No. No eres un cobarde.";
+				} else {
+					!! TODO - Llamada después de haber visto al dragón
+				}
+				new_line;
+				return true;
+			Lock,
+			Unlock:
+				print "En este lado no hay ningún cerrojo.";
+				new_line;
+				return true;
+			Open,
+			Pull,
+			Push,
+			PushDir:
+				if (~~Baron.is_burning()) {
+					print "Las [self](puertas) han sido trancadas desde el otro lado y ni siquiera el monstruo podría abrirlas desde aquí. Esa es la idea. El acuerdo es que llamarás con un golpe para que te abran una vez hayas lo hayas derrotado.";
+				} else {
+					<<KnockOn self>>;
+				}
+				new_line;
+				return true;
+			Touch:
+				if (~~Baron.is_burning()) {
+					print "Los guanteletes te impiden tocar el bronce directamente, pero aún así puedes notar perfectamente el calor que irradia.";
+				} else {
+					print "Con los sentidos completamente embotados por el dolor no eres capaz de notar nada.";
+				}
+				new_line;
+				return true;
+		],
+		description [;
+			if (~~Baron.is_burning()) {
+				print "Dos imponentes puertas de bronce bloquean la única salida de la gruta.";
+				if (self hasnt described) {
+					print " Tienen unos grabados ornamentales, de factura muy tosca, entre los que adviertes la figura de un [GrutaVestibuloPuertasGrabado](hombre:REMARKABLE_OBJECT) que parece arder en llamas.";
+				} else {
+					print " Están decoradas con el [GrutaVestibuloPuertasGrabado](grabado) de un hombre que arde en llamas.";
+				}
+			} else {
+				!! TODO Barón en llamas
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @GrutaVestibuloPuertasGrabado
+Atrezzo -> -> GrutaVestibuloPuertasGrabado
+	has
+		male,
+	with
+		short_name [;
+			print "[](hombre) en llamas";
+			return true;
+		],
+		name_f 'figura' 'persona' 'talla',
+		name_m 'adorno' 'caballero' 'grabado' 'hombre',
+		gender G_MASCULINO,
+		adjectives 'ardiendo' 'llamas' 'un' 'una',
+		!!
+		before [
+			obj;
+			!! TODO - habla con el hombre
+			Pull,
+			Push,
+			PushDir,
+			Turn:
+				obj = parent(self);
+				<<Push obj>>;
+			Take:
+				obj = parent(self);
+				<<Take obj>>;
+			Touch:
+				obj = parent(self);
+				<<Touch obj>>;
+		],
+		description [;
+			print "En lugar de la expresión de tormento que cabría esperar de un hombre ardiendo, el rostro de la figura grabada en el bronce refleja algo muy distinto: ansia, anhelo.";
+			if (Baron.is_burning()) {
+				print " Horrorizado comprendes que tu propia cara debe estar mostrando exactamente lo mismo en este momento.";
+			} else {
+				print " Lejos de agonizar en las llamas la figura parece estar deleitándose en ellas.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @GrutaVestibuloMarmol
+Atrezzo -> GrutaVestibuloMarmol "mármol"
+	has
+		female pluralname transparent,
+	with
+		name_f 'pared',
+		name_fp 'paredes',
+		name_m 'marmol',
+		gender G_MASCULINO,
+		adjectives 
+			'negra' 'negras' 'negro' 'planchas' 'pulida' 'pulidas' 'pulido',
+		!!
+		before [;
+			Touch:
+				if (~~Baron.is_burning()) {
+					print "Las [GrutaVestibuloMarmolVetas] blancas del mármol parecen contorsionarse bajo tu mano, como si estuvieran vivas.";
+				} else {
+					print "Las [GrutaVestibuloMarmolVetas] blancas del mármol huyen de tu contacto.";
+				}
+				new_line;
+				return true;
+		],
+		description [;
+			print "Tanto las paredes como el techo están cubiertos por unas placas de mármol negro muy pulido. Sus [GrutaVestibuloMarmolVetas] forman patrones intrincados sobre la superficie.";
+			new_line;
+			return true;
+		],
+;
+
+!! @GrutaVestibuloMarmolVetas
+Atrezzo -> -> GrutaVestibuloMarmolVetas "vetas"
+	has
+		male pluralname,
+	with
+		name_f 'estria' 'linea' 'raya' 'veta',
+		name_fp 'estrias' 'lineas' 'rayas' 'vetas',
+		name_m 'patron',
+		name_mp 'patrones',
+		gender G_FEMENINO + G_PLURAL,
+		adjectives 'blanca' 'blancas' 'blanco' 'blancos' 'marmol',
+		!!
+		before [
+			obj;
+			Pull,
+			Push,
+			PushDir,
+			Turn:
+				obj = parent(self);
+				<<Push obj>>;
+			Take:
+				obj = parent(self);
+				<<Take obj>>;
+			Touch:
+				obj = parent(self);
+				<<Touch obj>>;
+		],
+		description [;
+			if (self hasnt described && ~~Baron.is_burning()) {
+				print "Al estudiar las líneas del mármol se apodera de ti el presentimiento de que, de algún modo, esas estrías blancas codifican un significado oculto. Como si bajo el aparente caos se hayase la respuesta a un profundo misterio. Pero al esforzarte por desentrañarlo los patrones comienzan a bailar ante tus ojos; se retuercen y giran y se arremolinan unos con otros. Mareado, tienes que apartar la mirada.";
+			} else if (~~Baron.is_burning()) {
+				print "Las ondulantes líneas blancas parecen retorcerse en la superficie del mármol. No eres capaz de fijar la mirada sobre ellas sin marearte.";
+			} else {
+				print "Las ondulantes líneas blancas se retuercen en la superficie del mármol. Como culebras quemándose vivas.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @GrutaVestibuloFuego
+Atrezzo -> GrutaVestibuloFuego "fuego"
+	class
+		Background,
+	has
+		light male,
+	with
+		name_f 'claridad' 'llama' 'luz',
+		name_fp 'llamas',
+		name_m 'fuego' 'fulgor' 'resplandor',
+		name_mp 'fuegos',
+		gender G_MASCULINO,
+		adjectives 'lengua' 'lenguas',
+		!!
+		before [;
+			Blow,
+			SwitchOff:
+				print "Nadie podría apagar un fuego como ese.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Un incendio salvaje arde en las profundidades de la gruta y arroja destellos de una luz rojiza y anaranjada a tu alrededor.";
+			new_line;
+			return true;
+		],
+;
+
+!! @GrutaVestibuloSombras
+Atrezzo -> GrutaVestibuloSombras "sombras"
+	class
+		Background,
+	has
+		female pluralname,
+	with
+		name_f 'oscuridad' 'sombra' 'tiniebla',
+		name_fp 'sombras' 'tinieblas',
+		gender G_FEMENINO + G_PLURAL,
+		!!
+		description [;
+			if (~~Baron.is_burning()) {
+				print "Las sombras dibujan formas macabras y temblorosas entre los huesos del suelo.";
+			} else {
+				print "Las sombras huyen a tu paso.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @GrutaVestibuloHuesos
+Atrezzo -> GrutaVestibuloHuesos "huesos"
 	has
 		~concealed male pluralname ~scenery static,
 	with
@@ -431,7 +699,9 @@ Atrezzo -> GrutaHuesos "huesos"
 			return true;
 		],
 		description [;
-			print "El suelo está cubierto de esqueletos despedazados. Negros por el fuego que en algún momento consumió la carne de sus cuerpos.";
+			print "El suelo está cubierto de esqueletos despedazados. Negros por el fuego que en algún momento consumió la carne de sus cuerpos.
+			^^
+			Arrojan sombras grotescas en la luz titilante.";
 			new_line;
 			return true;
 		],
@@ -443,6 +713,18 @@ Atrezzo -> GrutaHuesos "huesos"
 !!	3)	Un pequeño pasadizo
 !!
 !!------------------------------------------------------------------------------
+
+!! @DirGrutaPasadizo
+AdjacentRoom DirGrutaPasadizo "pasadizo"
+	has
+		male,
+	with
+		found_in GrutaSalon GrutaVestibulo,
+		name_m 'corredor' 'pasadizo' 'pasillo',
+		adjectives 'bajo' 'estrecho' 'pequeno',
+		!!
+		adjacent_room GrutaPasadizo,
+;
 
 !! @GrutaPasadizo
 Indoors GrutaPasadizo
@@ -466,6 +748,14 @@ Indoors GrutaPasadizo
 !!	4)	Enorme salón subterráneo
 !!
 !!------------------------------------------------------------------------------
+
+!! @DirGrutaSalon
+AdjacentRoom DirGrutaSalon
+	has
+		male,
+	with
+		found_in GrutaPasadizo,
+;
 
 !! @GrutaSalon
 Indoors GrutaSalon

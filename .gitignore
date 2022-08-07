@@ -16,7 +16,10 @@
 **/.pnp
 **/.pnp.js
 
-# Varios
+# Recursos multimedia
+**/*.mp4
+
+# Otros
 .DS_Store
 .env.local
 .env.development.local

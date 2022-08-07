@@ -391,11 +391,11 @@ Include "SpanishLM.h";
 
 #Ifdef USE_EXTENDED_LIBRARY;
 !! Personalizaciones a la librería:
-Include ">baronLib.inf";
+Include "baronLib.inf";
 #Endif; ! USE_EXTENDED_LIBRARY;
 
 !! Mensajes personalizados de la librería:
-Include ">baronLangLM.inf";
+Include "baronLangLM.inf";
 
 #Ifdef USE_GWINDOWS;
 !! GWindows: Window Class Framework:
@@ -707,7 +707,7 @@ Include "gWindowsGUI.h";		! Interfaz gráfica adaptativa con GWindows
 #Endif; ! USE_GWINDOWS;
 
 #Ifdef TARGET_GLULX;
-Include ">baron.bli";			! Recursos multimedia de la aplicación
+Include "baron.bli";			! Recursos multimedia de la aplicación
 #Endif; ! TARGET_GLULX;
 
 Include "arrays.h";				! Operaciones con arrays
@@ -868,6 +868,9 @@ Include "vorple-screen-effects.h";
 !!------------------------------------------------------------------------------
 [ Initialise
 	previous_style;
+	!! Por evitar advertencia del compilador en VERSION_WEB_MOBILE:
+	previous_style = 0;
+	
 	Utils.erase_window();
 
 	!! Inicializaciones para la VM Glulx ---------------------------------------
@@ -1088,7 +1091,7 @@ Include "SpanishG.h";
 Include "SpanishEG.h";
 
 !! Gramática propia de la obra:
-Include ">baronGrammar.inf";
+Include "baronGrammar.inf";
 
 
 !!==============================================================================
@@ -1097,16 +1100,16 @@ Include ">baronGrammar.inf";
 !!
 !!------------------------------------------------------------------------------
 
-Include ">baronClasses.inf";
-Include ">baronMenu.inf";
-Include ">baronTutorial.inf";
-Include ">baronUtils.inf";
+Include "baronClasses.inf";
+Include "baronMenu.inf";
+Include "baronTutorial.inf";
+Include "baronUtils.inf";
 
-Include ">scenes/baronSceneZero.inf";
-Include ">scenes/baronSceneOne.inf";
-Include ">scenes/baron_scene-two.inf";
-Include ">scenes/baron_scene-three.inf";
-Include ">scenes/baron_scene-four.inf";
-Include ">scenes/baronSceneFive.inf";
-Include ">scenes/baron_scene-six.inf";
-Include ">scenes/baron_scene-seven.inf";
+Include "scenes/baronSceneZero.inf";
+Include "scenes/baronSceneOne.inf";
+Include "scenes/baron_scene-two.inf";
+Include "scenes/baron_scene-three.inf";
+Include "scenes/baron_scene-four.inf";
+Include "scenes/baronSceneFive.inf";
+Include "scenes/baron_scene-six.inf";
+Include "scenes/baron_scene-seven.inf";

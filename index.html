@@ -12,16 +12,15 @@
     <link rel="stylesheet" type="text/css" href="interpreter/vex.css">
     <link rel="stylesheet" type="text/css" href="interpreter/vex-theme-plain.css">
     <link rel="stylesheet" type="text/css" href="interpreter/haven.css">
-    <!-- <link rel="stylesheet" type="text/css" href="interpreter/vorple.css"> -->
 
-    <link rel="stylesheet" type="text/css" href="resources/css/baron.css">
+    <link rel="stylesheet" type="text/css" href="assets/bitter.css">
+    <link rel="stylesheet" type="text/css" href="assets/baron.css">
 
     <style id=highlights>
 		.red-letters {
 			color: inherit !important;
 			text-shadow: none !important;
 		}
-
 		.white-letters {
 			color: inherit !important;
 			text-shadow: none !important;
@@ -35,29 +34,25 @@
         <div id="spinner">V</div>
     </div>
 
+	<div class="fullscreen-bg">
+		<div class="overlay"></div>
+		<video loop muted autoplay class="fullscreen-bg__video">
+			<source type="video/mp4" src="assets/the-baron-background-loop-video.mp4">
+		</video>
+	</div>
     <div class="vignette" />
 </main>
 
 <script type="text/javascript" src="interpreter/vorple.min.js"></script>
-<script type="text/javascript" src="resources/javascript/if.js"></script>
+<script type="text/javascript" src="assets/if.js"></script>
 
 <script>
-//     const ifjs = {
-//         config: {
-//     highlightKeyCodes: [16, 40], // LeftShift, DownArrow
-//     highlightStyleId: "highlights"
-//   },
-//   keyDown: () => null,
-//   keyUp: () => null,
-//   clearHyperlinks: () => null,
-//     };
-    
     vorple.options = {
         autosave: false,
         engineColors: false,
         resource_paths: {
-            images: "resources/images/",
-            audio: "resources/audio/"
+            images: "assets/",
+            audio: "assets/"
         },
 
         // URL to the game file

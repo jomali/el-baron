@@ -14,7 +14,7 @@
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:		0.0
-!!	Fecha:			2021/06/XX
+!!	Fecha:			2022/06/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -37,7 +37,7 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2021, J. Francisco Martín
+!!	Copyright (c) 2022, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 
@@ -98,6 +98,12 @@ Character Baron "protagonista" Limbo
 		name_m 'personaje' 'protagonista',
 		gender G_MASCULINO,
 		!!
+		!!	@returns {boolean} `true` si el PC está ardiendo
+		is_burning [;
+			return self.burning;
+		],
+
+		!! TODO - revisar
 		become_a_wolf [;
 			if (self.is_a_wolf()) return true;
 			self.wolf = true;
@@ -138,10 +144,6 @@ Character Baron "protagonista" Limbo
 		!!	@returns {boolean} `true` si el PC se ha convertido en lobo
 		is_a_wolf [;
 			return self.wolf;
-		],
-		!!	@returns {boolean} `true` si el PC está ardiendo
-		is_burning [;
-			return self.burning;
 		],
 		!!	@returns {boolean} `true` si el PC está desnudo
 		is_naked [
