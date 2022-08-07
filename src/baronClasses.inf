@@ -814,7 +814,7 @@ Class	Background
 !! al intentar actuar sobre cualesquiera otros objetos presentes en la misma 
 !! localidad.
 !!
-!!	@version 2020/11/28
+!!	@version 2.0 - 2022/08/07
 !!------------------------------------------------------------------------------
 Class Darkness
 	class Background
@@ -834,7 +834,7 @@ Class Darkness
 		],
 	with
 		short_name [;
-			print "[](oscuridad)";
+			PRT__("oscuridad", "oscuridad");
 			return true;
 		],
 		name_f 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
@@ -842,6 +842,11 @@ Class Darkness
 		gender G_FEMENINO,
 		article "la",
 		!!
+		cant_see [;
+			print "No puedes ver nada en ", (the) self, ".";
+			new_line;
+			return true;
+		],
 		!! Array de objetos con los que se puede interactuar a oscuras:
 		interactive_objects 0,
 		react_before [;
@@ -857,27 +862,28 @@ Class Darkness
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
-				if (noun ofclass AdjacentRoom) return false;
 				if (self.is_interactive_object(noun)) return false;
-				<<Examine self>>;
+				return self.cant_see();
 			DefaultAction:
 				return false;
 			Drop:
 				if (noun == nothing) return false;
 				if (~~IndirectlyContains(player, noun)) return false;
-				print "Si dejas [el noun] aquí es posible que más tarde no puedas encontrar", (lo) noun, " de nuevo en [la self].";
+				print "Si dejas ", (the) noun, " aquí es posible que luego no puedas encontrar", (lo) noun, " de nuevo en ", (the) self, ".";
 				new_line;
 				return true;
 			Inv,
 			InvTall,
 			InvWide:
-				<<Examine self>>;
+				return self.cant_see();
 			Rub:
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
-				if (noun ofclass Atrezzo) return false;
+				if (noun ofclass Background) return false;
 				if (self.is_interactive_object(noun)) return false;
+				print "Es difícil limpar ", (the) noun, " —o cualquier otra cosa— en completa oscuridad.";
+				new_line;
 				return true;
 		],
 ; 
