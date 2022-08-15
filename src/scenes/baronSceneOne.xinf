@@ -526,7 +526,6 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 		!!
 		before [
 			obj;
-			!! TODO - habla con el hombre
 			Pull,
 			Push,
 			PushDir,
@@ -536,17 +535,137 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 			Take:
 				obj = parent(self);
 				<<Take obj>>;
+			TalkTo:
+				return ChoiceSetManager.start(ConversacionHombreArdiendo);
 			Touch:
 				obj = parent(self);
 				<<Touch obj>>;
 		],
 		description [;
-			print "En lugar de la expresión de tormento que cabría esperar de un hombre ardiendo, el rostro de la figura grabada en el bronce refleja algo muy distinto: ansia, anhelo.";
-			if (Baron.is_burning()) {
-				print " Horrorizado comprendes que tu propia cara debe estar mostrando exactamente lo mismo en este momento.";
+			print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un hombre ardiendo, muestra algo muy distinto; un ansia profundo.";
+			if (self hasnt described && ~~Baron.is_burning()) {
+				ChoiceSetManager.start(ConversacionHombreArdiendo, true);
+				print " Deseo. No agoniza en las llamas de bronce sino que se deleita con ellas.
+				^^
+				Al observarla bajo la luz cambiante de la gruta, la figura parece cobrar vida y contorsionarse lentamente, siguiendo la danza que marcan las sombras. Por un momento, ese juego caprichoso de luces hace que su mirada parezca cruzarse con la tuya.
+				^^
+				—¡Un compañero nuevo! ¡Qué sorpresa! —crees escucharle, con vocecilla metálica. Quizá llega a hacer un gesto con la cabeza, señalando hacia los esqueletos que cubren el suelo—. Vas a tener que buscar muy bien para encontrarte un hueco.";
+			} else if (~~Baron.is_burning()) {
+				print "^^
+				La voz que creíste escuchar antes ahora guarda silencio.";
 			} else {
-				print " Lejos de agonizar en las llamas la figura parece estar deleitándose en ellas.";
+				print " Horrorizado comprendes que tu propio rostro debe estar mostrando exactamente lo mismo en este momento.";
 			}
+			new_line;
+			return true;
+		],
+;
+
+!! @ConversacionHombreArdiendo
+ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
+	with
+		fixed true,
+		final_action [;
+			!!
+		],
+		initial_action [;
+			self.add_choice(EstasVivo);
+			self.add_choice(EnfrentadoBestia);
+		],
+		inter_action [;
+			print (string) random(
+				"La figura de bronce parece seguir tus movimientos con atención.",
+				"La figura te observa atentamente."
+			);
+			new_line;
+			return true;
+		],
+;
+
+!! @EstasVivo
+ChoiceSetItem EstasVivo
+ with	entry [;
+			print "¿Estás ";
+			PRT__("vivo", 0, REMARKABLE_OBJECT);
+			print "?";
+			return true;
+		],
+		keys 'estas' 'vivo',
+		!!
+		append_choice_set true,
+		final_choice false,
+		reaction [;
+			print "—¿Estás vivo?
+			^^
+			No contesta. Se limita a estudiarte en silencio desde su prisión de bronce.";
+			new_line;
+			return true;
+		],
+;
+
+!! @EnfrentadoBestia
+ChoiceSetItem EnfrentadoBestia
+ with	entry [;
+			print "¿Te has enfrentado a la ";
+			PRT__("bestia", 0, REMARKABLE_OBJECT);
+			print "?";
+			return true;
+		],
+		keys 'enfrentado' 'bestia' 'dragon' 'monstruo',
+		!!
+		append_choice_set true,
+		final_choice false,
+		reaction [;
+			print "—Eso te lo ha hecho la bestia. Te has enfrentado a ella, ¿verdad?
+			^^
+			—El rostro descubierto… bien —percibes una nota de aprobación en la vocecilla estridente—. Mucho mejor que la mayoría de esos cobardes.
+			^^
+			—La bestia —insistes—. Esas llamas que te envuelven son por su culpa, ¿no es así? ¿Qué aspecto tiene?
+			^^
+			—¡Oh, lo verás muy pronto!";
+			new_line;
+			return true;
+		],
+		subchoices ComoVencer TeDuele,
+;
+
+!! @ComoVencer
+ChoiceSetItem ComoVencer
+ with	entry [;
+			print "¿Como la ";
+			PRT__("venzo", 0, REMARKABLE_OBJECT);
+			print "?";
+			return true;
+		],
+		keys 'como' 'venzo' 'vencer',
+		!!
+		append_choice_set true,
+		final_choice false,
+		reaction [;
+			print "—¿Cómo la venzo?
+			^^
+			El hombre sonríe, señalando de nuevo los huesos a tus pies. —Pregúntales a ellos.";
+			new_line;
+			return true;
+		],
+;
+
+!! @TeDuele
+ChoiceSetItem TeDuele
+ with	entry [;
+			print "¿";
+			PRT__("Duele", 0, REMARKABLE_OBJECT);
+			print "?";
+			return true;
+		],
+		keys 'duele',
+		!!
+		append_choice_set true,
+		final_choice true,
+		reaction [;
+			print "—El fuego, ¿duele?
+			^^
+			El hombre parece perder interés en ti. —Pronto. Muy pronto —repite, antes de volver toda su atención de nuevo a sus llamas de metal.";
 			new_line;
 			return true;
 		],
