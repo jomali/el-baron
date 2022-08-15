@@ -282,16 +282,26 @@ AdjacentRoom -> DirAbismoAdelante
 ;
 
 !! @AbismoOscuridad
-Background -> AbismoOscuridad "oscuridad"
+Darkness -> AbismoOscuridad "oscuridad"
 	has
 		female on,
 	with
-		name_f 'abismo' 'negrura' 'oscuridad' 'sombra' 'tiniebla',
-		name_fp 'sombras' 'tinieblas',
+		name_f 'abismo' 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
+		name_fp 'penumbras' 'sombras' 'tinieblas',
 		name_m 'vacio',
 		gender G_FEMENINO,
 		adjectives 'negro',
+		article "la",
 		!!
+		cant_see [;
+			if (self hasnt described) {
+				print "No puedes ver nada en [la self].";
+			} else {
+				print "No puedes ver nada en [la self], aparte de [un AbismoResplandor] muy débil que llega desde algún lugar más [f_obj].";
+			}
+			new_line;
+			return true;
+		],
 		description [;
 			if (self hasnt described) {
 				Tutorial.hint_highlight_key_b();
@@ -305,50 +315,7 @@ Background -> AbismoOscuridad "oscuridad"
 			new_line;
 			return true;
 		],
-		react_before [;
-			if (self hasnt on) return false;
-			Consult,
-			Examine,
-			Look,
-			LookUnder,
-			Read,
-			Search:
-				if (noun == nothing) return false;
-				if (noun == self) return false;
-				if (noun == parent(self)) return false;
-				if (noun == AbismoResplandor) return false;
-				return self.cant_see();
-			DefaultAction:
-				return false;
-			Drop:
-				if (noun == nothing) return false;
-				if (~~IndirectlyContains(player, noun)) return false;
-				print "Si dejas [el noun] aquí es posible que luego no puedas encontrarl[o noun] de nuevo en [la self].";
-				new_line;
-				return true;
-			Inv,
-			InvTall,
-			InvWide:
-				return self.cant_see();
-			Rub:
-				if (noun == nothing) return false;
-				if (noun == self) return false;
-				if (noun == parent(self)) return false;
-				if (noun ofclass Background) return false;
-				print "Es difícil limpiar [el noun] —o cualquier otra cosa— en completa oscuridad.";
-				new_line;
-				return true;
-		],
-	private
-		cant_see [;
-			if (self has described) {
-				print "No puedes ver nada en [la self], aparte de [un AbismoResplandor] muy débil que llega desde algún lugar más [f_obj].";
-			} else {
-				print "No puedes ver nada en [la self].";
-			}
-			new_line;
-			return true;
-		],
+		interactive_objects AbismoResplandor,
 ;
 
 !! @AbismoResplandor
@@ -729,7 +696,9 @@ Atrezzo -> -> GrutaVestibuloMarmolVetas "vetas"
 		],
 		description [;
 			if (self hasnt described && ~~Baron.is_burning()) {
-				print "Al estudiar las líneas del mármol se apodera de ti el presentimiento de que, de algún modo, esas estrías blancas codifican un significado oculto. Como si bajo el aparente caos se hayase la respuesta a un profundo misterio. Pero al esforzarte por desentrañarlo los patrones comienzan a bailar ante tus ojos; se retuercen y giran y se arremolinan unos con otros. Mareado, tienes que apartar la mirada.";
+				print "Al estudiar las líneas del mármol se apodera de ti el presentimiento de que, de algún modo, esas estrías blancas codifican un significado oculto. Como si bajo el aparente caos se hayase la respuesta a un profundo misterio. Pero al esforzarte por desentrañarlo los patrones comienzan a bailar ante tus ojos; se retuercen y giran y se arremolinan unos con otros.
+				^^
+				Mareado, tienes que apartar la mirada.";
 			} else if (~~Baron.is_burning()) {
 				print "Las ondulantes líneas blancas parecen retorcerse en la superficie del mármol. No eres capaz de fijar la mirada sobre ellas sin marearte.";
 			} else {
@@ -818,9 +787,11 @@ Atrezzo -> GrutaVestibuloHuesos "huesos"
 			return true;
 		],
 		description [;
-			print "El suelo está cubierto de esqueletos despedazados. Negros por el fuego que en algún momento consumió la carne de sus cuerpos.
-			^^
-			Arrojan sombras grotescas en la luz titilante.";
+			print "El suelo está cubierto de esqueletos despedazados. Negros por el fuego que en algún momento consumió la carne de sus cuerpos.";
+			if (self hasnt described) {
+				print "^^
+				Arrojan sombras grotescas en la luz titilante.";
+			}
 			new_line;
 			return true;
 		],

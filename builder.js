@@ -193,7 +193,12 @@ const main = async() => {
     } catch (error) {
         console.error('\x1b[31m%s: \x1b[90m%s\x1b[0m', 'Error', error.cmd);
         console.trace();
-        console.error(`\n\x1b[0m${error.stdout}`);
+        if (Boolean(error.stderr)) {
+            console.error(error.stderr);
+        }
+        if (Boolean(error.stdout)) {
+            console.error(error.stdout);
+        }
         process.exit(0);
     }
 };
