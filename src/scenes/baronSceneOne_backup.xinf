@@ -1,53 +1,4 @@
 
-
-!!==============================================================================
-!!
-!!	EL BARÓN
-!!	Escena primera
-!!
-!!==============================================================================
-!!
-!!	Archivo:		baronSceneOne.xinf
-!!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
-!!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2021/05/XX
-!!
-!!------------------------------------------------------------------------------
-!!
-!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
-!!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
-!!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
-!!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
-!!
-!!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2021, J. Francisco Martín
-!!
-!!------------------------------------------------------------------------------
-
-
-!!==============================================================================
-!!
-!!	0)
-!!
-!!------------------------------------------------------------------------------
-
 [ EndSceneOne
 	obj previous_style;
 	Utils.erase_window();
@@ -141,13 +92,6 @@
 
 !! @Casco
 Item	Casco "casco" Limbo
- class	Clothes,
- has	male transparent,
- with	name_m 'casco' 'morrion' 'yelmo',
-		gender G_MASCULINO,
-		adjectives 'funcional',
-		article "tu",
-		!!------------------
 		after [;
 			Disrobe:
 				move self to parent(player);
@@ -309,14 +253,6 @@ Object	-> -> E1_ExcavandoDemasiadoProfundo "Excavando demasiado profundo"
 
 !! @DirGrutaVestibulo
 AdjacentRoom	DirGrutaVestibulo "vestíbulo"
- has	male,
- with	found_in GrutaPasadizo,
-		name_f 'antesala',
-		name_m 'hall' 'recibidor' 'vestibulo',
-		gender G_MASCULINO,
-		adjectives 'fresca' 'fresco' 'pequena' 'pequeno' 'rectangular',
-		!!------------------
-		adjacent_room GrutaVestibulo,
 		before [;
 			Enter:
 				if (Baron.is_running_away()) {
@@ -332,49 +268,11 @@ AdjacentRoom	DirGrutaVestibulo "vestíbulo"
 				self.AdjacentRoom::before();
 				return true;
 		],
-		description [;
-			print "El frescor relativo [del self] aguarda un poco más allá.";
-			new_line;
-			return true;
-		],
 ;
 
 !! TODO - actualizar PC_is_coming_in
 !! @GrutaVestibulo
 Indoors	GrutaVestibulo
- has	male,
- with	short_name [;
-			print "[](Vestíbulo) de la gruta";
-			return true;
-		],
-		name_f 'antesala' 'caverna' 'cueva' 'estancia' 'gruta' 'sala',
-		name_m 'hall' 'recibidor' 'vestibulo',
-		gender G_MASCULINO,
-		adjectives 'fresca' 'fresco' 'pequena' 'pequeno' 'rectangular',
-		!!------------------
-		b_to [;
-			<<Enter GrutaPuertas>>;
-		],
-		before [;
-			Listen:
-				if (Baron.is_burning) {
-					print "El fuego ruge en tus oídos como un animal hambriento.";
-				} else if (noun == 0 or self) {
-					print "Una especie de reverberación grave y discontinua parece propagarse por las paredes.";
-				} else if (TestScope(noun, player) && ~~noun.before()) {
-					print "Prestas atención [al noun] pero no escuchas nada extraño. El único sonido que llega hasta tus oídos es esa especie de gruñido grave que parece surgir de las profundidades de la gruta.";
-				}
-				new_line;
-				return true;
-			Smell:
-				if (noun == 0 or self) {
-					print "Un penetrante olor como a huevos podridos llena la [self](cueva).";
-				} else {
-					print "Un hedor como a huevos podridos lo impregna todo.";
-				}
-				new_line;
-				return true;
-		],
 		description [;
 			if (Baron.is_burning()) {
 				print "A través de las llamas alcanzas a distinguir [Marmol](mármol:REMARKABLE_OBJECT) negro. [Huesos](Huesos:REMARKABLE_OBJECT) en el suelo. Las dos [GrutaPuertas](puertas:REMARKABLE_OBJECT) de bronce que bloquean la única salida.";
@@ -385,40 +283,10 @@ Indoors	GrutaVestibulo
 			new_line;
 			return true;
 		],
-		exits [;
-			if (Baron.is_burning()) {
-				print "Las [GrutaPuertas](puertas:DIRECTION_OBJECT) son la única salida de este infierno.";
-			} else {
-				print "Aparte de la salida bloqueada por [las GrutaPuertas] cerradas, únicamente se puede seguir [f_obj]. Hacia el cubil del monstruo.";
-			}
-			new_line;
-			return true;
-		],
-		f_to [;
-			<<Enter DirGrutaPasadizo>>;
-		],
-		in_to [;
-			<<Enter DirGrutaPasadizo>>;
-		],
-		n_to [;
-			if (Utils.is_compass_enabled()) <<Enter DirGrutaPasadizo>>;
-			else return self.cant_go();
-		],
- private
-		counter 0,
 ;
 
 !! @GrutaPuertas
 Item	-> GrutaPuertas
- has	door female openable ~open pluralname scenery transparent,
- with	short_name [;
-			print "[](puertas:REMARKABLE_OBJECT) de bronce";
-			return true;
-		],
-		name_f 'entrada' 'puerta' 'salida',
-		name_fp 'puertas',
-		gender G_FEMENINO + G_PLURAL,
-		adjectives 'bronce' 'cerrada' 'cerradas',
 		!!------------------
 		before [;
 			!! TODO Touch/Pull/Push
@@ -453,67 +321,11 @@ Item	-> GrutaPuertas
 				}
 				new_line;
 				return true;
-			Lock,
-			Unlock:
-				print "No parece haber ningún cerrojo. No en este lado.";
-				new_line;
-				return true;
-			Open:
-				print "Las [self](puertas) han sido trancadas desde el otro lado y ni siquiera el dragón podría abrirlas desde aquí. Esa es la idea. El acuerdo es que llamarás con un golpe para que te abran una vez hayas derrotado al monstruo.";
-				new_line;
-				return true;
-		],
-		description [;
-			!! TODO Barón en llamas
-			print "Dos imponentes [self] bloquean la única salida de la gruta.";
-			if (self hasnt described) {
-				print " Tienen unos grabados ornamentales, de una factura muy tosca, entre los que adviertes la figura de un [GrutaPuertasGrabado](hombre:REMARKABLE_OBJECT) que parece arder en llamas.";
-			} else {
-				print " Están decoradas con el [GrutaPuertasGrabado](grabado) de un hombre que arde en llamas.";
-			}
-			new_line;
-			return true;
 		],
 ;
 
 !! @GrutaPuertasGrabado
-Atrezzo	-> -> GrutaPuertasGrabado
- has	male,
- with	short_name [;
-			print "[](hombre) en llamas";
-			return true;
-		],
-		name_f 'figura' 'persona' 'talla',
-		name_m 'adorno' 'caballero' 'grabado' 'hombre',
-		gender G_MASCULINO,
-		adjectives 'ardiendo' 'llamas' 'un' 'una',
-		!!------------------
-		before [
-			obj;
-			Pull,
-			Push,
-			PushDir,
-			Turn:
-				obj = parent(self);
-				<<Push obj>>;
-			Take:
-				obj = parent(self);
-				<<Take obj>>;
-			Touch:
-				obj = parent(self);
-				<<Touch obj>>;
-		],
-		description [;
-			print "En lugar de la expresión de tormento que cabría esperar de un hombre ardiendo, el rostro de la figura grabada en el bronce refleja algo muy distinto: ansia, anhelo.";
-			if (Baron.is_burning()) {
-				print " Horrorizado comprendes que tu propia cara debe estar mostrando exactamente lo mismo en este momento.";
-			} else {
-				print " Lejos de agonizar en las llamas la figura parece estar deleitándose en ellas.";
-			}
-			new_line;
-			return true;
-		],
-;
+Atrezzo	-> -> GrutaPuertasGrabado;
 
 !! @GrutaVestibuloFuego
 Atrezzo	-> GrutaVestibuloFuego "fuego"
@@ -540,62 +352,6 @@ Atrezzo	-> GrutaVestibuloFuego "fuego"
 		],
 ;
 
-!! @Marmol
-Atrezzo	-> Marmol "mármol"
- has	female pluralname transparent,
- with	name_f 'pared',
-		name_fp 'paredes',
-		name_m 'marmol',
-		gender G_MASCULINO,
-		adjectives 'negra' 'negras' 'negro' 'planchas' 'pulida' 'pulidas'
-			'pulido',
-		!!------------------
-		before [;
-			!! TODO Touch/Pull/Push
-		],
-		description [;
-			print "Tanto las paredes como el techo están cubiertos por unas placas de [self] negro muy pulido. Sus vetas forman [MarmolVetas](patrones:2) intrincados sobre la superficie.";
-			new_line;
-			return true;
-		],
-;
-
-!! @MarmolVetas
-Atrezzo	-> -> MarmolVetas "vetas"
- has	male pluralname,
- with	name_f 'estria' 'linea' 'raya' 'veta',
-		name_fp 'estrias' 'lineas' 'rayas' 'vetas',
-		name_m 'patron',
-		name_mp 'patrones',
-		gender G_FEMENINO + G_PLURAL,
-		adjectives 'blanca' 'blancas' 'blanco' 'blancos' 'marmol',
-		!!------------------
-		before [
-			obj;
-			Pull,
-			Push,
-			PushDir,
-			Turn:
-				obj = parent(self);
-				<<Push obj>>;
-			Take:
-				obj = parent(self);
-				<<Take obj>>;
-			Touch:
-				obj = parent(self);
-				<<Touch obj>>;
-		],
-		description [;
-			if (self hasnt described) {
-				print "Al estudiar las líneas del mármol se apodera de ti el presentimiento de que, de algún modo, esas estrías blancas codifican un significado oculto. Como si bajo el aparente caos se hayase la respuesta a un profundo misterio. Pero al esforzarte por desentrañarlo los patrones comienzan a ondular ante tus ojos; y se retuercen y giran y se arremolinan unos con otros. Mareado, tienes que apartar la mirada.";
-			} else {
-				print "Las ondulante líneas blancas parecen retorcerse en la superficie [del Marmol]. No eres capaz de mirarlas fijamente sin marearte.";
-			}
-			new_line;
-			return true;
-		],
-;
-
 
 !!==============================================================================
 !!
@@ -605,13 +361,6 @@ Atrezzo	-> -> MarmolVetas "vetas"
 
 !! @DirGrutaPasadizo
 AdjacentRoom	DirGrutaPasadizo "pasadizo"
- has	male,
- with	found_in GrutaDragon GrutaVestibulo,
-		name_m 'corredor' 'pasadizo' 'pasillo',
-		gender G_MASCULINO,
-		adjectives 'bajo' 'estrecho' 'pequeno',
-		!!------------------
-		adjacent_room GrutaPasadizo,
 		before [;
 			Enter:
 				switch (location) {
@@ -651,16 +400,6 @@ AdjacentRoom	DirGrutaPasadizo "pasadizo"
 
 !! @GrutaPasadizo
 Indoors	GrutaPasadizo
- has	male,
- with	short_name [;
-			print "Un pequeño [](pasadizo)";
-			return true;
-		],
-		name_f 'caverna' 'cueva' 'gruta',
-		name_m 'corredor' 'pasadizo' 'pasillo',
-		gender G_MASCULINO,
-		adjectives 'bajo' 'estrecho' 'pequeno',
-		!!------------------
 		b_to [;
 			<<Enter DirGrutaVestibulo>>;
 		],
@@ -699,110 +438,13 @@ Indoors	GrutaPasadizo
 			new_line;
 			return true;
 		],
-		exits [;
-			if (self.PC_is_coming_in) {
-				print "Tienes [el DirGrutaVestibulo] a tu espalda y [el DirGrutaDragon] frente a ti.";
-			} else {
-				print "Tienes [el DirGrutaVestibulo] frente a ti y [el DirGrutaDragon] a tu espalda.";
-			}
-			new_line;
-			return true;
-		],
-		f_to [;
-			<<Enter DirGrutaDragon>>;
-		],
-		in_to [;
-			<<Enter DirGrutaDragon>>;
-		],
-		n_to [;
-			if (Utils.is_compass_enabled()) <<Enter DirGrutaDragon>>;
-			else return self.cant_go();
-		],
-		out_to [;
-			<<Enter DirGrutaVestibulo>>;
-		],
-		!! Registra si el Barón está entrando o saliendo de la cueva:
-		PC_is_coming_in true,
-		s_to [;
-			if (Utils.is_compass_enabled()) <<Enter DirGrutaVestibulo>>;
-			else return self.cant_go();
-		],
 ;
 
 !! @Cenizas
-Atrezzo	-> Cenizas "cenizas"
- has	female pluralname transparent,
- with	name_f 'ceniza',
-		name_fp 'cenizas',
-		gender G_FEMENINO + G_PLURAL,
-		adjectives 'capa' 'de' 'suelo',
-		!!------------------
-		before [;
-			Take:
-				if (~~self.tried_to_take) {
-					self.tried_to_take = true;
-					print "Te agachas para coger un puñado de cenizas del suelo, pero están tan comprimidas que sólo consigues manchar ligeramente el guantelete con el fino polvo.";
-				} else {
-					print "Están tan comprimidas que resulta imposible.";
-				}
-				new_line;
-				return true;
-		],
-		description [;
-			print "Una gruesa capa de cenizas cubre el suelo. Están compactadas hasta tal punto que tus pies apenas dejan huella.";
-			new_line;
-			return true;
-		],
-		react_before [;
-			if (noun == d_obj) {
-				noun = self;
-			}
-		],
-		reset [;
-			self.tried_to_take = false;
-		],
- private
-		tried_to_take false,
-;
-
-Atrezzo	-> -> "huellas"
- has	female pluralname,
- with	name_f 'huella',
-		name_fp 'huellas',
-		name_m 'rastro',
-		gender G_FEMENINO + G_PLURAL,
-		!!------------------
-		description [;
-			print "Prácticamente invisibles en la compacta capa de [Cenizas].";
-			new_line;
-			return true;
-		],
-;
+Atrezzo	-> Cenizas "cenizas";
 
 !! @GrutaPasadizoFuego
-Atrezzo	-> GrutaPasadizoFuego "fuego"
- class	Background,
- has	light male,
- with	name_f 'claridad' 'llama' 'luz',
-		name_fp 'llamas',
-		name_m 'fuego' 'fulgor' 'resplandor',
-		name_mp 'fuegos',
-		gender G_MASCULINO,
-		adjectives 'lengua' 'lenguas',
-		!!------------------
-		before [;
-			Blow,
-			SwitchOff:
-				print "Nadie podría apagar un fuego como ese.";
-				new_line;
-				return true;
-		],
-		description [;
-			print "Lenguas de fuego mayores que cualquier hombre iluminan el pasadizo desde [la DirGrutaDragon].";
-			new_line;
-			return true;
-		],
-;
+Atrezzo	-> GrutaPasadizoFuego "fuego";
 
 
 !!==============================================================================
@@ -837,13 +479,6 @@ AdjacentRoom	DirGrutaDragon
 				} else if (Baron.is_running_away()) {
 					print "Recompones el ánimo tras unos instantes. No puedes huir así. No eres un cobarde. Estás dispuesto a plantar cara.";
 				} else if (self.PC_hesitates) {
-					self.PC_hesitates = false;
-					Tutorial.hint_hesitations();
-					print "La entrada al cubil parece la entrada misma a los avernos. Existen multitud de leyendas acerca de cómo el monstruo llegó a vivir ahí, pero lo cierto es que nadie lo sabe con certeza. Algunos sabios afirman que el dragón es tan antiguo como la propia Tierra y que ha habitado en las profundidades de la gruta desde el origen de los tiempos.
-					^^
-					Por un momento dudas, preguntándote si podrás hallar en tu interior el valor necesario para dar el paso.";
-					new_line;
-					return true;
 				} else {
 					!! Se registran las elecciones del usuario:
 					if (Percunos in player

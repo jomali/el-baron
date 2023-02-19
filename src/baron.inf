@@ -103,7 +103,7 @@ Release 0;
 !!------------------------------------------------------------------------------
 
 !! Descomentar para compilar la versión Web/Móvil:
- Constant VERSION_WEB_MOBILE;
+Constant VERSION_WEB_MOBILE;
 
 #Ifndef VERSION_WEB_MOBILE;
 !! Si no se está compilando para Web/Móvil, es que se compila para escritorio:
@@ -261,7 +261,7 @@ Global _hyperlinks_command = "";
 !!------------------------------------------------------------------------------
 
 #Ifdef USE_SPANISH_LM;
-Constant PS1 "-";				! Inductor
+Constant PS1 ">";				! Inductor
 
 Global FORMER__TX	= "tu antiguo ~yo~";
 Global YOURSELF__TX	= "ti mismo";
@@ -982,7 +982,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = GrutaVestibulo;
+	location = Abismo;
 	Storyteller.start_scene(1);
 	print "^^";
 

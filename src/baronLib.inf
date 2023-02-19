@@ -411,43 +411,43 @@ Global _last_location = 0;
 		}
 	}
 
-	if (_last_location ~= real_location) {
-		_last_location = real_location;
-		new_line;
-		if (real_location hasnt concealed) {
-			!! Establece los estilos de texto:
-			#Ifdef TARGET_ZCODE;
-			style bold;
-			#Ifnot; ! TARGET_GLULX;
-			#Ifdef VERSION_WEB_MOBILE;
-			VorpleStyle(STYLE_DARK_GRAY_BACKGROUND);
-			#Endif; ! VERSION_WEB_MOBILE;
-			previous_style = Utils.set_text_style(TEXT_STYLE_IMPORTANT);
-			#Endif; ! TARGET_
-			!! Imprime el nombre de la localidad actual:
-			if (visibility_levels == 0) {
-				PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, thedark);
-				PrintCharacterArray(utility_array_a, 1);
-			} else {
-				if (visibility_ceiling ~= location) {
-					print (El_) visibility_ceiling, " ";
-				}
-				PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN,
-					visibility_ceiling);
-				PrintCharacterArray(utility_array_a, 1);
-			}
-			new_line;
-			!! Reestablece los estilos de texto anteriores:
-			#Ifdef TARGET_ZCODE;
-			style roman;
-			#Ifnot; ! TARGET_GLULX;
-			Utils.set_text_style(previous_style);
-			#Ifdef VERSION_WEB_MOBILE;
-			VorpleEndStyle();
-			#Endif; ! VERSION_WEB_MOBILE;
-			#Endif; ! TARGET_
-		}
-	}
+	! if (_last_location ~= real_location) {
+	! 	_last_location = real_location;
+	! 	new_line;
+	! 	if (real_location hasnt concealed) {
+	! 		!! Establece los estilos de texto:
+	! 		#Ifdef TARGET_ZCODE;
+	! 		style bold;
+	! 		#Ifnot; ! TARGET_GLULX;
+	! 		#Ifdef VERSION_WEB_MOBILE;
+	! 		VorpleStyle(STYLE_DARK_GRAY_BACKGROUND);
+	! 		#Endif; ! VERSION_WEB_MOBILE;
+	! 		previous_style = Utils.set_text_style(TEXT_STYLE_IMPORTANT);
+	! 		#Endif; ! TARGET_
+	! 		!! Imprime el nombre de la localidad actual:
+	! 		if (visibility_levels == 0) {
+	! 			PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, thedark);
+	! 			PrintCharacterArray(utility_array_a, 1);
+	! 		} else {
+	! 			if (visibility_ceiling ~= location) {
+	! 				print (El_) visibility_ceiling, " ";
+	! 			}
+	! 			PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN,
+	! 				visibility_ceiling);
+	! 			PrintCharacterArray(utility_array_a, 1);
+	! 		}
+	! 		new_line;
+	! 		!! Reestablece los estilos de texto anteriores:
+	! 		#Ifdef TARGET_ZCODE;
+	! 		style roman;
+	! 		#Ifnot; ! TARGET_GLULX;
+	! 		Utils.set_text_style(previous_style);
+	! 		#Ifdef VERSION_WEB_MOBILE;
+	! 		VorpleEndStyle();
+	! 		#Endif; ! VERSION_WEB_MOBILE;
+	! 		#Endif; ! TARGET_
+	! 	}
+	! }
 
 	! The room description (if visible)
 	if (lookmode < 3 && visibility_ceiling == location) {

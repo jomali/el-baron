@@ -38,7 +38,19 @@ body {
 	max-width: 744px;
 }
 
+.turn:not(.previous) span {
+	color: #606060;
+	-webkit-transition: 250ms linear 0s;
+	-moz-transition: 250ms linear 0s;
+	-o-transition: 250ms linear 0s;
+	transition: 250ms linear 0s;
+}
+
 /* ENTRADA */
+
+/* #lineinput, .lineinput, .lineinput.last {
+	margin-top: 32px;
+} */
 
 #lineinput-field {
 	background-color: transparent;
@@ -102,7 +114,7 @@ body {
 	Nombres de las localidades (alt.)
 } */
 
-.light-gray-letters, .previous-location span {
+.light-gray-letters {
 	/* Parser */
 	color: #606060;
 	font-style: italic;
@@ -110,9 +122,9 @@ body {
 
 .red-letters, .red-letters a:hover {
 	/* Hipervínculos: direction */
-	color: #b91717 !important;
+	color: #ffffff !important;
 	text-decoration: none;
-	text-shadow: -2px 2px 8px #b91717, 2px -2px 8px #b91717;
+	text-shadow: -2px 2px 8px #ff2121, 2px -2px 8px #ff2121;
 }
 
 .white-letters, .white-letters a:hover {

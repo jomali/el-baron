@@ -409,10 +409,10 @@ Object	LibraryMessages
 		!! Puede definirse para que sea una frase, o se genere una frase
 		!! aleatoria en cada turno, por ejemplo.
 		Tutorial.hints();
+		new_line;
 		#Ifdef USE_VORPLE;
 		if (VorpleAppendToLM(##Prompt, lm_n)) return true;
 		#Endif; ! USE_VORPLE;
-		new_line;
 		print (string) PS1, " ";
 		return true;
 

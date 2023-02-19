@@ -98,11 +98,10 @@ Character Baron "protagonista" Limbo
 		name_m 'personaje' 'protagonista',
 		gender G_MASCULINO,
 		!!
-		!!	@returns {boolean} `true` si el PC está ardiendo
-		is_burning [;
-			return self.burning;
-		],
-
+		is_burning false,
+		!!
+		is_entering_the_cavern false,
+		
 		!! TODO - revisar
 		become_a_wolf [;
 			if (self.is_a_wolf()) return true;
