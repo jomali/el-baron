@@ -107,19 +107,15 @@ Object	Utils "(Utilities)"
 		],
 		!!----------------------------------------------------------------------
 		!! Si es compilación para Vorple, limpia todos los hipervínculos 
-		!! impresos hasta el momento, cierra el último TAG HTML abierto, y 
-		!! abre uno nuevo con la clase `current-location`.
+		!! impresos hasta el momento.
 		!!
-		!! Permite la definición de estilos y el uso de hipervínculos por 
-		!! localidad.
+		!!	@version 2023/02/19
 		!!----------------------------------------------------------------------
 		clear_hyperlinks [;
 			#Ifdef USE_VORPLE;
 			VorpleExecuteJavaScriptCommand(BuildCommand("
 				ifjs.clearHyperlinks();
 			"));
-			VorpleCloseHTMLTag();
-			VorpleOpenHTMLTag("div", "current-location");
 			#Endif; ! USE_VORPLE;
 		],
 		!!----------------------------------------------------------------------

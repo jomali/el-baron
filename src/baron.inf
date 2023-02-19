@@ -762,7 +762,6 @@ Include "vorple-screen-effects.h";
 	VorpleExecuteJavaScriptCommand(BuildCommand("
 		ifjs.keyUp({ keyCode: ifjs.config.highlightKeyCodes[0] });
 	"));
-!	VorpleScrollToBottom();
 	#Endif; ! USE_VORPLE;
 ];
 
@@ -775,7 +774,7 @@ Include "vorple-screen-effects.h";
 !! una con la otra, y puede dejar el contador de palabras en cualquier punto.
 !!
 !!	@returns Nada
-!!	@version 2019/07/15
+!!	@version 2023/02/19
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
 	#Ifdef CHOICE_SETS;
@@ -784,6 +783,7 @@ Include "vorple-screen-effects.h";
 	#Ifdef PARSING_PREPROCESSOR;
 	ParsingPreprocessor.run();
 	#Endif; ! PARSING_PREPROCESSOR;
+	Utils.clear_hyperlinks();
 ];
 
 !!------------------------------------------------------------------------------
@@ -918,7 +918,6 @@ Include "vorple-screen-effects.h";
 	Utils.set_hyperlinks_status(OTHER_OBJECT, true);
 	!! Palabras destacadas:
 	#Ifdef VERSION_WEB_MOBILE;
-	VorpleOpenHTMLTag("div", "current-location");
 	Utils.set_highlight_style(REMARKABLE_OBJECT, TEXT_STYLE_NOTE);
 	Utils.set_highlight_style(DIRECTION_OBJECT, TEXT_STYLE_QUOTE);
 	Utils.set_highlight_style(CHOICE_OBJECT, TEXT_STYLE_NOTE);

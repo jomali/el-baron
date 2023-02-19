@@ -232,15 +232,29 @@ Indoors Abismo
 		],
 		gender G_MASCULINO,
 		!!
+		before [;
+			Smell:
+				print "La [AbismoOscuridad] penetra en tus pulmones, arrastrando consigo una ligera pestilencia.";
+				new_line;
+				return true;
+		],
 		description [;
+			Tutorial.hint_highlight_key_a();
 			if (AbismoOscuridad hasnt described) {
-				Tutorial.hint_highlight_key_a();
 				print "Todo es [AbismoOscuridad] a tu alrededor. El universo entero reducido a un vacío negro.";
 			} else {
 				print "Distingues un débil [AbismoResplandor](fulgor) entre las sombras.";
 			}
 			new_line;
 			return true;
+		],
+		each_turn [;
+			if (self.counter < 2) {
+				self.counter++;
+			} else {
+				Tutorial.hint_highlight_key_b();
+				return true;				
+			}
 		],
 		exits [;
 			if (AbismoOscuridad hasnt described) {
@@ -254,6 +268,11 @@ Indoors Abismo
 		f_to [;
 			<<Enter DirAbismoAdelante>>;
 		],
+		reset [;
+			self.counter = 0;
+		],
+	private
+		counter 0,
 ;
 
 !! @DirAbismoAdelante
@@ -266,12 +285,11 @@ AdjacentRoom -> DirAbismoAdelante
 			Enter:
 				self.AdjacentRoom::onChangeLocation();
 				if (AbismoOscuridad hasnt described) {
-					print "Alcanzas a distinguir un resplandor entre las sombras. ";
+					print "Alcanzas a distinguir un resplandor entre las sombras.";
 				} else {
-					print "Ha llegado el momento. Al fin y al cabo tú eres la única persona que puede acabar con la bestia.
-					^^";
+					print "Ha llegado el momento de enfrentarse a la bestia.";
 				}
-				print "Tan pronto das un paso en la dirección de la que proviene la luz, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás. Aferras el [Percunos](hacha:REMARKABLE_OBJECT) con firmeza y das otro paso adelante, hacia el calor…";
+				print " Tan pronto das un paso en la dirección de la que proviene la luz, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás. Aferras el [Percunos](hacha:REMARKABLE_OBJECT) con firmeza y das otro paso adelante, hacia el calor…";
 				new_line;
 				!! TODO - Pulsar INTRO para continuar
 				self.AdjacentRoom::before();
@@ -304,7 +322,6 @@ Darkness -> AbismoOscuridad "oscuridad"
 		],
 		description [;
 			if (self hasnt described) {
-				Tutorial.hint_highlight_key_b();
 				move AbismoResplandor to Abismo;
 				print "Te dejas llevar por el abrazo de las [self](sombras). Solo e inmóvil en mitad de la nada, lejos de obligaciones, de las monótonas rutinas del día a día, de la gente y sus juicios constantes. Casi desearías dejarlo todo y quedarte aquí para siempre. Pero no es más que una idea infantil, por supuesto.
 				^^
@@ -405,7 +422,7 @@ Indoors GrutaVestibulo
 				return true;
 			Smell:
 				if (noun == 0 or self) {
-					print "Un penetrante olor como a huevos podridos llena la [self](cueva).";
+					print "Un penetrante olor como el de los huevos podridos llena la [self](cueva).";
 				} else {
 					print "Un hedor como a huevos podridos lo impregna todo.";
 				}
@@ -413,7 +430,7 @@ Indoors GrutaVestibulo
 				return true;
 		],
 		description [;
-			!! TODO - entrada de tutorial
+			Tutorial.hint_keywords_a();
 			print "Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
 			new_line;
 			return true;
@@ -862,17 +879,19 @@ AdjacentRoom DirGrutaPasadizo "pasadizo"
 		adjectives 'bajo' 'estrecho' 'pequeno',
 		!!
 		adjacent_room GrutaPasadizo,
-		before [;
+		before [
+			rnd;
 			Enter:
 				switch (location) {
 					GrutaSalon:
 						Baron.is_entering_the_cavern = false;
 					GrutaVestibulo:
 						if (~~Baron.is_burning) {
-							print "Los huesos del suelo crujen bajo tu peso.";
-							if (GrutaPasadizo hasnt visited) {
-								print "^^
-								Justo antes de atravesar el vestíbulo tropiezas con algo que sale despedido y entra rodando en el pasadizo.";
+							rnd = random(2);
+							if (GrutaPasadizo hasnt visited || rnd == 1) {
+								print "Atraviesas la pequeña estancia destrozando huesos a tu paso.";
+							} else {
+								print "Los huesos del suelo crujen bajo tu peso.";
 							}
 							new_line;
 						}
@@ -903,8 +922,9 @@ Indoors GrutaPasadizo
 
 		],
 		description [;
+			Tutorial.hint_keywords_b();
 			if (~~Baron.is_burning) {
-				print "El [self](corredor) es largo y estrecho, con un suelo de [Cenizas](ceniza) compactada y un techo tan bajo que te obliga a inclinarte para poder pasar. Desde [la DirGrutaSalon], en el extremo del [self](pasillo), la potente luz del fuego y oleadas de un calor infernal";
+				print "El [self](corredor) es largo y estrecho, con un suelo de [Cenizas](ceniza) compactada y un techo tan bajo que te obliga a inclinarte para poder pasar. Desde la [DirGrutaSalon](guarida) de la bestia, en el extremo del [self](pasillo), la potente luz del fuego y oleadas de un calor infernal";
 				if (Baron.is_entering_the_cavern && Yelmo has worn) {
 					print " te golpean de frente";
 				} else if (Baron.is_entering_the_cavern) {
@@ -1051,7 +1071,7 @@ AdjacentRoom DirGrutaSalon
 					Tutorial.hint_hesitations();
 					print "La entrada al cubil parece la entrada misma a los avernos. Existen multitud de leyendas acerca de cómo el monstruo llegó a vivir ahí, pero lo cierto es que nadie lo sabe con certeza. Algunos sabios afirman que el dragón es tan antiguo como la propia Tierra y que ha habitado en las profundidades de la gruta desde el origen de los tiempos.
 					^^
-					Por un momento dudas, preguntándote si tu interior guarda el valor necesario para dar el paso.";
+					Por un momento dudas, preguntándote si tienes realmente el valor necesario para dar el paso.";
 					new_line;
 					return true;
 				} else {
