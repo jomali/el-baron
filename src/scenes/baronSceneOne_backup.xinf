@@ -486,32 +486,6 @@ AdjacentRoom	DirGrutaDragon
 						&& CascoVisera has open) {
 						give E1_CodigoCaballeria on;
 					}
-					if (Percunos in player
-						&& Casco in player && Casco has worn
-						&& CascoVisera has ~~open) {
-						give E1_MasValePrevenir on;
-					}
-					if (Percunos notin player
-						&& (Casco notin player || Casco hasnt worn)) {
-						give E1_Berserker on;
-					}
-					!! Comprueba el hacha:
-					if (IndirectlyContains(player, Percunos)) {
-						print "Aferrando el [Percunos](hacha:OTHER_OBJECT) con firmeza";
-					} else {
-						print "Desarmado";
-					}
-					!! Comprueba el casco:
-					if (IndirectlyContains(player, Casco) && Casco has worn) {
-						if (CascoVisera has open) {
-							print ", el visor del [Casco](casco:OTHER_OBJECT) abierto —tal y como dictan los códigos—";
-						} else {
-							print ", el visor del [Casco](casco:OTHER_OBJECT) cerrado —no es lo más honorable pero, sin duda, sí lo más prudente—";
-						}
-					} else {
-						print ", arrogante y bravo sin tu casco";
-					}
-					print ", apartas los temores a un lado y te dispones a encarar a la bestia.";
 				}
 				new_line;
 				return self.AdjacentRoom::before();

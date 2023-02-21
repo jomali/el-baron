@@ -66,6 +66,12 @@ Item Armadura Limbo
 		gender G_MASCULINO,
 		adjectives 'acero' 'completo' 'conjunto' 'cuero',
 		!!
+		react_before [;
+			Drop:
+				if (noun == self) {
+					<<Disrobe self>>;
+				}
+		],
 		before [;
 			Disrobe:
 				if (~~Baron.is_burning) {
@@ -101,7 +107,7 @@ Item Yelmo "yelmo" Limbo
 	with
 		name_m 'casco' 'morrion' 'yelmo',
 		gender G_MASCULINO,
-		adjectives 'antiguo' 'ennegrecido' 'funcional' 'negro',
+		adjectives 'antiguo' 'ennegrecido' 'funcional' 'negro' 'viejo',
 		!!
 		after [;
 			Disrobe:
@@ -134,6 +140,11 @@ Item Yelmo "yelmo" Limbo
 					<<Take self>>;
 				}
 		],
+		describe [;
+			if (self in GrutaVestibulo) {
+				return true;
+			}
+		],
 		description [;
 			if (Baron.is_burning) {
 				print "De algún modo antinatural, el metal [del self] permanece frío en mitad del infierno.";
@@ -156,6 +167,12 @@ Item Yelmo "yelmo" Limbo
 			}
 			new_line;
 			return true;
+		],
+		invent [;
+			if (inventory_stage == 1 && parent(self) ofclass Room) {
+				print "un viejo [self](casco) tirado en el suelo";
+				return true;
+			}
 		],
 	private
 		tried_to_wear false,
@@ -211,6 +228,12 @@ Item Percunos Limbo
 			print "Para esta gesta te has traído el más pesado de tus hachas de guerra. Pocos pueden levantar su peso, y menos aún manejarlo con la misma velocidad y precisión mortíferas con las que tú lo haces.";
 			new_line;
 			return true;
+		],
+		invent [;
+			if (inventory_stage == 1 && parent(self) ofclass Room) {
+				print "tu [self](hacha) a un lado";
+				return true;
+			}
 		],
 ;
 
@@ -406,9 +429,11 @@ Indoors GrutaVestibulo
 		adjectives 'fresca' 'fresco' 'pequena' 'pequeno' 'rectangular',
 		!!
 		b_to [;
-			<<Enter GrutaVestibuloPuertas>>;
+			<<Open GrutaVestibuloPuertas>>;
 		],
 		before [;
+			Dig:
+				<<Search GrutaVestibuloHuesos>>;
 			Listen:
 				if (Baron.is_burning) {
 					print "El fuego ruge en tus oídos como un animal hambriento.";
@@ -581,7 +606,7 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un [self](hombre) ardiendo, muestra algo muy distinto; un ansia profundo.";
 				if (~~Baron.is_burning) {
 					print  "^^
-					La voz que creíste escuchar antes ahora guarda silencio.";
+					La voz que has creído escuchar hace un momento ahora guarda silencio.";
 				} else {
 					print " Horrorizado comprendes que tu propio rostro debe estar mostrando exactamente lo mismo en este momento.";
 				}
@@ -730,6 +755,19 @@ Atrezzo -> GrutaVestibuloHuesos "huesos"
 			'negra' 'negras' 'negro' 'negros',
 		!!
 		before [;
+			Dig,
+			Search:
+				if (~~self.tried_to_search) {
+					self.tried_to_search = true;
+					move Yelmo to parent(self);
+					print "La capa de [self](huesos) es mayor de lo que habías imaginado. Hay todo un brazo de profundidad antes de alcanzar el suelo de mármol. ¿Cuántos han venido aquí antes que tú?
+					^^
+					Al remover los restos descubres algo que estaba enterrado. Un viejo [Yelmo](casco) de acero negro entre las calaveras blancas.";
+				} else {
+					print "Bajo el manto óseo hay un suelo del mismo [GrutaVestibuloMarmol] negro que recubre el resto de la estancia.";
+				}
+				new_line;
+				return true;
 			Take:
 				print "Son los restos de aquellos que vinieron aquí antes que tú, y no tienes ninguna intención de cargar con recuerdos de su fracaso.";
 				new_line;
@@ -739,16 +777,18 @@ Atrezzo -> GrutaVestibuloHuesos "huesos"
 			rnd;
 			rnd = random(2);
 			new_line;
-			if (real_location hasnt visited || rnd == 1) {
-				print "Una auténtica alfombra de [self](huesos) y [self](cráneos) ennegrecidos oculta el suelo.";
+			if (parent(self) == parent(Yelmo)) {
+				print "Un antiguo [Yelmo] descansa entre [los self] del suelo.";
+			} else if (real_location hasnt visited || rnd == 1) {
+				print "Una auténtica alfombra de [self] oculta el suelo.";
 			} else {
-				print "Los [self](huesos) del suelo proyectan sombras temblorosas a tu alrededor.";
+				print "[Los self] del suelo proyectan sombras temblorosas a tu alrededor.";
 			}
 			new_line;
 			return true;
 		],
 		description [;
-			print "El suelo está cubierto de esqueletos despedazados. Negros por el fuego que en algún momento consumió la carne de sus cuerpos.";
+			print "El suelo está cubierto de esqueletos despedazados. Calcinados por el fuego que en algún momento consumió la grasa y el músculo de sus cuerpos.";
 			if (self hasnt described) {
 				print "^^
 				Arrojan sombras grotescas en la luz titilante.";
@@ -756,6 +796,11 @@ Atrezzo -> GrutaVestibuloHuesos "huesos"
 			new_line;
 			return true;
 		],
+		reset [;
+			self.tried_to_search = false;
+		],
+	private
+		tried_to_search false,
 ;
 
 !! @ConversacionHombreArdiendo
@@ -879,20 +924,14 @@ AdjacentRoom DirGrutaPasadizo "pasadizo"
 		adjectives 'bajo' 'estrecho' 'pequeno',
 		!!
 		adjacent_room GrutaPasadizo,
-		before [
-			rnd;
+		before [;
 			Enter:
 				switch (location) {
 					GrutaSalon:
 						Baron.is_entering_the_cavern = false;
 					GrutaVestibulo:
 						if (~~Baron.is_burning) {
-							rnd = random(2);
-							if (GrutaPasadizo hasnt visited || rnd == 1) {
-								print "Atraviesas la pequeña estancia destrozando huesos a tu paso.";
-							} else {
-								print "Los huesos del suelo crujen bajo tu peso.";
-							}
+							print "Los huesos del suelo crujen destrozados bajo tus botas.";
 							new_line;
 						}
 						Baron.is_entering_the_cavern = true;
@@ -924,9 +963,9 @@ Indoors GrutaPasadizo
 		description [;
 			Tutorial.hint_keywords_b();
 			if (~~Baron.is_burning) {
-				print "El [self](corredor) es largo y estrecho, con un suelo de [Cenizas](ceniza) compactada y un techo tan bajo que te obliga a inclinarte para poder pasar. Desde la [DirGrutaSalon](guarida) de la bestia, en el extremo del [self](pasillo), la potente luz del fuego y oleadas de un calor infernal";
+				print "[if:self has visited]El [self](corredor) es[else]Entras en un [self](corredor)[fi] largo y estrecho, con[if:self has visited] un[fi] suelo de [Cenizas](ceniza) compactada y un techo tan bajo que te obliga a inclinarte para poder pasar. Desde la [DirGrutaSalon](guarida) del dragón, en el extremo del [self](pasillo), llegan oleadas de un calor infernal que";
 				if (Baron.is_entering_the_cavern && Yelmo has worn) {
-					print " te golpean de frente";
+					print " se cuelan entre las rendijas [del Yelmo], abrasándote los ojos,";
 				} else if (Baron.is_entering_the_cavern) {
 					print " te golpean en plena cara";
 				} else {
@@ -1020,9 +1059,9 @@ Atrezzo -> GrutaPasadizoFuego "fuego"
 	has
 		light male,
 	with
-		name_f 'claridad' 'llama' 'luz',
+		name_f 'bestia' 'claridad' 'llama' 'luz',
 		name_fp 'llamas',
-		name_m 'fuego' 'fulgor' 'resplandor',
+		name_m 'dragon' 'fuego' 'fulgor' 'monstruo' 'resplandor',
 		name_mp 'fuegos',
 		gender G_MASCULINO,
 		adjectives 'lengua' 'lenguas',
@@ -1035,7 +1074,7 @@ Atrezzo -> GrutaPasadizoFuego "fuego"
 				return true;
 		],
 		description [;
-			print "Lenguas de fuego mayores que cualquier hombre iluminan el pasadizo desde [la DirGrutaSalon].";
+			print "Lenguas de fuego mayores que cualquier hombre iluminan el pasadizo desde la [DirGrutaSalon](guarida) del dragón.";
 			new_line;
 			return true;
 		],
@@ -1079,18 +1118,13 @@ AdjacentRoom DirGrutaSalon
 					if (IndirectlyContains(player, Percunos)) {
 						print "Aferrando el [Percunos](hacha:OTHER_OBJECT) con firmeza";
 					} else {
-						print "Desarmado";
+						print "Completamente desarmado";
 					}
 					!! Comprueba el casco:
-					!! TODO ajustar a la nueva situación: recuperar el casco de entre los esqueletos
 					if (IndirectlyContains(player, Yelmo) && Yelmo has worn) {
-						if (YelmoVisera has open) {
-							print ", el visor del [Yelmo](yelmo:OTHER_OBJECT) abierto —tal y como dictan los códigos—";
-						} else {
-							print ", el visor del [Yelmo](yelmo:OTHER_OBJECT) cerrado —no es lo más honorable pero, sin duda, sí lo más prudente—";
-						}
+						print ", con el rostro protegido por el viejo [Yelmo] —del que confías que te traiga más fortuna que a su anterior propietario—";
 					} else {
-						print ", arrogante y bravo sin tu yelmo";
+						print ", con la cabeza alta y el rostro descubierto —tal y como dictan los códigos—";
 					}
 					print ", apartas los temores a un lado y te dispones a encarar a la bestia.";
 				}
@@ -1119,4 +1153,33 @@ Indoors GrutaSalon
 		gender G_MASCULINO,
 		adjectives 'dragon' 'enorme' 'gran' 'grande' 'subterraneo',
 		!!
+		b_to [;
+			<<Enter DirGrutaPasadizo>>;
+		],
+		before [;
+
+		],
+		cant_go [;
+		
+		],
+		exits [;
+			print "La boca [del DirGrutaPasadizo] se abre en una de las paredes de roca del enorme [self](salón).";
+			new_line;
+			return true;
+		],
+		initial [;
+		
+		],
+		description [;
+			if (~~Baron.is_burning) {
+				print "El pasadizo desemboca en lo que parece una [self](gruta) natural. Es enorme, mucho mayor incluso que la sala del trono del Emperador. Desde infinidad de grietas y fisuras abiertas en la roca emergen llamaradas gigantescas. La luz aquí es más brillante que el mediodía y el calor casi insoportable.";
+			} else {
+				print "Entre la vorágine de llamas sólo aciertas a distinguir imágenes fragmentadas; fisuras en la roca, la mancha carmesí del dragón, el pequeño punto de oscuridad que señala la boca del pasadizo.";
+			}
+			new_line;
+			return true;
+		],
+		out_to [;
+			<<Enter DirGrutaPasadizo>>;
+		],
 ;
