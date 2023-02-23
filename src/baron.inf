@@ -187,13 +187,13 @@ Constant WITHOUT_DIRECTIONS;
 !!------------------------------------------------------------------------------
 
 Constant CSET_STYLE 1;
-Constant CSET_PREFIX "(";
-Constant CSET_SUFIX ").";
+Constant CSET_PREFIX "";
+Constant CSET_SUFIX "";
 Constant CSET_MSG1 "";
 Constant CSET_MSG2 "";
-Constant CSET_COMMA " / ";
-Constant CSET_OR " / ";
-Constant CSET_NO_MSG "Listado de opciones vacío";
+Constant CSET_COMMA "^";
+Constant CSET_OR "^";
+Constant CSET_NO_MSG "Listado de opciones vacío.";
 
 !!------------------------------------------------------------------------------
 !!	Configuración de la interfaz gráfica con 'GWindows'
@@ -981,7 +981,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = Abismo;
+	location = GrutaVestibulo;
 	Storyteller.start_scene(1);
 	print "^^";
 

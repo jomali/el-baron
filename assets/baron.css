@@ -38,12 +38,20 @@ body {
 	max-width: 744px;
 }
 
+hr.choice-set-divider {
+	opacity: 0.6;
+}
+
 .turn:not(.previous) span {
 	color: #606060;
 	-webkit-transition: 250ms linear 0s;
 	-moz-transition: 250ms linear 0s;
 	-o-transition: 250ms linear 0s;
 	transition: 250ms linear 0s;
+}
+
+.turn:not(.previous) hr.choice-set-divider {
+	opacity: 0.2;
 }
 
 /* ENTRADA */
@@ -122,7 +130,7 @@ body {
 
 .red-letters, .red-letters a:hover {
 	/* Hipervínculos: direction */
-	color: #ffffff !important;
+	color: #ff8080 !important;
 	text-decoration: none;
 	text-shadow: -2px 2px 8px #ff2121, 2px -2px 8px #ff2121;
 }

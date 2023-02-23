@@ -14,7 +14,7 @@
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:		0.0
-!!	Fecha:			2022/06/XX
+!!	Fecha:			2023/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -37,7 +37,7 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2022, J. Francisco Martín
+!!	Copyright (c) 2023, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 
@@ -98,9 +98,9 @@ Character Baron "protagonista" Limbo
 		name_m 'personaje' 'protagonista',
 		gender G_MASCULINO,
 		!!
-		is_burning false,
+		is_blind false,
 		!!
-		is_entering_the_cavern false,
+		is_burning false,
 		
 		!! TODO - revisar
 		become_a_wolf [;
