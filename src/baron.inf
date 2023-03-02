@@ -981,7 +981,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = GrutaVestibulo;
+	location = GrutaSalon;
 	Storyteller.start_scene(1);
 	print "^^";
 

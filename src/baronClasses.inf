@@ -14,7 +14,7 @@
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:		0.0
-!!	Fecha:			2022/01/XX
+!!	Fecha:			2023/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -37,7 +37,7 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2022, J. Francisco Martín
+!!	Copyright (c) 2023, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -50,6 +50,7 @@
 !!	<>	Thing:Atrezzo:AdjacentRoom
 !!	<>	Thing:Atrezzo:Background
 !!	<>	Thing:Atrezzo:Background:Darkness
+!!	<>	Thing:Atrezzo:Fire
 !!	<>	Thing:Atrezzo:Room
 !!	<>	Thing:Atrezzo:Room:Indoors
 !!	<>	Thing:Atrezzo:Room:Outdoors
@@ -886,7 +887,49 @@ Class Darkness
 				new_line;
 				return true;
 		],
-; 
+;
+
+!!------------------------------------------------------------------------------
+!! Thing:Atrezzo:Fire
+!!------------------------------------------------------------------------------
+!!	@version 2023/03/01
+!!------------------------------------------------------------------------------
+Class Fire
+	class
+		Atrezzo,
+	has
+		light male,
+	with
+		name_f 'llama' 'llamarada',
+		name_fp 'llamas' 'llamaradas',
+		name_m 'fuego' 'incendio' 'infierno',
+		name_mp 'fuegos',
+		gender G_MASCULINO,
+		adjectives 'lengua' 'lenguas',
+		!!
+		before [;
+			Blow,
+			SwitchOff:
+				print "Nadie ";
+				switch (Utils.get_grammatical_inflection()) {
+					FIRST_PERSON_PRESENT,
+					SECOND_PERSON_PRESENT,
+					THIRD_PERSON_PRESENT:
+						print "podría";
+					FIRST_PERSON_PAST,
+					SECOND_PERSON_PAST,
+					THIRD_PERSON_PAST:
+						print "hubiese podido";
+					FIRST_PERSON_FUTURE,
+					SECOND_PERSON_FUTURE,
+					THIRD_PERSON_FUTURE:
+						print "podrá";
+				}
+				print " apagar un fuego como ese.";
+				new_line;
+				return true;
+		],
+;
 
 
 !!------------------------------------------------------------------------------
@@ -1047,9 +1090,11 @@ Class	Outdoors
 !!------------------------------------------------------------------------------
 !!	@version 2020/01/26
 !!------------------------------------------------------------------------------
-Class	Snow
- class	Atrezzo
- with	before [;
+Class Snow
+	class
+		Atrezzo,
+	with
+		before [;
 			Dig:
 				switch (Utils.get_grammatical_inflection()) {
 					FIRST_PERSON_PRESENT:
