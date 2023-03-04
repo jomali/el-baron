@@ -1387,9 +1387,7 @@ Character -> Dragon "dragón"
 					return self.spits_fire_on_attack();
 				}
 			DefaultAction:
-				if (self.tried_to_talk_to) {
-					<<TalkTo self>>;
-				} else if (Baron.is_blind) {
+				if (Baron.is_blind) {
 					<<Examine self>>;
 				} else if (self has described
 					&& IndirectlyContains(player, Percunos)) {
@@ -1398,9 +1396,8 @@ Character -> Dragon "dragón"
 					<<Examine self>>;
 				}
 			TalkTo:
-				self.tried_to_talk_to = true;
 				if (Baron.is_burning) {
-					if (ConversacionDragon.tried_to_speak_again) {
+					if (self.tried_to_talk_to_again) {
 						return ConversacionDragon.final_action();
 					}
 				}
@@ -1456,6 +1453,7 @@ Character -> Dragon "dragón"
 		spits_fire_on_wait [;
 			return self.spits_fire(0);
 		],
+		tried_to_talk_to_again false,
 	private
 		counter 0,
 		reacts [;
@@ -1477,7 +1475,7 @@ Character -> Dragon "dragón"
 					} else if (self.counter >= 3) {
 						StopDaemon(self);
 						if (Baron.is_blind) {							
-							print "No llegas a verlo acercarse a ti ni a sentirlo a tu lado. No ves nada más que blanco. Sólo sientes dolor. Un dolor blanco mientras sus dientes atraviesan tu armadura con la misma facilidad con la que atravesarían la piel de una manzana. Algo cruje de forma repugnante y un torrente de sangre te inunda la boca.
+							print "No llegas a verlo acercarse a ti ni a sentirlo a tu lado. No ves ni sientes nada más que blanco y dolor. Un dolor blanco mientras sus dientes atraviesan tu armadura con la misma facilidad con la que atravesarían la piel de una manzana. Algo cruje de forma repugnante y un torrente de sangre te inunda la boca.
 							^^
 							Después incluso el blanco y el dolor desaparecen.";
 						} else {
@@ -1505,6 +1503,10 @@ Character -> Dragon "dragón"
 			!! Actualiza estado del resto del mundo
 			move GrutaSalonFuego to Limbo;
 			move GrutaBaronFuego to Baron;
+			ConversacionDragon.remove_choice(DragonAmenazar);
+			ConversacionDragon.remove_choice(DragonRazonar);
+			ConversacionDragon.add_choice(DragonAmenazarOtraVez);
+			ConversacionDragon.add_choice(DragonPedirClemencia);
 			!! TODO - iniciar daemon del fuego
 			if (context == 1 or 2) {
 				!! Descripción al atacar/hablar
@@ -1532,7 +1534,6 @@ Character -> Dragon "dragón"
 				return true;
 			}
 		],
-		tried_to_talk_to false,
 ;
 
 !! @GrutaBrechas
@@ -1615,8 +1616,8 @@ Atrezzo -> GrutaSalonFuego "fuego"
 ChoiceSet ConversacionDragon "(Conversación: dragón)"
 	with
 		final_action [;
-			if (~~self.tried_to_speak_again) {
-				self.tried_to_speak_again = true;
+			if (~~Dragon.tried_to_talk_to_again) {
+				Dragon.tried_to_talk_to_again = true;
 				print "Tu laringe está destrozada por el fuego y es incapaz de articular los sonidos. Tan sólo logras emitir un chillido penoso e ininteligible.";
 			} else {
 				print "Tu laringe está destrozada y es incapaz de articular sonidos.";
@@ -1625,10 +1626,23 @@ ChoiceSet ConversacionDragon "(Conversación: dragón)"
 			return true;
 		],
 		initial_action [;
-			self.add_choice(DragonAmenazar);
-			self.add_choice(DragonRazonar);
+			if (~~Baron.is_burning) {
+				self.add_choice(DragonAmenazar);
+				self.add_choice(DragonRazonar);
+			}
+			return self.inter_action();
 		],
-		tried_to_speak_again false,
+		inter_action [;
+			if (Baron.is_blind) {
+				print "Sabes que está ahí, en algún sitio, aunque no puedas verlo.";
+			} else if (Baron.is_burning) {
+				print "Está ahí, en algún sitio entre las llamas, aunque no puedas verlo.";
+			} else {
+				print "Sus ojos de reptil están clavados en ti, inteligentes y malévolos.";
+			}
+			new_line;
+			return true;
+		]
 ;
 
 !! @DragonAmenazar
@@ -1653,7 +1667,6 @@ ChoiceSetItem DragonAmenazar
 			return Dragon.spits_fire_on_talk_to();
 		],
 		relatives DragonRazonar,
-		subchoices DragonAmenazarOtraVez DragonPedirClemencia,
 ;
 
 !! @DragonRazonar
@@ -1678,7 +1691,6 @@ ChoiceSetItem DragonRazonar
 			return Dragon.spits_fire_on_talk_to();
 		],
 		relatives DragonAmenazar,
-		subchoices DragonAmenazarOtraVez DragonPedirClemencia,
 ;
 
 !! @DragonAmenazarOtraVez

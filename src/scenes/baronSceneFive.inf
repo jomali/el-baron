@@ -1,0 +1,1672 @@
+
+
+
+!!==============================================================================
+!!
+!!	EL BARÓN
+!!	Escena quinta
+!!
+!!==============================================================================
+!!
+!!	Archivo:		baron_scene-five.xinf
+!!	Autor(es):		Victor Gijsbers
+!!					J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Español)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:		0.0
+!!	Fecha:			2021/XX/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
+!!
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
+!!	modificarlo bajo los términos de la Licencia Pública General
+!!	GNU publicada por la Fundación para el Software Libre, ya
+!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
+!!	versión posterior.
+!!
+!!	EL BARÓN se distribuye con la esperanza de que sea útil,
+!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+!!	Consulte los detalles de la Licencia Pública General GNU
+!!	para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública
+!!	General GNU junto a EL BARÓN. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2021, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	0)
+!!
+!!------------------------------------------------------------------------------
+
+!!@CastilloEstrellas
+Atrezzo CastilloEstrellas "estrellas" Limbo
+	has female pluralname,
+	with
+		found_in Edificio PatioArmas TorreExterior,
+		!!
+		name_f 'estrella',
+		name_fp 'estrellas',
+		name_m 'astro',
+		name_mp 'astros',
+		gender G_FEMENINO + G_PLURAL,
+		!!
+		description [;
+			print "En la distancia cósmica, las almas de los mayores guerreros del pasado arden salvajemente en eterna lucha con fuerzas desconocidas del más allá. Aquí, en la tierra, su luz lejana adorna el firmamento como hermosas velas contra terciopelo negro.";
+			new_line;
+			return true;
+		],
+;
+
+!! @CastilloLuna
+Atrezzo CastilloLuna "luna" Limbo
+	has female,
+	with
+		found_in Edificio PatioArmas TorreExterior,
+		!!
+		name_f 'luna',
+		gender G_FEMENINO,
+		!!
+		description [;
+			print "Las luz de la luna emborrona los contornos de las cosas, arrebatándoles su nitidez; parecen fluir entre sí, como los bloques de un sueño en el que nada es lo que parece y todos los significados y significantes se entremezclan unos con otros.";
+			new_line;
+			return true;
+		],
+;
+
+!! @CastilloNieve
+Atrezzo CastilloNieve "nieve" Limbo
+	has female,
+	with
+		found_in Edificio PatioArmas TorreExterior,
+		!!
+		name_f 'nieve',
+		gender G_FEMENINO,
+		!!
+		before [;
+			Dig,
+			LookUnder:
+				if (second ~= nothing
+					&& second ~= player
+					&& IndirectlyContains(player, second)) {
+					print "Hurgas aquí y allá entre ", (the) self, " con ", (the) second, ", sin encontrar nada.";
+					new_line;
+					return true;
+				}
+				print "Hurgas aquí y allá entre ", (the) self, ", sin encontrar nada.";
+				new_line;
+				return true;
+			Search:
+				<<Dig self>>;
+		],
+		description [;
+			if (self has described) {
+				print "La gruesa capa de nieve parece estar intentando asfixiar el pasado bajo su peso.";
+			} else {
+				print "A veces la nieve otorga a los objetos una cualidad de cuento de hadas al posarse sobre ellos. Hoy no, no esta nieve. Esta nieve parece querer asfixiarlos y enterrarlos para siempre.";
+			}
+			new_line;
+			return true;
+		],
+		react_before [;
+			Dig:
+				if (noun == nothing || noun == location) {
+					<<Dig self second>>;
+				}
+		],
+;
+
+!! @CastilloParedes
+Atrezzo	CastilloParedes "paredes" Limbo
+ class	Background,
+ has	female pluralname,
+ with	found_in Comedor Edificio PatioArmas Sotano,
+		name_f 'pared',
+		name_fp 'paredes',
+		name_m 'muro',
+		name_mp 'muros',
+		gender G_FEMENINO + G_PLURAL,
+		adjectives 'ennegrecida' 'ennegrecidas' 'ennegrecido' 'ennegrecidos',
+		!!------------------
+		description [;
+			print "Los blancos muros de piedra caliza no se ven blancos e inmaculados desde el interior del castillo";
+			if (real_location ofclass Outdoors) {
+				print ", salvo allí donde hay ", (name) CastilloNieve, " acumulada";
+			}
+			print ". Están ennegrecidos y cascados por culpa de algún antiguo fuego.";
+			new_line;
+			return true;
+		],
+;
+
+!! @DirTorrePasadizo
+AdjacentRoom DirTorrePasadizo "pasadizo" Limbo
+	has
+		male ~scenery,
+	with
+		name_m 'pasadizo' 'pasillo',
+		gender G_MASCULINO,
+		adjectives 'secreto' 'torre',
+		!!
+		adjacent_room Sotano,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+		describe [;
+			new_line;
+			if (Sotano has visited) {
+				print "Hay ", (a) self, " hacia los sótanos, abierto en la pared que quedaba oculta por ", (the) Tapiz, ".";
+			} else {
+				print "Hay ", (a) self, " abierto en la pared que quedaba oculta por ", (the) Tapiz, ". Parece descender a los subsuelos.";
+			}
+			new_line;
+			return true;
+		],
+		description [;
+			if (Tapiz has open) {
+				print "Al correr ", (the) Tapiz, " has dejado al descubierto la boca de ", (a) self, ".";
+			} else {
+				print "", (The) self, " queda oculto tras ", (the) Tapiz, ".";
+			}
+			new_line;
+			return true;
+		]
+;
+
+
+!!==============================================================================
+!!
+!!	1) Galería
+!!
+!!------------------------------------------------------------------------------
+
+!! @Galeria
+Indoors Galeria "Galería"
+	has female,
+	with
+		name_f 'galeria',
+		name_m 'corredor' 'pasillo',
+		gender G_FEMENINO,
+		!!
+		b_to [;
+			<<Enter DirPortonesCastillo>>;
+		],
+		description [;
+			if (false) {
+				print "La luz de la antorcha es débil, pero resulta suficiente como para alumbrar el interior de la galería. A tu alrededor hay amontonados unos fajos de papel en innumerables pilas de diferente altura; anudados escrupulosamente unos y sueltos y sin orden aparente otros, bien ajustados, tambaleantes o caídos y desperdigados por el suelo. Ocupan prácticamente todo el espacio, salvo por el paso despejado en línea recta que lleva desde las ";
+PRT__(DirPortonesCastillo, "puertas");
+print " del castillo hasta ", (the) DirPatioArmas, ".";
+			} else if (PatioArmas has visited) {
+				print "No llega luz alguna hasta aquí. Todo cuanto puedes ver a tu alrededor es de un negro impenetrable, silencioso y frío, salvo por el arco de luz que has dejado a tu espalda.";
+			} else {
+				print "Las enormes ";
+PRT__(DirPortonesCastillo, "puertas");
+print " dan paso a una galería hasta la que no llega luz alguna. Todo cuanto puedes ver a tu alrededor es de un negro impenetrable, silencioso y frío, salvo por un arco de luz algo más adelante.";
+			}
+			new_line;
+			return true;
+		],
+		f_to [;
+			<<Enter DirPatioArmas>>;
+		],
+		in_to [;
+			<<Enter DirPatioArmas>>;
+		],
+		out_to [;
+			<<Enter DirPortonesCastillo>>;
+		],
+;
+
+!! @DirPatioArmas
+AdjacentRoom -> DirPatioArmas
+	has
+		male,
+	with
+		short_name [;
+			print "";
+PRT__("patio", "patio");
+print " de armas";
+			return true;
+		],
+		name_m 'claustro' 'patio',
+		gender G_MASCULINO,
+		adjectives 'armas' 'castillo' 'fortaleza' 'interior',
+		!!
+		adjacent_room PatioArmas,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @DirPortonesCastillo
+AdjacentRoom -> DirPortonesCastillo "portones"
+	has
+		male pluralname,
+	with
+		name_f 'entrada' 'puerta',
+		name_fp 'puertas',
+		name_m 'porton',
+		name_mp 'portones',
+		gender G_MASCULINO + G_PLURAL,
+		adjectives 'castillo' 'fortaleza',
+		!!
+		before [;
+			Enter:
+				print "No sin María.";
+				new_line;
+				return true;
+		],
+;
+
+!! @GaleriaOscuridad
+Darkness -> GaleriaOscuridad "oscuridad"
+	has	female,
+	with
+		description [;
+			print "No ves nada en la oscuridad, aparte de";
+			if (PatioArmas has visited) {
+				print " la salida ", (al) DirPatioArmas, "";
+			} else {
+				print " la abertura de más ", (name) f_obj, "";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+;
+
+
+!!==============================================================================
+!!
+!!	2)	Patio de armas
+!!
+!!------------------------------------------------------------------------------
+
+!! @PatioArmas
+Outdoors PatioArmas
+	has	male,
+	with
+		short_name [;
+			print "";
+PRT__("Patio", "Patio");
+print " de armas";
+			return true;
+		],
+		name_m 'claustro' 'patio',
+		gender G_MASCULINO,
+		adjectives 'armas' 'interior',
+		!!
+		b_to [;
+			<<Enter DirEntradaCastillo>>;
+		],
+		before [;
+			Listen:
+				print "El viento murmura nostálgico entre las piedras caídas.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Detrás de la fachada aparentemente intacta se oculta una verdadera ruina. Casi todas las construcciones de la fortaleza han sucumbido y en su lugar quedan tan solo montones desperdigados de escombros, entre los cuáles las tres torres brotan como hongos gigantescos de sillería y argamasa. Alguien ha abierto un estrecho paso entre la nieve. Lo ves zigzaguear entre las piedras caídas, desde ";
+if (true) {
+print "la entrada del castillo";
+} else {
+print "la gran torre central";
+}
+print " en dirección ";
+if (true) {
+print "a la gran torre central";
+} else {
+print "a la entrada del castillo";
+}
+print ".";
+			new_line;
+			return true;
+		],
+		f_to [;
+			<<Enter DirTorreExterior>>;
+		],
+;
+
+!! @DirEntradaCastillo
+AdjacentRoom -> DirEntradaCastillo
+	has female,
+	with
+		short_name [;
+			print "";
+PRT__("entrada", "entrada");
+print " del castillo";
+			return true;
+		],
+		name_f 'entrada' 'galeria',
+		gender G_FEMENINO,
+		adjectives 'castillo' 'fortaleza',
+		!!
+		adjacent_room Galeria,
+		before [;
+			Enter:
+				print "Regresas a la galería.";
+				new_line;
+				self.AdjacentRoom::before();
+				return true;
+			],
+;
+
+!! @PatioArmasEstatua
+HeavyItem	-> PatioArmasEstatua "estatua"
+ has	female,
+ with	name_f 'efigie' 'escultura' 'estatua' 'figura' 'talla',
+		name_m 'hombre' 'monumento',
+		gender G_FEMENINO,
+		adjectives 'desgastada' 'desgastado' 'granito' 'ilustre',
+		!!------------------
+		!! TODO - Explorar recuerdos al tocarla/moverla
+		before [;
+			TalkTo:
+				if (self.tried_to_talk) {
+					print "Se limita a contemplar la desolación que os rodea sin inmutarse.";
+				} else {
+					print "La estatua asiente con la cabeza bruscamente, una única vez, antes de quedarse completamente inmóvil de nuevo.";
+				}
+				new_line;
+				return true;
+			Take,
+			Turn,
+			Pull,
+			Push,
+			PushDir:
+				print "Nadie podría mover algo así.";
+				new_line;
+				return true;
+		],
+		describe [;
+			new_line;
+			print "", (A) self, " domina el centro del patio.";
+			new_line;
+			return true;
+		],
+		description [;
+			print "Tiene al menos cuatro varas y media de altura. Representa la figura de un hombre de porte ilustre, pero el granito está tan desgastado por los elementos que los rasgos de su rostro se han perdido para siempre en el tiempo.";
+			new_line;
+			return true;
+		],
+		reset [;
+			self.tried_to_talk = false;
+		],
+ private
+ 		tried_to_talk false,
+;
+
+!! @PatioArmasCamino
+Atrezzo	-> PatioArmasCamino "camino"
+ has	male,
+ with	name_f 'pista',
+		name_m 'camino' 'paso' 'sendero' 'rastro',
+		gender G_FEMENINO,
+		adjectives 'improvisado',
+		!!------------------
+		description [;
+			print "Un rastro dejado por alguien al cruzar el patio. Lleva desde ", (the) DirEntradaCastillo, " en dirección a la gruesa ";
+PRT__(DirTorreExterior, "torre");
+print " del homenaje.";
+			new_line;
+			return true;
+		],
+;
+
+!! @PatioArmasEscombros
+Atrezzo	-> PatioArmasEscombros
+ has	male pluralname,
+ with	short_name [;
+ 			print "montones de ";
+PRT__("piedra", "piedra", OTHER_OBJECT);
+print "";
+			return true;
+		],
+		name_f 'piedra',
+		name_fp 'piedras',
+		name_m 'escombro',
+		name_mp 'escombros',
+		!!------------------
+		before [;
+			Touch:
+				if (self.tried_to_touch) {
+					print "Estas piedras guardan recuerdos de otra época más feliz.";
+					new_line;
+					return true;
+				} else {
+					!! TODO
+					print "Pones tu mano sobre las piedras y cierras los ojos.
+					^^
+					Un salón iluminado, más pequeño pero más acogedor que aquel donde descansan los nobles señores del castillo. La gente camina de vez en cuando, poniendo la última mano en la comida de la noche o relajándose de un largo día de duro trabajo. Un grupo de chicos se ríe. Un anciano toca un instrumento de viento, una especie de flauta. Pacífica. Alegre. Acurrucado. Toda esta gente está en casa.
+					^^
+					Cuando abres los ojos, estás de pie de nuevo en la nieve con ambos pies. Tiras del abrigo con más fuerza a tu alrededor, como protección contra el viento helado que chirría entre las ruinas.";
+				}
+				new_line;
+				return true;
+		],
+		description [;
+			print "Los contornos de las habitaciones que una vez formaron la planta baja de estos edificios en ruinas son todavía visibles como paredes bajas, desmoronándose cada vez más bajo el peso de la nieve y del tiempo. Uno cree que casi puede oír y tocar los recuerdos almacenados en su interior.";
+			new_line;
+			return true;
+		],
+		reset [;
+			self.tried_to_touch = false;
+		],
+ private
+ 		tried_to_touch false,
+;
+
+
+!!==============================================================================
+!!
+!!	3)	Frente a la torre del homenaje
+!!
+!!------------------------------------------------------------------------------
+
+!! @DirTorreExterior
+AdjacentRoom	DirTorreExterior "torre"
+ has	female,
+ with	found_in Edificio PatioArmas,
+ 		name_m 'torre',
+		gender G_FEMENINO,
+		adjectives 'central' 'homenaje' 'principal',
+		!!------------------
+		adjacent_room TorreExterior,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @TorreExterior
+Outdoors TorreExterior "Frente a la torre del homenaje"
+	has
+		female,
+	with
+		name_f 'torre',
+ 		gender G_FEMENINO,
+		adjectives 'central' 'homenaje' 'principal',
+		!!
+		b_to [;
+			<<Enter DirPatioArmas>>;
+		],
+		description [;
+			print "Imponente y amenazadora, la gran torre principal se eleva ante ti bloqueando completamente la luz de la luna. En este punto, el estrecho camino abierto en la nieve se bifurca formando una T nerviosa que comunica el interior de la torre con ", (the) DirPatioArmas, " y con el otro único ", (name) DirEdificioDesdeTorre, " que aún pemanece en pie, pegado al muro exterior.";
+			new_line;
+			return true;
+		],
+		f_to [;
+			<<Enter DirTorreInterior>>;
+		],
+;
+
+!! @DirEdificioDesdeTorre
+AdjacentRoom -> DirEdificioDesdeTorre "edificio"
+	has
+		male,
+	with
+		name_m 'agujero' 'construccion' 'edificio',
+		gender G_MASCULINO,
+		adjectives 'enorme' 'pared' 'paredes' 'semiderruido',
+		!!
+		adjacent_room Edificio,
+		before [;
+			Enter:
+				Edificio.PC_from_castle_grounds = true;
+				if (Edificio hasnt visited) {
+					print "Entras en la construcción a través de un agujero enorme abierto en una de las paredes.";
+					new_line;
+				}
+				if (Edificio has visited) {
+					print "Entras en la construcción a través del enorme agujero abierto en la pared.";
+					new_line;
+				}
+				self.AdjacentRoom::before();
+				return true;
+		],
+		description [;
+			print "Un edificio de piedra de una sola planta que parece mantenerse en pie solo a duras penas. Tiene un enorme ";
+PRT__(self, "agujero");
+print " en una de sus paredes.";
+			new_line;
+			return true;
+		],
+;
+
+!! @DirTorreInterior
+AdjacentRoom -> DirTorreInterior "torre"
+	has
+		male,
+	with
+		name_m 'torre',
+		gender G_MASCULINO,
+		adjectives 'central' 'homenaje' 'principal',
+		!!
+		adjacent_room TorreInterior,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @TorreExteriorEscombros
+Atrezzo -> TorreExteriorEscombros
+	has
+		male pluralname,
+	with
+		short_name [;
+ 			print "montones de ";
+PRT__("piedra", "piedra", OTHER_OBJECT);
+print "";
+			return true;
+		],
+		name_f 'piedra',
+		name_fp 'piedras',
+		name_m 'escombro',
+		name_mp 'escombros',
+		!!
+		description [;
+			print "Las viejas piedras descansan inertes, semienterradas por ", (the) CastilloNieve, ".";
+			new_line;
+			return true;
+		],
+;
+
+
+!!==============================================================================
+!!
+!!	4)	Edificio semiderruido
+!!
+!!------------------------------------------------------------------------------
+
+!! @Edificio
+Outdoors Edificio
+	has
+		male,
+	with
+		short_name [;
+			print "";
+PRT__("Edificio", "Edificio");
+print " semiderruido";
+			return true;
+		],
+		name_m 'construccion' 'edificio',
+		gender G_MASCULINO,
+		adjectives 'semiderruido',
+		!!
+		PC_from_castle_grounds false,
+		before [;
+			Listen:
+				print "Cierras los ojos y escuhas. La voz de las piedras que repiten su historia eternamente.
+				^^
+				La gente se está riendo. En otra habitación una mujer regaña a alguien; no se pueden oír sus palabras, pero la esencia de su historia es obvia. Un zumbido de voces viene de todos lados, una mezcla de palabras y estados de ánimo que te encierre como una manta caliente. Por encima de todos los sonidos, sereno y triste, una melodía silbada.
+				^^
+				Vuelves a abrir los ojos y cesan los silbidos y las voces. Sólo el aullido del viento rompe el sombrío silencio.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "El tejado se ha desplomado completamente en el interior y las paredes han comenzado a desmoronarse, cubriendo el suelo con pedazos de yeso y de mampostería, de tejas partidas y de vigas de madera que ya no sostienen más que una fina capa de nieve. En algún momento del pasado este lugar debió de estar lleno de vida, pero hace mucho de eso. Ahora todo permanece silencioso y muerto.";
+			new_line;
+			return true;
+		],
+		out_to [;
+			<<Enter DirTorreExterior>>;
+		],
+		reset [;
+			self.PC_from_castle_grounds = false;
+		],
+;
+
+!! @DirUmbral
+AdjacentRoom -> DirUmbral "umbral"
+	has
+		male,
+	with
+		name_f 'puerta',
+		name_m 'comedor' 'umbral' 'salon',
+		gender G_MASCULINO,
+		!!
+		adjacent_room Comedor,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+		description [;
+			print "";
+if (Comedor.is_lit_up()) {
+print "Puedes distinguir una luz parpadeante, muy tenue, más allá ", (del) self, ".";
+} else {
+print "Hace tiempo que ninguna puerta ocupa ese ", (name) self, ". Incluso el marco ha desaparecido.";
+}
+print "";
+			new_line;
+			return true;
+		],
+;
+
+!! @EdificioRastro
+HeavyItem -> EdificioRastro "rastro"
+	has
+		male static,
+	with
+		short_name [;
+ 			print "";
+PRT__("rastro", "rastro", OTHER_OBJECT);
+print " de barro";
+			return true;
+		],
+		name_f 'huella',
+		name_fp 'huellas',
+		name_m 'barro' 'rastro',
+		gender G_MASCULINO,
+		!!
+		before [
+			previous_style;
+			Pull,
+			Push,
+			PushDir,
+			Take,
+			Turn,
+			Wave:
+				previous_style = Utils.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				print "No puedes manipular ", (el_) self;
+				PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, self);
+				PrintCharacterArray(utility_array_a);
+				print " de ese modo.";
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				Utils.set_text_style(previous_style);
+				new_line;
+				return true;
+		],
+		describe [;
+			new_line;
+			print "A través del gran hueco abierto en el muro ";
+if (Edificio.PC_from_castle_grounds) {
+print "a tu espalda";
+} else {
+print "a tu derecha";
+}
+print " se puede salir de vuelta al patio. Hay ", (a) self, " que empieza allí y llega hasta ", (a) DirUmbral, "";
+			if (Comedor.is_lit_up()) {
+				print " sin puerta";
+			} else {
+				print " oscuro, como un rectángulo de tinta negra";
+			}
+			print ", en una de las paredes que aún siguen en pie";
+			if (Comedor.is_lit_up()) {
+				print ". Más allá se distingue un débil resplandor";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+		description [;
+			print "Huellas de botas. Hay además un segundo par de marcas, mucho más pequeñas, de unos pies descalzos.";
+			new_line;
+			return true;
+		],
+;
+
+!! @EdificioEscombros
+Atrezzo -> EdificioEscombros
+	has
+		male pluralname,
+	with
+		short_name [;
+ 			print "montones de ";
+PRT__("piedra", "piedra", OTHER_OBJECT);
+print "";
+			return true;
+		],
+		name_f 'piedra',
+		name_fp 'piedras',
+		name_m 'escombro',
+		name_mp 'escombros',
+		!!
+		description [;
+			print "El suelo está cubierto con los restos del tejado y los cascotes desprendidos de las paredes. Una delgada capa de nieve se ha ido asentando sobre ellos, enterrándolos lentamente, igual que al resto del castillo.";
+			new_line;
+			return true;
+		],
+;
+
+!! @EdificioTejado
+Atrezzo -> EdificioTejado "tejado"
+	has
+		male,
+	with
+		name_f 'techumbre' 'teja' 'viga',
+		name_fp 'tejas' 'vigas',
+		name_m 'techo' 'tejado',
+		gender G_MASCULINO,
+		adjectives 'caido' 'derrumbado',
+		!!
+		description [;
+			print "Todo cuanto queda aún en su sitio son un par de vigas negras recortadas contra el cielo salpicado de estrellas. El resto se ha hundido por completo y yace desperdigado por el suelo.";
+			new_line;
+			return true;
+		],
+;
+
+
+!!==============================================================================
+!!
+!!	5)	En el comedor
+!!
+!!------------------------------------------------------------------------------
+
+!! @Comedor
+Indoors Comedor
+	has
+		male,
+	with
+		short_name [;
+			print "En el ";
+PRT__("comedor", "comedor");
+print "";
+			return true;
+		],
+		name_f 'estancia' 'sala',
+		name_m 'comedor' 'salon',
+		gender G_MASCULINO,
+		!!
+		b_to [;
+			<<Enter DirEdificioDesdeComedor>>;
+		],
+		description [;
+			print "Este salón se ha mantenido en mejores condiciones que ", (the) DirEdificioDesdeComedor, " contigu", (o) DirEdificioDesdeComedor, ". Aún así, hay varios agujeros en el techo por los que se cuela la luz de la luna y bajo los que han comenzado a formarse unos pequeños montones de nieve semifundida. El único mobiliario a la vista es una larga mesa de madera con una silla en cada extremo.";
+			new_line;
+			return true;
+		],
+		is_lit_up [;
+			return (Antorcha has light && IndirectlyContains(self, Antorcha));
+		],
+		out_to [;
+			<<Enter DirEdificioDesdeComedor>>;
+		],
+;
+
+!! @DirEdificioDesdeComedor
+AdjacentRoom -> DirEdificioDesdeComedor "habitación"
+	has
+		female,
+	with
+		name_f 'habitación',
+		name_m 'cuarto' 'edificio' 'umbral',
+		gender G_FEMENINO,
+		!!
+		adjacent_room Edificio,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @Aplique
+Atrezzo -> Aplique "aplique"
+	has
+		container male open ~scenery static,
+	private
+		loose false,
+	with
+		name_f 'abrazadera' 'sujeccion',
+		name_m 'aplique',
+		gender G_MASCULINO,
+		adjectives 'hierro' 'oxidada' 'oxidado' 'pared',
+		!!
+		after [;
+			LetGo:
+				if (~~self.loose) {
+					self.loose = true;
+					print "", (The) Antorcha, " está trabada en las sujecciones. Tiras de ella con fuerza hasta que notas cómo se desprende con un chasquido, y la sacas del aplique.";
+				} else {
+					print "Sacas ", (the) Antorcha, " de la abrazadera de hierro.";
+				}
+				new_line;
+				return true;
+			Receive:
+				print "Colocas de nuevo ", (the) noun, " en el aplique de la pared.";
+				new_line;
+				return true;
+		],
+		before [;
+			Pull:
+				if (child(self) == Antorcha && ~~self.loose) {
+					self.loose = true;
+					print "Tiras con fuerza de ", (the) Antorcha, " hasta que notas cómo se libera de la sujección con un chasquido.";
+					new_line;
+					return true;
+				} else {
+					<<Turn self>>;
+				}
+			Push:
+				if (child(self) == Antorcha && ~~self.loose) {
+					self.loose = true;
+					print "Forcejeas con ", (the) Antorcha, " hasta que notas cómo se libera de la sujección con un chasquido.";
+					new_line;
+					return true;
+				} else {
+					<<Turn self>>;
+				}
+			PushDir,
+			Take,
+			Turn,
+			Wave:
+				print "El aplique está firmemente sujeto a la pared.";
+				new_line;
+				return true;
+			Receive:
+				if (noun ~= Antorcha) {
+					print "No puedes sujetar ", (the) noun, " en el aplique.";
+					new_line;
+					return true;
+				}
+		],
+		describe [;
+			if (child(self) ~= Antorcha) {
+				return true;
+			} else {
+				new_line;
+				print "";
+if (Antorcha has light) {
+print "Sujet", (o) Antorcha, " a un aplique en la pared, ", (a) Antorcha, " arde débilmente y arroja algo de luz y calor en la fría estancia.";
+} else {
+print "Ya apagad", (o) Antorcha, " y frí", (o) Antorcha, ", ", (the) Antorcha, " vuelve a descansar de nuevo en el aplique de la pared.";
+}
+print "";
+				new_line;
+				return true;
+			}
+		],
+		description [;
+			print "Una abrazadera de hierro oxidado.";
+			new_line;
+			return true;
+		],
+		react_before [;
+			Drop:
+				if ((noun == Antorcha)
+					&& (IndirectlyContains(player, noun))
+					&& (second == nothing)) {
+					<<Insert noun self>>;
+				}
+			Pull:
+				if ((noun == Antorcha) && (IndirectlyContains(self, noun))) {
+					<<Pull self>>;
+				} 
+			Push:
+				if ((noun == Antorcha) && (IndirectlyContains(self, noun))) {
+					<<Push self>>;
+				} 
+		],
+		reset [;
+			self.loose = false;
+			move Antorcha to self;
+		],
+;
+
+!! @Antorcha
+Item -> -> Antorcha "antorcha"
+	has
+		female light,
+	with
+		name_f 'antorcha' 'tea',
+		gender G_FEMENINO,
+		adjectives 'apagada' 'encendida',
+		!!
+		description [;
+			if (self has light) {
+				print "Su luz amarillenta contrasta en el blanco y negro de la noche.";
+			} else {
+				print "El lienzo engrasado del extremo se ha consumido por completo. Ahora es sólo un pedazo de madera ennegrecida y fría.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @ComedorNieve
+Atrezzo	-> ComedorNieve
+ has	female,
+ with	short_name [;
+			print "montones de ";
+PRT__("nieve", "nieve");
+print "";
+			return true;
+		],
+		name_f 'nieve',
+		gender G_FEMENINO,
+		adjectives 'montones',
+		!!------------------
+		before [;
+			Dig,
+			LookUnder,
+			Search:
+				print "Bajo la nieve no hay más que el frío suelo del comedor.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "La nieve ha empezado a amontonarse bajo los tres agujeros abiertos en el techo.";
+			new_line;
+			return true;
+		],
+;
+
+!! @ComedorMesa
+HeavyItem	-> ComedorMesa
+ has	concealed female supporter transparent,
+ with	short_name [;
+			print "";
+PRT__("mesa", "mesa");
+print " de comedor";
+			return true;
+		],
+		name_f 'mesa',
+		gender G_FEMENINO,
+		adjectives 'comedor' 'ebano' 'negra',
+		!!------------------
+		before [;
+			Burn:
+				print "El ébano no parece muy impresionado por la llama de la antorcha. Ni siquiera puedes saber si llega a ennegrecerse.";
+				new_line;
+				return true;
+			LookUnder:
+				if (true) {
+					print "Debajo ", (del) self, " descubres el cadáver congelado de un gato.";
+				} else {
+					print "No hay nada más debajo de ", (the) self, ".";
+				}
+				new_line;
+				return true;
+			Push:
+				print "Pesa demasiado como para moverl", (o) self, " tú solo.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Construida en ébano negro, tiene al menos siete varas de largo. Dos personas sentadas a sus extremos prácticamente tendrían que gritar para hablar entre ellas  —y son precisamente sus extremos donde están las únicas dos sillas—.";
+			if (child(self)) {
+				new_line;
+				new_line;
+				print "Hay ";
+WriteListFrom(child(self), ENGLISH_BIT + CONCEAL_BIT);
+print " sobre la mesa.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @Papel
+Item	-> -> Papel
+ has	male,
+ with	short_name [;
+			print "trozo de ";
+PRT__("papel", "papel", REMARKABLE_OBJECT);
+print "";
+			return true;
+		],
+		name_f 'hoja',
+		name_m 'papel',
+		gender G_MASCULINO,
+		adjectives 'trozo',
+		!!------------------
+		before [;
+			Burn:
+				print "Las llamas lamen el papel y de inmediato empieza a ennegrecerse y enroscarse sobre sí mismo. Cuando la página entera ha sido consumida por el fuego, empieza a deshacerse en pequeñas escamas carbonizadas";
+				if (real_location ofclass Outdoors) {
+					print " que se dispersan en la brisa";
+				}
+				print ".";
+				new_line;
+				return true;
+			Read:
+				print "", (emph) "También hoy. ¿Por qué tiene que venir? ¿No se va a acabar nunca, no podré nunca", " (incomprensible) ", (emph) "es como fuego que convierte la alegría", " (incomprensible) ", (emph) "que él diga. Y lo odio. Me odio.", "";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Tiene escritas varias frases en tinta negra y con una cuidadosa caligrafía, aunque están algo emborronadas por la humedad.";
+			if (self has described) {
+				print ". ";
+			} else {
+				print ":^^";
+				<Read self>;
+				new_line;
+			}
+			print "Tiene exactamente el mismo tamaño que las páginas del diario de María.";
+			new_line;
+			return true;
+		],
+;
+
+!! @ComedorSillas
+Atrezzo	-> ComedorSillas "sillas"
+ has	female pluralname,
+ with	name_f 'silla',
+		name_fp 'sillas',
+		gender G_FEMENINO + G_PLURAL,
+		!!------------------
+		after [;
+			Enter:
+				print "Te sientas en una de las sillas.";
+				new_line;
+				return true;
+			Exit:
+				print "Te levantas.";
+				new_line;
+				return true;
+		],
+		before [;
+			Burn:
+				print "El ébano no parece muy impresionado por la llama de la antorcha. Ni siquiera arde.";
+				new_line;
+				return true;
+			Push:
+				print "No estás aquí para reorganizar los muebles del barón.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Como la mesa, las sillas son de ébano, pesadas y negras. Una en cada extremo de la mesa, tan lejos como es posible.";
+			new_line;
+			return true;
+		],
+;
+
+!! @ComedorTecho
+Atrezzo	-> ComedorTecho "techo"
+ has	male,
+ with	name_f 'techumbre' 'teja' 'viga',
+		name_fp 'tejas' 'vigas',
+		name_m 'techo' 'tejado',
+		gender G_MASCULINO,
+		adjectives 'caido' 'derrumbado',
+		!!------------------
+		before [;
+			default:
+				print "El techo es demasiado alto para eso.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Aparte de tres grandes agujeros, donde aparentemente una de las vigas ha cedido, el techo aquí está todavía intacto. Esto ha permitido que el gran comedor conserve parte de su antigua grandeza.";
+			new_line;
+			return true;
+		],
+;
+
+!! @Duquesa
+Item	Duquesa Limbo
+ has	female proper,
+ with	short_name [;
+			print "cuerpo de ";
+PRT__("Duquesa", "Duquesa");
+print "";
+			return true;
+		],
+		name_f 'duquesa' 'gata' 'gatita',
+		name_m 'animal' 'cadaver' 'cuerpo' 'gato',
+		gender G_FEMENINO,
+		adjectives 'congelada' 'congeado' 'muerta' 'muerto',
+		!!------------------
+		before [;
+			!! 3. "Eso puede descongelar al gato, pero nada más. Para incinerar a Cathy, necesitarás un fuego más grande".
+			!! 4. "El gato está muerto. No podrá oírte".
+			!! 5. "Tiernamente acaricias a Cathy, y piensa en el momento en que ella todavía vino a sentarse en tu regazo, ronroneando."
+			!! 6. "¿Te has vuelto completamente loco?"
+		],
+		description [;
+			print "Se trata sin ninguna duda ", (del) self, ", tu gata. Recuerdas el desconsuelo de María cuando Duquesa murió, hace años. Los conejos que la trajiste a casa después nunca la gustaron igual.";
+			new_line;
+			return true;
+		],
+;
+
+
+!!==============================================================================
+!!
+!!	6)	Torre del homenaje
+!!
+!!------------------------------------------------------------------------------
+
+!! @TorreInterior
+Indoors TorreInterior
+	has
+		female,
+	with
+		short_name [;
+			print "";
+PRT__("Torre", "Torre");
+print " del homenaje";
+			return true;
+		],
+		name_f 'estancia' 'habitacion' 'torre',
+		name_m 'torreon',
+		gender G_FEMENINO,
+		adjectives 'circular' 'homenaje' 'principal',
+		!!
+		b_to [;
+			<<Enter DirEntradaTorre>>;
+		],
+		d_to [;
+			if (parent(DirTorrePasadizo) == self) {
+				<<Enter DirTorrePasadizo>>;
+			} else {
+				return self.cant_go();
+			}
+		],
+		description [
+			lightObject;
+			lightObject = Baron.get_closest_lit_object();
+			print "Una única sala circular conforma la planta baja de la torre. Está vacía casi por completo";
+			if (~~lightObject) {
+				print ". Bajo la débil luz que se cuela por las troneras sin cristales";
+			} else {
+				print ". Bajo la luz temblorosa ", (del_) lightObject, " ";
+				PRT__(lightObject, 0, 2);
+				if (parent(lightObject) == self) {
+					print " que has posado a tus pies";
+				}
+			}
+			print ", todo cuanto se distingue es el inicio de ", (a) DirEscalerasCaracol, ", justo enfrente ", (del) DirEntradaTorre, "";
+			if (Tapiz has open) {
+				print ", y el raído ";
+PRT__(Tapiz, "tapiz");
+print " que has apartado a un lado";
+			} else {
+				print ", y un ";
+PRT__(Tapiz, "tapiz");
+print " raído que cubre buena parte de la pared";
+			}
+			print ".";			
+			new_line;
+			return true;
+		],
+		e_to [;
+			if (Utils.is_compass_enabled() 
+				&& parent(DirTorrePasadizo) == self) {
+				<<Enter DirTorrePasadizo>>;
+			} else {
+				return self.cant_go();
+			}
+		],
+		f_to [;
+			<<Enter DirEscalerasCaracol>>;
+		],
+		initial [
+			lightObject;
+			lightObject = Baron.get_closest_lit_object();
+			if (~~lightObject) {
+				give TorreBarro scenery;
+			} else {
+				give TorreBarro ~scenery;
+			}
+		],
+		out_to [;
+			<<Enter DirEntradaTorre>>;
+		],
+		react_after [;
+			Drop:
+				if (noun == Antorcha) {
+					!! la descripción de la localidad ya alude a la antorcha:
+					give Antorcha concealed;
+				}
+			Take:
+				if (noun == Antorcha) {
+					give Antorcha ~concealed;
+				}
+		],
+		s_to [;
+			if (Utils.is_compass_enabled()) <<Enter DirEntradaTorre>>;
+			else return self.cant_go();
+		],
+		u_to [;
+			<<Enter DirEscalerasCaracol>>;
+		],
+;
+
+!! @DirEntradaTorre
+AdjacentRoom -> DirEntradaTorre "entrada"
+	has
+		female,
+	with
+		name_f 'entrada' 'salida',
+		gender G_FEMENINO,
+		adjectives 'torre',
+		!!
+		adjacent_room TorreExterior,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @DirEscalerasCaracol
+AdjacentRoom -> DirEscalerasCaracol
+	has
+		female pluralname,
+	private
+		tried_to_enter false,
+	with
+		short_name [;
+			print "";
+PRT__("escaleras", "escaleras", DIRECTION_OBJECT);
+print " de caracol";
+			return true;
+		],
+		name_f 'escalera',
+		name_fp 'escaleras',
+		name_m 'escalon',
+		name_mp 'escalones',
+		gender G_FEMENINO + G_PLURAL,
+		adjectives 'caracol',
+		!!
+		adjacent_room Camara,
+		before [;
+			Enter:
+				if (~~self.tried_to_enter) {
+					self.tried_to_enter = true;
+					print "Te asomas al hueco de la ";
+PRT__(self, "escalera");
+print " y miras hacia arriba, con el corazón palpitándote con violencia en el pecho. Maldices en voz baja. Ahora que ya estás aquí, después de todo el esfuerzo que has hecho por llegar, tus piernas parecen negarse a responder…";
+					new_line;
+					return true;
+				}
+				print "Empiezas el lento ascenso, luchando contra una gravedad que parece tirar de tu cuerpo con más fuerza de lo que lo ha hecho nunca. Las escaleras giran. Y giran. Y giran. Hasta que dejan de hacerlo.";
+				new_line;
+				self.AdjacentRoom::before();
+				return true;
+		],
+		reset [;
+			self.tried_to_enter = false;
+		],
+;
+
+!! @Tapiz
+Array moveFlags -> 2; ! hasta 8 flags
+HeavyItem -> Tapiz "tapiz"
+	has
+		concealed male openable transparent,
+	private
+		tried_to_open false,
+	with
+		name_m 'tapiz',
+		gender G_MASCULINO,
+		adjectives 'mohoso' 'raido',
+		!!
+		after [;
+			Close:
+				move DirTorrePasadizo to Limbo;
+				switch (Shuffle(3, moveFlags)) {
+					1: 
+						print "Corres ", (the) self, " de nuevo.";
+					2:
+						print "Tiras ", (del) self, " para devolverlo a su posición inicial.";
+					3:
+						print "Corres ", (the) self, " otra vez.";
+				}
+				new_line;
+				return true;
+			Open:
+				move DirTorrePasadizo to location;
+				if (~~self.tried_to_open) {
+					self.tried_to_open = true;
+					print "Agarras la tela húmeda y tiras de ella hacia un lado. ", (The) Tapiz, " se desliza sobre la guía metálica que lo sostiene, dejando al descubierto la boca de ", (a) DirTorrePasadizo, ".";
+				} else {
+					switch (Shuffle(3, moveFlags)) {
+						1:
+							print "Descorres ", (the) self, " de nuevo.";
+						2:
+							print "Tiras ", (del) self, " para dejar descubierto el paso otra vez.";
+						3:
+							print "Descorres ", (the) self, " otra vez.";
+					}
+				}
+				new_line;
+				return true;
+		],
+		before [;
+			Pull, Push:
+				if (self has open) {
+					<<Close self>>;
+				} else {
+					<<Open self>>;
+				}
+		],
+		description [
+			lightObject;
+			lightObject = Baron.get_closest_lit_object();
+			print "Es un viejo tapiz oscuro de sombras, de moho y de humedad";
+			if (self has open) {
+				print ". Al apartarlo hacia un lado ha dejado al descubierto ", (a) DirTorrePasadizo, " que desciende hacia las profundidades de la torre.";
+			} else {
+				print ". ";
+if (self has described) {
+print "Hasta el punto que sus ", (name) MotivosTapiz, "";
+} else {
+print "Hasta tal punto que ", (the) MotivosTapiz, " que lo adorna", (n) MotivosTapiz, "";
+}
+print "";
+				if (~~lightObject) {
+					print " son imposibles de descifrar en la penumbra";
+				} else {
+					print " son apenas discernibles a la luz ", (del) lightObject, "";
+				}
+				if (self hasnt described) {
+					print ". En épocas pasadas tal vez sirviese para ayudar a aislar la estancia del exterior y evitar que escapase el calor, pero esa es una batalla que perdió hace ya mucho tiempo";
+				}
+				print ".";
+			}
+			new_line;
+			return true;
+		],
+		reset [;
+			self.tried_to_open = false;
+			give self ~open;
+		],
+;
+
+Atrezzo -> -> MotivosTapiz "motivos"
+	has
+		male pluralname,
+	with
+		name_m 'adorno' 'motivo',
+		name_mp 'adornos' 'motivos',
+		gender G_MASCULINO + G_PLURAL,
+		adjectives 'tapiz',
+		!!
+		before [
+			obj;
+			DefaultAction,
+			Examine:
+				return false;
+		],
+		description [
+			lightObject;
+			lightObject = Baron.get_closest_lit_object();
+			if (~~lightObject) {
+				print "No ", (es) self, " más que un borrón parduzco. Cualquier escena que pueda haber exhibido ", (the) Tapiz, " queda oculta tras el moho y la oscuridad de la estancia.";
+			} else {
+				print "A pesar de la suciedad, gracias a la luz ", (del) lightObject, " alcanzas a distinguir vagamente los motivos ", (del) Tapiz, "; parece una representación clásica de la primavera, con varias figuras infantiles formando un corro entre árboles en flor. Los colores de las ropas, sin duda vivos y alegres en el pasado, ahora están ennegrecidos por el moho y la podredumbre.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @TorreBarro
+Atrezzo -> TorreBarro
+	has
+		male scenery,
+	with
+		short_name [;
+			print "";
+PRT__("barro", "barro", OTHER_OBJECT);
+print "";
+			return true;
+		],
+		name_f 'mancha' 'suciedad',
+		name_fp 'manchas',
+		name_m 'barro',
+		gender G_MASCULINO,
+		!!
+		describe [;
+			if (parent(self) == parent(DirTorrePasadizo) &&
+				DirTorrePasadizo hasnt concealed) {
+				return true;
+			} else {
+				new_line;
+				print "Hay manchas de ", (name) self, " por todo el suelo.";
+				new_line;
+				return true;
+			}
+		],
+		description [
+			lightObject;
+			lightObject = Baron.get_closest_lit_object();
+			if (~~lightObject) {
+				print "El suelo está resbaladizo de barro.";
+			} else {
+				print "Gracias ", (al) lightObject, " puedes ver claramente los rastros de barro que parten desde ", (the) DirEntradaTorre, " y se esparcen por el resto de la habitación, hasta morir en las ";
+PRT__(DirEscalerasCaracol, "escaleras");
+print " y justo debajo ", (del) Tapiz, ".";
+			}
+			new_line;
+			return true;
+		],
+		reset [;
+			give self scenery;
+		],
+;
+
+
+
+!!==============================================================================
+!!
+!!	7) Sotano
+!!
+!!------------------------------------------------------------------------------
+
+!! @DirSotano
+AdjacentRoom	DirSotano "calabozo"
+ has	male,
+ with	found_in Sotano,
+		name_f 'antesala',
+		name_m 'hall' 'recibidor' 'vestibulo',
+		gender G_MASCULINO,
+		adjectives 'fresca' 'fresco' 'pequena' 'pequeno' 'rectangular',
+		!!------------------
+		adjacent_room Sotano,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @Sotano
+Indoors	Sotano "Sótano"
+ has	male,
+ with	name_f 'bodega',
+		name_m 'sotano',
+		gender G_MASCULINO,
+		adjectives 'humeda' 'humedo',
+		!!------------------
+;
+
+!! @SotanoLuz
+Atrezzo	-> SotanoLuz "luz"
+ has	female,
+ with	name_f 'luz',
+		gender G_FEMENINO,
+		!!------------------
+		description [;
+			if (true) {
+				print "La luz de la luna entra en el calabozo por la trampilla, iluminándola débilmente.";
+			} else {
+				print "La antorcha arroja luz amarilla y sombras parpadeantes en las paredes.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @SotanoReja
+!! 3. "Donde antes había una rejilla, ahora sólo hay una masa de metal fundido en el suelo".
+Atrezzo	-> SotanoReja "reja"
+ has	female,
+ with	name_f 'luz',
+		gender G_FEMENINO,
+		!!------------------
+		description [;
+			print "Una reja de hierro va de una habitación a otra, del suelo al techo, y así delimita una celda a la que también da entrada una puerta de hierro. Las barras están a menos de un palmo de distancia; lo suficiente como para pasar unas manos implorantes a través de ellas, pero no lo suficiente como para escapar.";
+			new_line;
+			return true;
+		],
+;
+
+
+!!==============================================================================
+!!
+!!	8) Calabozo
+!!
+!!------------------------------------------------------------------------------
+
+!! @DirCalabozo
+AdjacentRoom	DirCalabozo "calabozo"
+ has	male,
+ with	found_in Sotano,
+		name_f 'antesala',
+		name_m 'hall' 'recibidor' 'vestibulo',
+		gender G_MASCULINO,
+		adjectives 'fresca' 'fresco' 'pequena' 'pequeno' 'rectangular',
+		!!------------------
+		adjacent_room Sotano,
+		before [;
+			Enter:
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @Calabozo
+Indoors	Calabozo "Calabozo"
+ has	male,
+ with	name_f 'celda',
+		name_m 'calabozo',
+		gender G_MASCULINO,
+		adjectives 'humeda' 'humedo',
+		!!------------------
+!! 1. "Un calabozo húmedo"
+!! 2. "En la sombría luz que entra por la trampilla, se puede ver claramente que esto ha sido un calabozo".
+!! 3. "La luz parpadeante de la antorcha revela un calabozo oscuro".
+!! 4. "A lo largo de una de las paredes, una rejilla de metal delimita una pequeña celda, donde se pueden ver huesos, cadenas y, curiosamente, una muñeca madre hambrienta".
+!! 5. "A lo largo de una de las paredes, una rejilla metálica delimita una pequeña celda, en la que se pueden ver huesos y cadenas".
+!! 6. "Donde una rejilla que se usaba para delimitar una célula, ahora sólo hay metal fundido y luego solidificado en el suelo. Huesos y cadenas conmemoran el propósito anterior".
+!! 7. "Al otro lado del calabozo hay dos instrumentos de tortura: un potro y una doncella de hierro. Gotas de agua caen a intervalos irregulares desde el techo sobre el frío piso de piedra.
+!! 8. "Aparte del agua que cae, sólo hay silencio; pero parece como si una conversación se detuviera en el momento en que se abre la escotilla".
+!! 9. "¿Por qué? ¿Por qué tenía que pasarnos esto?, dice la voz suave de una mujer."
+!! 10. "Pero no hay respuesta, y el silencio regresa."
+!! 11. "Desde el potro suena un gemido torturado".
+!! 12. "¿Y por qué nunca hiciste nada, madre?", responde la voz reprobatoria de una niña.
+!! ^^
+!! ~No quería creerlo. No quería entender lo que había entendido todo el tiempo; no quería saber lo que había sabido durante años. Yo... lo siento.
+!! ^^
+!! ~Le has permitido destruir mi vida sin mover ni un dedo. ¿Cómo podré perdonarte? La voz empieza a sollozar.
+!! Tienes razón, no puedo justificarme. Me he ganado totalmente tu condena. La voz de la mujer calla, golpeada."
+!! 13. "Un suave lamento viene de la doncella de hierro.
+!! ^^
+!! Pero eso es todo, y el silencio regresa al calabozo".
+!! 14. "Pero eso es todo, y el silencio regresa al calabozo."
+!! 15. "No lo sé, yo... yo... he tratado de detenerlo, pero no puedo, una voz masculina responde, susurrando."
+!! 16. "Un suave lamento viene de la doncella de hierro".
+!! 17. "¿No fui suficiente para ti? ¿Por qué tuviste que destruir nuestra felicidad por esa muchacha?
+!! ^^
+!! ~¿Qué sabes tú de eso? No has luchado noche tras noche con esta lujuria infernal, hasta que tu alma se partió en dos y te ahogaste de nuevo en un mar de llamas.
+!! ^^
+!! Por un momento está en silencio. Luego la mujer continúa, más tranquila ahora: ~ No dije que pudieras evitarlo... Yo... no sé, ya no sé nada. No, desde hace años. Tal vez todo vuelva a la normalidad cuando ella tenga edad para salir de nuestra casa...
+!! ^^
+!! ~Nunca más será normal. Después de esa conclusión fatalista las voces permanecen en silencio."
+!! 18. "¿Y por eso has destruido mi juventud y has convertido mi vida en un infierno?", pregunta una voz de niña acusadora.
+!! ^^
+!! ~ ¿Y qué pasa con mi vida? ~, responde la mujer. ~¿Imaginas que estos años han sido felices para mí? ¿Crees que me ha gustado ver a mi hija marchitarse y arrastrarse siempre más profundamente dentro de sí misma?
+!! ^^
+!! ~¿Qué? La chica parece enfadada. ~ Todos estos años nunca te has atrevido a levantar un dedo para ayudarme, y sabes que te atreves a pedir compasión? Es tu cobardía la que le ha permitido seguir todo este tiempo.
+!! ^^
+!! ~No, el hombre los interrumpe. ~ Es mi culpa, todo es mi culpa. Lo sé, y aún así no puedo liberarnos de este infierno. Perdóname.
+!! ^^
+!! Pero ese último comentario sólo se encuentra con un silencio lúgubre".
+!! 19. "Debes haberte equivocado; no importa cuán atentamente escuches, no escuchas nada."
+!! 20. "Desde el potro de tortura viene un doloroso gemido."
+!! 21. "Un doloroso gemido que viene del potro se alterna con un suave sollozo que sale de la doncella de hierro".
+!! 22. "Todo lo que oyes es un suave sollozo que viene de la Doncella de Hierro".
+!! 23. "¿Padre?", pregunta una voz suave de niña. ~ ¿Por qué me haces esto? ~
+!! ^^
+!! Pero no hay respuesta.
+!! ^^
+!! ~Madre?~, la chica entonces pregunta. ~ ¿Por qué no me ayudas? ~
+!! ^^
+!! Pero esa pregunta también se encuentra sólo con el silencio."
+!! 24. "¿Padre?", pregunta una voz suave de niña. ~ ¿Por qué me haces esto? ~
+!! ^^
+!! Del estante sólo sale un suave gemido.
+!! ^^
+!! ~Madre?~, la chica entonces pregunta. ~ ¿Por qué no me ayudas? ~
+!! ^^
+!! Pero sólo sigue el silencio".
+!! 25. "¿Mi chica?", dice la voz de un hombre. ~ Lo siento mucho. ~
+!! ^^
+!! Pero sólo sigue el silencio".
+!! 26. "¿Mi niña?", dice la voz de un hombre. ~ Lo siento mucho. ~
+!! ^^
+!! Pero todo lo que sigue es un suave lamento de la doncella de hierro".
+!! 27. "¿Padre?", pregunta una voz suave de niña. ~ ¿Por qué me haces esto? ~
+!! ^^
+!! ~No lo sé, niña. Realmente no lo sé, ~ un hombre responde.
+!! ^^
+!! ~¿Es tu placer realmente más importante que mi vida? ¿Cómo puedo perdonarte cuando no puedo entenderte?
+!! ^^
+!! ~Yo... yo tampoco lo entiendo. No puedo detenerme. No soy lo suficientemente fuerte; o soy demasiado depravado.
+!! ^^
+!! Por un momento la chica duda. ~He intentado tantas veces perdonarte, pero no puedo. Durante los últimos dos años, he rezado por tu muerte cada noche.
+!! ^^
+!! A partir de ahí, el silencio absoluto desciende".
+!! 28. "Pero, muy suavemente, parece como si escucharas algo."
+		description [;
+			print "La celda tiene menos de un metro de ancho, pero tiene un metro de largo. Las cadenas cuelgan de la pared, y un esqueleto yace derrotado en el suelo, sus brazos extendidos a través de las barras como si estuviera pidiendo comida o agua.";
+			new_line;
+			return true;
+		],
+;
+
+!! @CalabozoPuerta
+Atrezzo	-> CalabozoPuerta "puerta"
+ has	female,
+ with	name_f 'puerta',
+		gender G_FEMENINO,
+		!!------------------
+!! 1. "célula"
+!! 2. "La celda tiene menos de un metro de ancho, pero tiene un metro de largo. Las cadenas cuelgan de la pared, y un esqueleto yace derrotado en el suelo, sus brazos extendidos a través de las barras, como si estuviera pidiendo comida o agua".
+!! 3. "La puerta de la celda parece estar cerrada con llave".
+!! 4. "La puerta de la celda ya está abierta".
+!! 5. "Empujas la puerta de hierro, que chirría con fuerza".
+!! 6. "Tiras con fuerza de la puerta de hierro, que se abre lentamente hacia ti en sus bisagras oxidadas, mientras emite fuertes gritos de protesta".
+!! 7. "La puerta de la celda ya está cerrada".
+!! 8. "Tiras con fuerza de la puerta de hierro para cerrarla, mientras chilla sobre sus bisagras oxidadas".
+!! 9. "Empujas la puerta de hierro, que chirría con fuerza".
+!! 10. "La puerta de la celda ya ha sido abierta".
+!! 11. "Pones la llave de cobre en la cerradura, que parece ser cuatro tamaños demasiado grande, y con cuidado la giras. Con un suave clic la cerradura se abre..."
+!! 12. "No importa lo que intentes, la cerradura no se abre. Presumiblemente, ", (el) segundo, " "; imprime IsorAre(segundo); imprime " no la llave de esta celda."
+!! 13. "La puerta de la celda ya está cerrada."
+!! 14. "Vuelves a cerrar la puerta".
+!! 15. "No tienes la llave del diario de Maartje contigo."
+!! 16. "Ya estás en la celda".
+!! 17. "Entras en la celda estrecha".
+!! 18. "No estás dentro de la celda".
+!! 19. "Sales de la celda estrecha".
+!! 20. "No puedes alcanzar eso desde la celda".
+!! 21. "No puedes alcanzar eso desde la celda".
+;
