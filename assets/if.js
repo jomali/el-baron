@@ -23,7 +23,6 @@ const ifjs = {
     }
   },
   clearHyperlinks: () => {
-    console.log('---- clear');
     Array.from(document.getElementsByClassName("white-letters"))
       .map((element) => element.className = "");
     Array.from(document.getElementsByClassName("red-letters"))

@@ -1349,7 +1349,13 @@ Character -> Dragon "dragón"
 		before [;
 			Attack:
 				if (Baron.is_blind) {
-					print "Echas a correr hacia el monstruo absolutamente a ciegas";
+					print "Enloquecido por el dolor, echas a correr";
+					if (IndirectlyContains(player, Percunos)) {
+						print " lanzando tajos con el hacha";
+					} else {
+						print " lanzando puñetazos al aire";
+					}
+					print ", completamente a ciegas";
 					return GrutaBrechas.fall_in();
 				} else if (Baron.is_burning) {
 					print "El monstruo debe morir. Sea cual sea el precio. Por un instante alcanzas a distinguir entre las llamas el ojo de reptil y preparas";
@@ -1374,26 +1380,32 @@ Character -> Dragon "dragón"
 					new_line;
 					return true;
 				} else {
+					print "—¡Escucha bien, bestia! —gritas[if:IndirectlyContains(player, Percunos)], alzando el hacha con ambas manos[else], sorprendido de la seguridad de tus propias palabras[fi]. —¡Ha llegado tu hora! —y, por un instante, la estampa es la de un auténtico caballero sacado de un cuento de hadas; el enfrentamiento del héroe contra el mal.
+					^^
+					El [self](monstruo) te observa impasible mientras cargas contra él. A pesar de sus dientes largos como una vara, te lanzas a la carrera sin pensártelo, espoleado por una rabia suicida. En ese momento";
 					give self on; !! detiene el daemon durante el prox. turno
 					return self.spits_fire_on_attack();
 				}
 			DefaultAction:
-				if (self has described
+				if (self.tried_to_talk_to) {
+					<<TalkTo self>>;
+				} else if (Baron.is_blind) {
+					<<Examine self>>;
+				} else if (self has described
 					&& IndirectlyContains(player, Percunos)) {
 					<<Attack self>>;
 				} else {
 					<<Examine self>>;
 				}
 			TalkTo:
+				self.tried_to_talk_to = true;
 				if (Baron.is_burning) {
-					!! TODO
-					print "—¡Aaargh!";
-					new_line;
-					return true;
-				} else {
-					give self on; !! detiene el daemon durante el prox. turno
-					return self.spits_fire_on_talk_to();
+					if (ConversacionDragon.tried_to_speak_again) {
+						return ConversacionDragon.final_action();
+					}
 				}
+				give self on; !! detiene el daemon durante el prox. turno
+				return ChoiceSetManager.start(ConversacionDragon);
 		],
 		daemon [;
 			!! El daemon gestiona el movimiento del dragón, con sus intentos
@@ -1434,6 +1446,16 @@ Character -> Dragon "dragón"
 			new_line;
 			return true;
 		],
+		spits_fire_on_attack [;
+			return self.spits_fire(1);
+		],
+		spits_fire_on_talk_to [;
+			give self on; !! detiene el daemon durante el prox. turno
+			return self.spits_fire(2);
+		],
+		spits_fire_on_wait [;
+			return self.spits_fire(0);
+		],
 	private
 		counter 0,
 		reacts [;
@@ -1470,15 +1492,6 @@ Character -> Dragon "dragón"
 					}
 			}
 		],
-		spits_fire_on_attack [;
-			return self.spits_fire(1);
-		],
-		spits_fire_on_talk_to [;
-			return self.spits_fire(2);
-		],
-		spits_fire_on_wait [;
-			return self.spits_fire(0);
-		],
 		spits_fire [ context;
 			!! Actualiza estado del Barón
 			if (parent(Yelmo) ~= player || Yelmo hasnt worn) {
@@ -1493,28 +1506,22 @@ Character -> Dragon "dragón"
 			move GrutaSalonFuego to Limbo;
 			move GrutaBaronFuego to Baron;
 			!! TODO - iniciar daemon del fuego
-			!! Descripción
 			if (context == 1 or 2) {
-				print "—¡Escucha bien, bestia! —gritas[if:IndirectlyContains(player, Percunos)], alzando el hacha con ambas manos[else], sorprendido de la seguridad de tus propias palabras[fi]. —¡Ha llegado tu hora! —y, por un instante, la estampa es heroica; la imagen de un auténtico caballero sacado de un cuento de hadas.";
-				new_line;
-				if (context == 1) {
-					new_line;
-					print "El monstruo te observa impasible mientras cargas contra él. A pesar de sus dientes largos como una vara, te lanzas a la carrera sin pensártelo, espoleado por una rabia suicida. En ese momento, veloz y repentino como un relámpago, un surtidor de fuego estalla desde el interior de su boca y te envuelve por completo.";
-					if (Baron.is_blind) {
-						print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
-					} else {
-						print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
-					}
-					new_line;
-				} else if (context == 2) {
-					new_line;
-					!! TODO
-					print "XXX";
-					new_line;
+				!! Descripción al atacar/hablar
+				print ", veloz y repentino como un relámpago, un surtidor de fuego estalla desde el interior de su boca y te envuelve por completo.";
+				if (Baron.is_blind) {
+					print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
+				} else {
+					print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
 				}
 				new_line;
-				return GrutaSalon.description();
+				if (~~Baron.is_blind) {
+					new_line;
+					GrutaSalon.description();
+				}
+				return true;
 			} else {
+				!! Descipción general
 				print "Un inmenso chorro de fuego sale escupido desde la boca [del self] y te alcanza antes siquiera de que puedas pensar en apartarte.";
 				if (Baron.is_blind) {
 					print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
@@ -1525,6 +1532,7 @@ Character -> Dragon "dragón"
 				return true;
 			}
 		],
+		tried_to_talk_to false,
 ;
 
 !! @GrutaBrechas
@@ -1600,5 +1608,117 @@ Atrezzo -> GrutaSalonFuego "fuego"
 		],
 		reset [;
 			move self to GrutaSalon;
+		],
+;
+
+!! @ConversacionDragon
+ChoiceSet ConversacionDragon "(Conversación: dragón)"
+	with
+		final_action [;
+			if (~~self.tried_to_speak_again) {
+				self.tried_to_speak_again = true;
+				print "Tu laringe está destrozada por el fuego y es incapaz de articular los sonidos. Tan sólo logras emitir un chillido penoso e ininteligible.";
+			} else {
+				print "Tu laringe está destrozada y es incapaz de articular sonidos.";
+			}
+			new_line;
+			return true;
+		],
+		initial_action [;
+			self.add_choice(DragonAmenazar);
+			self.add_choice(DragonRazonar);
+		],
+		tried_to_speak_again false,
+;
+
+!! @DragonAmenazar
+ChoiceSetItem DragonAmenazar
+	with
+		entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+			print "—Ha llegado tu ";
+			PRT__("hora", 0, REMARKABLE_OBJECT);
+			print ", bestia.";
+			Utils.set_text_style(previous_style);
+			return true;
+		],
+		keys 'hora' 'llegado', 
+		!!
+		append_choice_set true,
+		reaction [;
+			print "—¡Escucha bien, [Dragon](bestia)! —gritas, sorprendido de la seguridad de tus propias palabras. —¡Ha llegado tu hora! —y, por un instante, la estampa es la de un auténtico caballero sacado de un cuento de hadas; el enfrentamiento del héroe contra el mal.
+			^^
+			Un instante después";
+			return Dragon.spits_fire_on_talk_to();
+		],
+		relatives DragonRazonar,
+		subchoices DragonAmenazarOtraVez DragonPedirClemencia,
+;
+
+!! @DragonRazonar
+ChoiceSetItem DragonRazonar
+	with
+		entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+			print "—No deberías estar aquí. Tienes que ";
+			PRT__("marcharte", 0, REMARKABLE_OBJECT);
+			print ".";
+			Utils.set_text_style(previous_style);
+			return true;
+		],
+		keys 'aqui' 'deberias' 'estar' 'marcharte' 'marchate' 'no', 
+		!!
+		append_choice_set true,
+		reaction [;
+			print "—¡No deberías estar aquí, [Dragon](bestia)! —gritas, tratando de dar a tus palabras una seguridad que en realidad no sientes. —Tienes… tienes que marcharte. ¡Tienes que a-
+			^^
+			La última frase queda interrumpida cuando";
+			return Dragon.spits_fire_on_talk_to();
+		],
+		relatives DragonAmenazar,
+		subchoices DragonAmenazarOtraVez DragonPedirClemencia,
+;
+
+!! @DragonAmenazarOtraVez
+ChoiceSetItem DragonAmenazarOtraVez
+	with
+		entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+			print "—¿Eso es todo? ¡Ven aquí! ¡";
+			PRT__("Atrévete", 0, REMARKABLE_OBJECT);
+			print " a acercarte!";
+			Utils.set_text_style(previous_style);
+			return true;
+		],
+		keys 'acercarte' 'acercate' 'aqui' 'atrevete' 'ven', 
+		!!
+		append_choice_set false,
+		persistent true,
+		reaction [;
+			return ConversacionDragon.final_action(true);
+		],
+;
+
+!! @DragonPedirClemencia
+ChoiceSetItem DragonPedirClemencia
+	with
+		entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+			print "—¡No, para! ¡Ten ";
+			PRT__("piedad", 0, REMARKABLE_OBJECT);
+			print "! Piedad…";
+			Utils.set_text_style(previous_style);
+			return true;
+		],
+		keys 'clemencia' 'no' 'para' 'piedad', 
+		!!
+		append_choice_set false,
+		persistent true,
+		reaction [;
+			return ConversacionDragon.final_action(true);
 		],
 ;

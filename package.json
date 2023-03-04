@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "build": "node builder.js inform6.exe src/baron",
-    "build:debug": "node builder.js inform6.exe src/baron -d" 
+    "build:debug": "node builder.js inform6.exe src/baron -d",
+    "build:start": "node builder.js inform6.exe src/baron & electron ."
   },
   "keywords": [
     "aventura",

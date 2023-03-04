@@ -411,6 +411,9 @@ Global _last_location = 0;
 		}
 	}
 
+	!! Por evitar advertencias del compilador
+	previous_style = 0;
+	_last_location = 0;
 	! if (_last_location ~= real_location) {
 	! 	_last_location = real_location;
 	! 	new_line;

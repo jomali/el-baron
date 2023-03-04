@@ -774,16 +774,16 @@ Include "vorple-screen-effects.h";
 !! una con la otra, y puede dejar el contador de palabras en cualquier punto.
 !!
 !!	@returns Nada
-!!	@version 2023/02/19
+!!	@version 2023/03/04
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
+	Utils.clear_hyperlinks();
 	#Ifdef CHOICE_SETS;
 	ChoiceSetManager.run();
 	#Endif; ! CHOICE_SETS;
 	#Ifdef PARSING_PREPROCESSOR;
 	ParsingPreprocessor.run();
 	#Endif; ! PARSING_PREPROCESSOR;
-	Utils.clear_hyperlinks();
 ];
 
 !!------------------------------------------------------------------------------
