@@ -751,18 +751,10 @@ Include "vorple-screen-effects.h";
 !! decir, después de que todas las impresiones en pantalla derivadas del turno
 !! actual hayan finalizado.
 !!
-!!	@returns Nada
-!!	@version 2019/06/24
+!!	@version 2023/03/26
 !!------------------------------------------------------------------------------
 [ AfterPrompt;
-	#Ifdef USE_VORPLE;
-	!! Simula el evento de haber dejado de pulsar una de las teclas para
-	!! resaltar palabras clave, de modo que tras cada acción ejecutada, las
-  	!! palabras clave vuelven a dejar de estar resaltadas:
-	VorpleExecuteJavaScriptCommand(BuildCommand("
-		ifjs.keyUp({ keyCode: ifjs.config.highlightKeyCodes[0] });
-	"));
-	#Endif; ! USE_VORPLE;
+	Utils.reset_highlights();
 ];
 
 !!------------------------------------------------------------------------------
@@ -773,10 +765,14 @@ Include "vorple-screen-effects.h";
 !! puede manipular estas tablas libremente mientras permanezcan consistentes la
 !! una con la otra, y puede dejar el contador de palabras en cualquier punto.
 !!
-!!	@returns Nada
 !!	@version 2023/03/04
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
+	if (PulsaIntroParaContinuar.fixed) {
+		parse-->1 = 'temp';
+		num_words = 1;
+	}
+
 	Utils.clear_hyperlinks();
 	#Ifdef CHOICE_SETS;
 	ChoiceSetManager.run();
@@ -1023,15 +1019,15 @@ Include "vorple-screen-effects.h";
 !!	@returns {boolean} Verdadero si se imprime el inductor definido en la
 !!		constante PS1 (si es que existe y está bien definido). Falso en caso
 !!		contrario
-!!	@version 2019/06/18
+!!	@version 2023/03/26
 !!------------------------------------------------------------------------------
 #Ifdef TARGET_GLULX;
 #Ifdef USE_VORPLE;
 [ MyVorplePrompt;
 	if (PulsaIntroParaContinuar.fixed) {
-		VorpleOpenHTMLTag("span", "press-intro-to-continue");
-		print "Pulsa «Intro» para continuar";
-		VorpleCloseHTMLTag();
+		VorpleExecuteJavaScriptCommand(BuildCommand("
+			ifjs.pressIntroToContinuePrompt();
+		"));
 		return true;
 	}
 
@@ -1102,6 +1098,14 @@ Include "SpanishEG.h";
 
 !! Gramática propia de la obra:
 Include "baronGrammar.inf";
+
+Verb meta 'temp'
+	*								-> Temp
+;
+
+[ TempSub;
+	return Utils.press_intro_to_continue_lock();
+];
 
 
 !!==============================================================================

@@ -42,8 +42,10 @@
 !!
 !!	Interfaz del objeto `Utils`:
 !!
-!!	- check_object_capacity
 !!	- clear_hyperlinks
+!!	- reset_highlights
+
+!!	- check_object_capacity
 !!	- create_vorple_hiperlink
 !!	- erase_window
 !!	- fade_in
@@ -105,7 +107,7 @@ ChoiceSetItem EleccionContinuar
 		!!
 		reaction [;
 			VorpleExecuteJavaScriptCommand(BuildCommand("
-				ifjs.temp();
+				ifjs.clearLastInput();
 			"));
 			PulsaIntroParaContinuar.fixed = false;
 			PlayerTo(_tempDestination);
@@ -115,6 +117,41 @@ ChoiceSetItem EleccionContinuar
 
 Object Utils
 	with
+		!!----------------------------------------------------------------------
+		!! Si es compilación para Vorple, deshabilita todos los hipervínculos 
+		!! impresos hasta el momento.
+		!!
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2023/02/19
+		!!----------------------------------------------------------------------
+		clear_hyperlinks [;
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.clearHyperlinks();
+			"));
+			#Endif; ! USE_VORPLE;
+		],
+		!!----------------------------------------------------------------------
+		!! Si es compilación para Vorple, simula el evento de haber dejado de 
+		!! pulsar una de las teclas configuradas para resaltar palabras clave, 
+		!! de modo que se asegura que después de ejecutar una acción las 
+		!! palabras clave no están resaltadas.
+		!!
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2023/03/26
+		!!----------------------------------------------------------------------
+		reset_highlights [;
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.resetHighlights();
+			"));
+			#Endif; ! USE_VORPLE;
+		],
+
+
+
 		press_intro_to_continue [ obj
 			hide_choice_inventory;
 			_tempDestination = obj;
@@ -155,20 +192,6 @@ Object Utils
 		check_object_capacity [ obj second;
 			!! Rutina definida por la extensión 'capacities.h':
 			return CheckIfObjectFits(obj, second);
-		],
-		!!----------------------------------------------------------------------
-		!! Si es compilación para Vorple, limpia todos los hipervínculos 
-		!! impresos hasta el momento.
-		!!
-		!!	@dependency vorple.h, ifjs.js
-		!!	@version 2023/02/19
-		!!----------------------------------------------------------------------
-		clear_hyperlinks [;
-			#Ifdef USE_VORPLE;
-			VorpleExecuteJavaScriptCommand(BuildCommand("
-				ifjs.clearHyperlinks();
-			"));
-			#Endif; ! USE_VORPLE;
 		],
 		!!----------------------------------------------------------------------
 		!! Crea un hipervínculo en Vorple.

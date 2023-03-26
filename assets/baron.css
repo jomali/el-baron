@@ -60,6 +60,13 @@ hr.choice-set-divider {
 	margin-top: 32px;
 } */
 
+#press-intro-to-continue-container {
+	background-color: transparent;
+	color: inherit;
+	font-size: 17px;
+	font-weight: 700;
+}
+
 #lineinput-field {
 	background-color: transparent;
 	color: #F0F0F0;
@@ -99,6 +106,10 @@ hr.choice-set-divider {
 	outline: 0 none;
 }
 
+.vorple-commandlink:hover, .vorple-weblink:hover {
+	text-decoration: none;
+}
+
 .vorple-commandlink:visited {
 	color: inherit;
 }
@@ -131,14 +142,12 @@ hr.choice-set-divider {
 .red-letters, .red-letters a:hover {
 	/* Hipervínculos: direction */
 	color: #ff8080 !important;
-	text-decoration: none;
 	text-shadow: -2px 2px 8px #ff2121, 2px -2px 8px #ff2121;
 }
 
 .white-letters, .white-letters a:hover {
 	/* Hipervínculos: remarkable, choice, other */
 	color: #ffffff !important;
-	text-decoration: none;
 	text-shadow: -2px 2px 8px #fffce2, 2px -2px 8px #fffce2;
 }
 

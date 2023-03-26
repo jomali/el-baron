@@ -444,7 +444,9 @@ AdjacentRoom -> DirAbismoAdelante
 				} else {
 					print "Ha llegado el momento de enfrentarse a la bestia.";
 				}
-				print " Tan pronto das un paso en la dirección de la que proviene la luz, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás. Aferras el [Percunos](hacha:REMARKABLE_OBJECT) con firmeza y das otro paso adelante, hacia el calor…";
+				print " Tan pronto das un paso en la dirección de la que proviene la luz, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás.
+				^^
+				Aferras el hacha con firmeza y das otro paso adelante, hacia el calor…";
 				new_line;
 				Utils.press_intro_to_continue(GrutaVestibulo);
 				return true;
