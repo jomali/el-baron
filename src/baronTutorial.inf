@@ -192,7 +192,7 @@ Object	Tutorial "(Tutorial)"
 			self.hint_look_a_printed = true;
 			print "Puedes volver a consultar la descripción del lugar en el que te encuentras, junto con todos los objetos que hay presentes, pulsando la tecla «Intro».";
 			return true;
-		],
+		],		
 		hint_repeated_actions_on false,
 		hint_repeated_actions_printed false,
 		hint_repeated_actions_text [;

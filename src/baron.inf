@@ -981,7 +981,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = GrutaSalon;
+	location = Abismo;
 	Storyteller.start_scene(1);
 	print "^^";
 
@@ -1016,6 +1016,10 @@ Include "vorple-screen-effects.h";
 !!------------------------------------------------------------------------------
 !! Permite imprimir un inductor personalizado en Vorple.
 !!
+!! Reemplaza el inductor genérico por el mensaje "Pulsa «Intro» para continuar" 
+!! cuando la acción está bloqueada mientras se espera la pulsación de tecla del 
+!! usuario.
+!!
 !!	@returns {boolean} Verdadero si se imprime el inductor definido en la
 !!		constante PS1 (si es que existe y está bien definido). Falso en caso
 !!		contrario
@@ -1024,6 +1028,13 @@ Include "vorple-screen-effects.h";
 #Ifdef TARGET_GLULX;
 #Ifdef USE_VORPLE;
 [ MyVorplePrompt;
+	if (PulsaIntroParaContinuar.fixed) {
+		VorpleOpenHTMLTag("span", "press-intro-to-continue");
+		print "Pulsa «Intro» para continuar";
+		VorpleCloseHTMLTag();
+		return true;
+	}
+
 	#Ifdef PS1;
 	if (metaclass(PS1) == String) {
 		print (string) PS1;

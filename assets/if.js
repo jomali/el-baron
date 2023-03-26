@@ -36,6 +36,28 @@ const ifjs = {
       anchors[0].parentNode.replaceChild(span, anchors[0]);
     }
   },
+
+  temp: () => {
+    // TODO - refactorizar para eliminar duplicidades. clear hyperlinks
+    Array.from(document.getElementsByClassName("white-letters"))
+      .map((element) => element.className = "");
+    Array.from(document.getElementsByClassName("red-letters"))
+      .map((element) => element.className = "");
+
+    let anchors = document.getElementsByTagName("A");
+    let span;
+    while (anchors.length > 0) {
+      span = document.createElement("SPAN");
+      span.innerHTML = anchors[0].innerHTML;
+      anchors[0].parentNode.replaceChild(span, anchors[0]);
+    }
+    // end clear
+
+    const elements = Array.from(
+      document.getElementsByClassName("lineinput last")
+    );
+    elements.forEach((element) => element.remove());
+  }
 };
 
 document.onkeydown = function (event) { ifjs.keyDown(event); };

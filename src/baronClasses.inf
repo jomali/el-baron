@@ -49,7 +49,9 @@
 !!	<>	Thing:Atrezzo
 !!	<>	Thing:Atrezzo:AdjacentRoom
 !!	<>	Thing:Atrezzo:Background
-!!	<>	Thing:Atrezzo:Background:Darkness
+!!	<>	Thing:Atrezzo:Background:BlindingObject
+!!	<>	Thing:Atrezzo:Background:BlindingObject:BlindingDarkness
+!!	<>	Thing:Atrezzo:Background:BlindingObject:BlindingLight
 !!	<>	Thing:Atrezzo:Fire
 !!	<>	Thing:Atrezzo:Room
 !!	<>	Thing:Atrezzo:Room:Indoors
@@ -643,7 +645,7 @@ Class	Atrezzo
 !!
 !!	@dependency arrays.h
 !!	@dependency textStyles.h
-!!	@version 2021/04/11
+!!	@version 2023/03/25
 !!------------------------------------------------------------------------------
 Class	AdjacentRoom
  class	Atrezzo
@@ -707,10 +709,6 @@ Class	AdjacentRoom
 		],
 		description [;
 			return L__M(##Look, 7, self);
-		],
-		onChangeLocation [;
-			Utils.clear_hyperlinks();
-			return true;
 		],
 ;
 
@@ -809,18 +807,31 @@ Class	Background
 ;
 
 !!------------------------------------------------------------------------------
-!! Thing:Atrezzo:Background:Darkness
+!! Thing:Atrezzo:Background:BlindingObject
 !!------------------------------------------------------------------------------
-!! Objetos oscuridad que modifican las respuestas por defecto de la librería 
-!! al intentar actuar sobre cualesquiera otros objetos presentes en la misma 
-!! localidad.
+!! Objetos para simular ceguera en el protagonista, modificando las respuestas 
+!! por defecto de la librería al intentar actuar sobre cualesquiera otros 
+!! objetos presentes en la misma localidad.
 !!
-!!	@version 2.0 - 2022/08/07
+!!	@version 2023/03/25
 !!------------------------------------------------------------------------------
-Class Darkness
+Class BlindingObject
 	class Background
-	has female on,
+	has on,
 	private
+		cant_drop [;
+			print "Si dejases ", (the) noun, " aquí no podrías encontrar", (lo) noun, " de nuevo por culpa ", (del) self, ".";
+			new_line;
+			return true;
+		],
+		cant_rub [;
+			return self.cant_see();
+		],
+		cant_see [;
+			print "No puedes ver nada por culpa ", (del) self, ".";
+			new_line;
+			return true;
+		],
 		is_interactive_object [ obj
 			current i result;
 			result = false;
@@ -834,21 +845,7 @@ Class Darkness
 			return result;
 		],
 	with
-		short_name [;
-			PRT__("oscuridad", "oscuridad");
-			return true;
-		],
-		name_f 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
-		name_fp 'penumbras' 'sombras' 'tinieblas',
-		gender G_FEMENINO,
-		article "la",
-		!!
-		cant_see [;
-			print "No puedes ver nada en ", (the) self, ".";
-			new_line;
-			return true;
-		],
-		!! Array de objetos con los que se puede interactuar a oscuras:
+		!! Array de objetos con los que se puede interactuar a ciegas:
 		interactive_objects 0,
 		react_before [;
 			if (self hasnt on) {
@@ -870,9 +867,7 @@ Class Darkness
 			Drop:
 				if (noun == nothing) return false;
 				if (~~IndirectlyContains(player, noun)) return false;
-				print "Si dejas ", (the) noun, " aquí es posible que luego no puedas encontrar", (lo) noun, " de nuevo en ", (the) self, ".";
-				new_line;
-				return true;
+				return self.cant_drop();
 			Inv,
 			InvTall,
 			InvWide:
@@ -883,10 +878,71 @@ Class Darkness
 				if (noun == parent(self)) return false;
 				if (noun ofclass Background) return false;
 				if (self.is_interactive_object(noun)) return false;
-				print "Es difícil limpar ", (the) noun, " —o cualquier otra cosa— en completa oscuridad.";
-				new_line;
-				return true;
+				return self.cant_rub();
 		],
+;
+
+!!------------------------------------------------------------------------------
+!! Thing:Atrezzo:Background:BlindingObject:BlindingDarkness
+!!------------------------------------------------------------------------------
+!! Oscuridad cegadora.
+!!
+!!	@version 2023/03/25
+!!------------------------------------------------------------------------------
+Class BlindingDarkness
+	class BlindingObject
+	has female on,
+	private
+		cant_rub [;			
+			print "Es difícil limpar ", (the) noun, " —o cualquier otra cosa— en completa oscuridad.";
+			new_line;
+			return true;
+		],
+		cant_see [;
+			print "No puedes ver nada en ", (the) self, ".";
+			new_line;
+			return true;
+		],
+	with
+		short_name [;
+			PRT__("oscuridad", "oscuridad");
+			return true;
+		],
+		name_f 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
+		name_fp 'penumbras' 'sombras' 'tinieblas',
+		gender G_FEMENINO,
+		article "la",
+;
+
+!!------------------------------------------------------------------------------
+!! Thing:Atrezzo:Background:BlindingObject:BlindingLight
+!!------------------------------------------------------------------------------
+!! Luz cegadora.
+!!
+!!	@version 2023/03/25
+!!------------------------------------------------------------------------------
+Class BlindingLight
+	class BlindingObject
+	has female on,
+	private
+		cant_rub [;			
+			print "Es difícil limpar ", (the) noun, " —o cualquier otra cosa— en completa oscuridad.";
+			new_line;
+			return true;
+		],
+		cant_see [;
+			print "No puedes ver nada en ", (the) self, ".";
+			new_line;
+			return true;
+		],
+	with
+		short_name [;
+			PRT__("luz", "luz");
+			return true;
+		],
+		name_f 'claridad' 'luz',
+		gender G_FEMENINO,
+		article "la",
 ;
 
 !!------------------------------------------------------------------------------

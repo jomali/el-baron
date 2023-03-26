@@ -126,6 +126,23 @@ Atrezzo -> GrutaBaronFuego "fuego"
 		],
 ;
 
+!! @GrutaLuz
+BlindingLight -> GrutaLuz "luz"
+	has
+		female on,
+	private
+		cant_see [;
+			print "Sólo hay blanco. [Una self] de un blanco perfecto ocupándolo todo.";
+			new_line;
+			return true;
+		],
+	with
+		react_before [;
+			Drop:
+				return false;
+		],
+;
+
 !! @LogroBerserker
 Object LogroBerserker "Berserker"
 	with
@@ -404,6 +421,10 @@ Indoors Abismo
 		f_to [;
 			<<Enter DirAbismoAdelante>>;
 		],
+		react_before [;
+			default:
+				return Utils.press_intro_to_continue_lock();
+		],
 		reset [;
 			self.counter = 0;
 		],
@@ -416,10 +437,8 @@ AdjacentRoom -> DirAbismoAdelante
 	has
 		male,
 	with
-		adjacent_room GrutaVestibulo,
 		before [;
 			Enter:
-				self.AdjacentRoom::onChangeLocation();
 				if (AbismoOscuridad hasnt described) {
 					print "Alcanzas a distinguir un resplandor entre las sombras.";
 				} else {
@@ -427,8 +446,7 @@ AdjacentRoom -> DirAbismoAdelante
 				}
 				print " Tan pronto das un paso en la dirección de la que proviene la luz, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás. Aferras el [Percunos](hacha:REMARKABLE_OBJECT) con firmeza y das otro paso adelante, hacia el calor…";
 				new_line;
-				!! TODO - Pulsar INTRO para continuar
-				self.AdjacentRoom::before();
+				Utils.press_intro_to_continue(GrutaVestibulo);
 				return true;
 		],
 		!! No necesita descripción. Al intentar examinarlo entran en juego las
@@ -436,17 +454,10 @@ AdjacentRoom -> DirAbismoAdelante
 ;
 
 !! @AbismoOscuridad
-Darkness -> AbismoOscuridad "oscuridad"
+BlindingDarkness -> AbismoOscuridad "oscuridad"
 	has
 		female on,
-	with
-		name_f 'abismo' 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
-		name_fp 'penumbras' 'sombras' 'tinieblas',
-		name_m 'vacio',
-		gender G_FEMENINO,
-		adjectives 'negro',
-		article "la",
-		!!
+	private
 		cant_see [;
 			if (self hasnt described) {
 				print "No puedes ver nada en [la self].";
@@ -456,6 +467,14 @@ Darkness -> AbismoOscuridad "oscuridad"
 			new_line;
 			return true;
 		],
+	with
+		name_f 'abismo' 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
+		name_fp 'penumbras' 'sombras' 'tinieblas',
+		name_m 'vacio',
+		gender G_FEMENINO,
+		adjectives 'negro',
+		article "la",
+		!!
 		description [;
 			if (self hasnt described) {
 				move AbismoResplandor to Abismo;
@@ -569,7 +588,11 @@ Indoors GrutaVestibulo
 		],
 		description [;
 			Tutorial.hint_keywords_a();
-			print "Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
+			if (Baron.is_blind) {
+				print "Todo es [GrutaLuz] a tu alrededor. El universo entero reducido a una quemadura blanca.";
+			} else {
+				print "Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
+			}
 			new_line;
 			return true;
 		],
@@ -1065,7 +1088,18 @@ AdjacentRoom DirGrutaPasadizo "pasadizo"
 						GrutaPasadizo.is_leading_inwards = false;
 						if (Baron.is_blind) {
 							return GrutaSalon.cant_go();
+						} else if (Baron.is_burning) {
+							print "Corres envuelto en llamas en busca de la salida.";
+						} else {
+							Dragon.counter = 1;
+							if (Dragon has described) {
+								print "Ese fuego es demasiado terrible";
+							} else {
+								print "Hay algo… algo innatural en la mirada del monstruo que resulta demasiado terrible";
+							}
+							print ". Huyes incapaz de enfrentarte a él.";
 						}
+						new_line;
 					GrutaVestibulo:
 						if (~~Baron.is_burning) {
 							print "Los huesos del suelo crujen destrozados bajo tus botas.";
@@ -1095,7 +1129,24 @@ Indoors GrutaPasadizo
 			<<Enter DirGrutaVestibulo>>;
 		],
 		before [;
-
+			Listen:
+				if (noun == 0 or self) {
+					print "Puedes escuchar una especie de murmullo ronco que llega desde [el DirGrutaSalon].";
+					new_line;
+					return true;
+				} else if (TestScope(noun, player) && ~~noun.before()) {
+					print "Prestas atención [al noun] pero no escuchas nada extraño. Nada aparte del crepitar del fuego y el murmullo ronco que llegan desde [el DirGrutaSalon].";
+					new_line;
+					return true;
+				}
+			Smell:
+				if (noun == 0 or self) {
+					print "El penetrante olor del azufre llena la [self](cueva).";
+				} else {
+					print "El olor del azufre lo impregna todo.";
+				}
+				new_line;
+				return true;
 		],
 		description [;
 			Tutorial.hint_keywords_b();
@@ -1109,6 +1160,8 @@ Indoors GrutaPasadizo
 					print " te abrasan la espalda";
 				}
 				print " y provocan que estés empapado en sudor dentro de tu [Armadura](armadura). [El DirGrutaVestibulo] se antoja ahora fresco en comparación.";
+			} else {
+				print "El mundo a tu alrededor es sólo un bosquejo agónico bajo [el GrutaBaronFuego]. [in_obj](Adentro): el dragón. [out_obj](Afuera): la salida.";
 			}
 			new_line;
 			return true;
@@ -1193,18 +1246,23 @@ Atrezzo	-> -> "huellas"
 		],
 ;
 
+!! @GrutaPasadizoDragon
+Atrezzo -> GrutaPasadizoDragon "dragón"
+	has
+		male,
+	with
+		name_f 'bestia' 'criatura',
+		name_m 'dragon' 'engendro' 'monstruo',
+		gender G_MASCULINO,
+		!!
+		!! TODO - descripción
+;
+
 !! @GrutaPasadizoFuego
 Atrezzo -> GrutaPasadizoFuego "fuego"
 	class
 		Fire,
 	with
-		name_f 'bestia' 'claridad' 'llama' 'luz',
-		name_fp 'llamas',
-		name_m 'dragon' 'fuego' 'fulgor' 'monstruo' 'resplandor',
-		name_mp 'fuegos',
-		gender G_MASCULINO,
-		adjectives 'lengua' 'lenguas',
-		!!
 		description [;
 			print "Lenguas de fuego mayores que cualquier hombre iluminan el pasadizo desde la [DirGrutaSalon](guarida) del dragón.";
 			new_line;
@@ -1294,6 +1352,13 @@ Indoors GrutaSalon
 			<<Enter DirGrutaPasadizo>>;
 		],
 		before [;
+			Listen:
+				if (noun == 0 or self
+					|| (TestScope(noun, player) && ~~noun.before())) {
+					print "El estruendo de las [](llamas) apaga cualquier otro sonido.";
+					new_line;
+					return true;
+				}
 			Smell:
 				if (noun == 0 or self) {
 					print "El penetrante olor del azufre llena la [self](cueva).";
@@ -1307,10 +1372,12 @@ Indoors GrutaSalon
 			if (Baron.is_blind) {
 				print "Echas a correr hacia la salida absolutamente a ciegas";
 				return GrutaBrechas.fall_in();
+			} else {
+				return self.Room::cant_go();
 			}
 		],
 		exits [;
-			print "La boca [del DirGrutaPasadizo] se abre en una de las paredes de roca del enorme [self](salón).";
+			print "La única salida es la boca [del DirGrutaPasadizo] que se abre en una de las paredes de roca del enorme [self](salón).";
 			new_line;
 			return true;
 		],
@@ -1404,6 +1471,7 @@ Character -> Dragon "dragón"
 				give self on; !! detiene el daemon durante el prox. turno
 				return ChoiceSetManager.start(ConversacionDragon);
 		],
+		counter 0,
 		daemon [;
 			!! El daemon gestiona el movimiento del dragón, con sus intentos
 			!! por incinerar o comerse al Barón:
@@ -1411,17 +1479,15 @@ Character -> Dragon "dragón"
 				give self ~on;
 				return true;
 			}
-			switch (location) {
-				GrutaPasadizo:
-				GrutaSalon:
-					if (self.counter ~= 3 || Baron.is_blind) {
-						new_line;
-						return self.reacts();
-					}
-				GrutaVestibulo:
+			if (location == GrutaSalon
+				&& self.counter == 3
+				&& ~~Baron.is_blind) {
+				self.counter++;
+				return true;
+			} else {
+				new_line;
+				return self.reacts();
 			}
-			self.counter++;
-			return true;
 		],
 		description [;
 			if (self hasnt described && ~~Baron.is_burning) {
@@ -1450,14 +1516,36 @@ Character -> Dragon "dragón"
 			give self on; !! detiene el daemon durante el prox. turno
 			return self.spits_fire(2);
 		],
-		spits_fire_on_wait [;
-			return self.spits_fire(0);
-		],
 		tried_to_talk_to_again false,
 	private
-		counter 0,
 		reacts [;
 			switch (location) {
+				GrutaPasadizo:
+					if (self.counter == 1) {
+						self.counter = 2;
+						print "El monstruo lanza un chillido estremecedor que perfora tus oídos. No está dispuesto a dejarte escapar.";
+						new_line;
+						return true;
+					} else if (self.counter == 2) {
+						self.counter = 3;
+						print "Distingues la figura [del self] más allá de la abertura del fondo del pasadizo. Ves su cabeza. Ves el baile de las llamas tras sus afilados dientes blancos.";
+						new_line;
+						return true;
+					} else if (self.counter == 3) {
+						self.counter = 4;
+						self.spits_fire();
+						Utils.clear_hyperlinks();
+						print "Un torrente de [GrutaBaronFuego] estalla al fondo del pasadizo. Corres desesperadamente hacia el [GrutaVestibulo](vestíbulo) pero las llamas corren mucho más rápido que tú.";
+						if (Baron.is_blind) {
+							move GrutaLuz to GrutaVestibulo;
+							print " Tu rostro desprotegido se calcina en la llamarada. Una luz deslumbrante y el dolor más intenso que nunca has conocido lo ocupan todo.";
+						} else {
+							print " A pesar de que el yelmo y la armadura te protegen de lo peor de la llamarada, tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
+						}
+						PlayerTo(GrutaVestibulo, 1);
+						new_line;
+						return true;
+					}
 				GrutaSalon:
 					if (self.counter == 0) {
 						self.counter = 1;
@@ -1471,7 +1559,15 @@ Character -> Dragon "dragón"
 						return true;
 					} else if (self.counter == 2) {
 						self.counter = 3;
-						return self.spits_fire_on_wait();
+						self.spits_fire();
+						print "Un inmenso chorro de fuego sale escupido desde la boca [del self] y te alcanza antes siquiera de que puedas pensar en apartarte.";
+						if (Baron.is_blind) {
+							print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
+						} else {
+							print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
+						}
+						new_line;
+						return true;
 					} else if (self.counter >= 3) {
 						StopDaemon(self);
 						if (Baron.is_blind) {							
@@ -1521,16 +1617,6 @@ Character -> Dragon "dragón"
 					new_line;
 					GrutaSalon.description();
 				}
-				return true;
-			} else {
-				!! Descipción general
-				print "Un inmenso chorro de fuego sale escupido desde la boca [del self] y te alcanza antes siquiera de que puedas pensar en apartarte.";
-				if (Baron.is_blind) {
-					print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
-				} else {
-					print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
-				}
-				new_line;
 				return true;
 			}
 		],

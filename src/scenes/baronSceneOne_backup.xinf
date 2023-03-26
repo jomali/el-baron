@@ -290,22 +290,6 @@ AdjacentRoom	DirGrutaPasadizo "pasadizo"
 		before [;
 			Enter:
 				switch (location) {
-					GrutaDragon:
-						GrutaPasadizo.PC_is_coming_in = false;
-						if (Baron.is_running_away()) {
-							if (Baron.is_burning()) {
-								print "Corres envuelto en llamas en busca de la salida.";
-							} else {
-								Dragon.counter = 1;
-								if (Dragon has described) {
-									print "Ese fuego es demasiado terrible";
-								} else {
-									print "Hay algo… algo en la mirada del monstruo que resulta demasiado terrible";
-								}
-								print " aun para un guerrero curtido como tú. Presa del miedo, huyes.";
-							}
-							new_line;
-						}
 					GrutaVestibulo:
 						if (Dragon.counter == 4) {
 							print "Al girarte la visión es tan horrible que te deja clavado en el sitio.";
@@ -321,48 +305,6 @@ AdjacentRoom	DirGrutaPasadizo "pasadizo"
 						new_line;
 				}
 				return self.AdjacentRoom::before();
-		],
-;
-
-!! @GrutaPasadizo
-Indoors	GrutaPasadizo
-		b_to [;
-			<<Enter DirGrutaVestibulo>>;
-		],
-		before [;
-			Listen:
-				if (noun == 0 or self) {
-					print "Puedes escuchar una especie de murmullo ronco que llega desde[if:Utils.is_compass_enabled()] [el n_obj][else] [el DirGrutaDragon][fi].";
-					new_line;
-					return true;
-				} else if (TestScope(noun, player) && ~~noun.before()) {
-					print "Prestas atención [al noun] pero no escuchas nada extraño. Nada aparte del crepitar del fuego y el murmullo ronco que llegan desde[if:Utils.is_compass_enabled()] [el n_obj][else] [el DirGrutaDragon][fi].";
-					new_line;
-					return true;
-				}
-			Smell:
-				if (noun == 0 or self) {
-					print "El penetrante olor del azufre llena la [self](cueva).";
-				} else {
-					print "El olor del azufre lo impregna todo.";
-				}
-				new_line;
-				return true;
-		],
-		description [;
-			if (Baron.is_burning()) {
-				print "El mundo a tu alrededor es sólo un bosquejo agónico bajo [el Fuego].[if:Utils.is_compass_enabled()] [Al n_obj][else] [in_obj](Adentro)[fi]: el dragón. [if:Utils.is_compass_enabled()] [Al s_obj][else] [out_obj](Afuera)[fi]: la salida.";
-			} else {
-				print "El techo del [self](corredor) es tan bajo que tienes que inclinarte para poder pasar. Una capa de [Cenizas](cenizas:REMARKABLE_OBJECT) amortigua tus pisadas. Desde [la DirGrutaDragon], en el extremo[if:Utils.is_compass_enabled()] [n_obj][fi] del [self](pasillo), la potente luz [del GrutaPasadizoFuego] y oleadas de un calor infernal";
-				if (self.PC_is_coming_in) {
-					print " te golpean en plena cara";
-				} else {
-					print " te abrasan la espalda";
-				}
-				print " y provocan que estés empapado en sudor dentro de tu [Armadura](armadura). [El DirGrutaVestibulo][if:Utils.is_compass_enabled()] [al s_obj][fi] se antoja ahora un remanso de frescor.";
-			}
-			new_line;
-			return true;
 		],
 ;
 
@@ -417,75 +359,20 @@ AdjacentRoom	DirGrutaDragon
 
 !! @GrutaDragon
 Indoors	GrutaDragon
-		before [;
-			Listen:
-				if (noun == 0 or self) {
-					!! <<Listen Dragon>> !! TODO
-				} else if (TestScope(noun, player) && ~~noun.before()) {
-					print "El estruendo de las [](llamas) y del propio [Dragon] apagan cualquier otro sonido.";
-					new_line;
-					return true;
-				}
-		],
-		cant_go [;
-			if (Baron.is_burning()) {
-				return Grietas.PC_falls();
-			}
-			return self.Room::cant_go();
-		],
 		initial [;
 			if (self hasnt visited) {
 				Baron.is_running_away = true;
 				StartDaemon(Dragon);
 			}
 		],
-		description [;
-				print "[if:Utils.is_compass_enabled()]El pasadizo [s_obj][else][El DirGrutaPasadizo][fi] desemboca en lo que parece una [self](gruta) natural. Es enorme, mucho mayor incluso que la sala del trono del Emperador. Desde infinidad de [Grietas](grietas:REMARKABLE_OBJECT) y [Grietas](fisuras) abiertas en la roca emergen [GrutaDragonFuego](llamaradas:REMARKABLE_OBJECT) gigantescas. La luz aquí dentro es más brillante que el mediodía y el calor resulta insoportable.";
-			}
-			new_line;
-			return true;
-		],
 ;
 
 !! @Dragon
 Character	-> Dragon "dragón"
-		before [
-			previous_style;
-			DefaultAction:
-				if (self has described) {
-					previous_style = Utils.set_text_style(TEXT_STYLE_PARSER);
-					print (string) TEXT_STYLE_PARSER_PREFIX;
-					print "ataca ", (al_) self;
-					PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, self);
-					PrintCharacterArray(utility_array_a);
-					print (string) TEXT_STYLE_PARSER_SUFIX;
-					Utils.set_text_style(previous_style);
-					new_line;
-					<<Attack self>>;
-				}
-		],
 		daemon [;
 			!! El daemon gestiona el movimiento del dragón, con sus intentos
 			!! por incinerar o comerse al Barón:
 			switch (location) {
-				GrutaPasadizo:
-					if (~~Baron.is_burning()) {
-						if (self.counter == 1) {
-							new_line;
-							print "El monstruo lanza un chillido estremecedor que perfora tus oídos. No está dispuesto a dejarte escapar.";
-							new_line;
-						}
-						if (self.counter == 2) {
-							new_line;
-							print "Distingues la figura [del self] más allá de la abertura del fondo del [GrutaPasadizo](pasillo). Ves su cabeza. Ves el baile de las llamas tras sus afilados dientes blancos.";
-							new_line;
-						} else if (self.counter >= 3) {
-							self.spit_fire();
-							new_line;
-							print "Un inmenso chorro de [Fuego] sale despedido desde la boca abierta [del self] al fondo del corredor y te envuelve por completo. El dolor lo ocupa todo de pronto. Un dolor como nunca antes lo habías sentido.";
-							new_line;
-						}
-					}
 				GrutaVestibulo:
 					if (~~Baron.is_burning()) {
 						if (self.counter == 2) {
@@ -520,22 +407,4 @@ Character	-> Dragon "dragón"
 			if (self.counter < 3) self.counter = 3;
 		],
 		!!------------------
-;
-
-!! @Grietas
-Atrezzo	-> Grietas "grietas"
-		PC_falls [ intentional;
-			give E1_ExcavandoDemasiadoProfundo on;
-			if (intentional) {
-				print "Enloquecido por el dolor prefieres poner fin al sufrimiento lo antes posible y saltas al interior de una de las grandes fisuras que atraviesan el suelo. Caes.
-				
-				 A través del fuego y del humo, caes. Las mismas llamas que te consumen iluminan las paredes perfectamente verticales de la hendidura, mucho más profunda de lo que podías imaginar. Sigues cayendo y alumbrando la oscuridad como una antorcha humana hasta que de pronto el estrecho espacio se abre en una gigantesca bóveda subterránea con un lago de magma en el fondo. Por una fracción de latido de corazón quedas fascinado ante la belleza sobrecogedora de este mundo subterráneo. Entonces impactas salvajemente contra la roca fundida. Todo tu cuerpo es abrasado y arde y tu alma queda transformada en fuego, en llamas, en calor, en luz.";
-			} else {
-				print "Echas a correr presa del pánico, cegado por el fuego y por el humo, incapaz de ver dónde pones los pies. Tropiezas y caes y vuelves a levantarte y tratas de continuar con tu carrera impelido por un terror agónico y primigenio mientras las llamas consumen tu cuerpo. Tienes que alejarte de la bestia y de su aliento mortal; tienes que alejarte del dolor. Entonces das un paso en la nada. El suelo desaparece bajo tus pies en una de las inmensas fisuras que atraviesan la gruta, y caes una vez más. Intentas aferrarte a algo desesperadamente, lo que sea, pero las paredes de la hendidura se prolongan perfectamente verticales, sin ningún saliente que pueda detener tu descenso hacia las profundidades. Caes. El aire está lleno de humo y vapores de sulfuro. Notas cómo penetran en tus pulmones con cada inspiración. Sigues cayendo cuando empiezas a ver un resplandor más abajo. Entonces pierdes el conocimiento, sin llegar a descubrir lo que sea que provocaba aquella luz.";
-			}
-			new_line;
-			print "^^^", (parser) "Pulsa una tecla.";
-			Utils.press_any_key();
-			return EndSceneOne();
-		],
 ;

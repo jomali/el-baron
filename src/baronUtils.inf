@@ -13,7 +13,7 @@
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:		0.0
-!!	Fecha:			2022/01/XX
+!!	Fecha:			2023/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -36,7 +36,7 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2022, J. Francisco Martín
+!!	Copyright (c) 2023, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -80,9 +80,60 @@ Array _hyperlinks_utility_array_a buffer LEN_HUGEHUGESTR;
 #Endif; ! USE_VORPLE;
 #Endif; ! TARGET_GLULX;
 
-Object	Utils "(Utilities)"
- with	!!----------------------------------------------------------------------
-		!! Comprueba si un objto contenedor/soporte 'obj' tiene capacidad
+Global _tempDestination = 0;
+
+!! @PulsaIntroParaContinuar
+ChoiceSet PulsaIntroParaContinuar
+	with
+		initial_action [; 
+			self.fixed = true;
+			self.add_choice(EleccionContinuar);
+		],
+;
+
+!! @EleccionContinuar
+ChoiceSetItem EleccionContinuar
+ with	entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+			print "Pulsa intro para ";
+			PRT__("continuar", 0, REMARKABLE_OBJECT);
+			Utils.set_text_style(previous_style);
+			return true;
+		],
+		keys 'continuar',
+		!!
+		reaction [;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.temp();
+			"));
+			PulsaIntroParaContinuar.fixed = false;
+			PlayerTo(_tempDestination);
+			return true;
+		],
+;
+
+Object Utils
+	with
+		press_intro_to_continue [ obj
+			hide_choice_inventory;
+			_tempDestination = obj;
+			hide_choice_inventory = true,
+			ChoiceSetManager.start(
+				PulsaIntroParaContinuar, 
+				hide_choice_inventory
+			);
+			return true;
+		],
+		press_intro_to_continue_lock [;
+			if (PulsaIntroParaContinuar.fixed) {
+				VorpleChangeLastCommand("");
+				VorpleRemoveLastCommandInHistory();
+				return EleccionContinuar.reaction();
+			}
+		],
+		!!----------------------------------------------------------------------
+		!! Comprueba si un objeto contenedor/soporte 'obj' tiene capacidad
 		!! suficiente para contener un segundo objeto 'second', pasados ambos
 		!! como parámetro.
 		!!
@@ -109,6 +160,7 @@ Object	Utils "(Utilities)"
 		!! Si es compilación para Vorple, limpia todos los hipervínculos 
 		!! impresos hasta el momento.
 		!!
+		!!	@dependency vorple.h, ifjs.js
 		!!	@version 2023/02/19
 		!!----------------------------------------------------------------------
 		clear_hyperlinks [;
