@@ -97,6 +97,9 @@ var ifjs = (function (controller) {
     continueWrapperNode.appendChild(continueNode);
     containerNode.appendChild(continueWrapperNode);
 
+    const promptNode = document.createTextNode(" >")
+    containerNode.appendChild(promptNode);
+
     const prefixNode = await _waitForElm("#lineinput-prefix");
     prefixNode.parentNode.insertBefore(containerNode, prefixNode);
   };

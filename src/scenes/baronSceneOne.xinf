@@ -442,9 +442,9 @@ AdjacentRoom -> DirAbismoAdelante
 				if (AbismoOscuridad hasnt described) {
 					print "Alcanzas a distinguir un resplandor entre las sombras.";
 				} else {
-					print "Ha llegado el momento de enfrentarse a la bestia.";
+					print "Ha llegado el momento de plantar cara a la bestia.";
 				}
-				print " Tan pronto das un paso en la dirección de la que proviene la luz, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás.
+				print " Das un paso en la dirección de la que proviene la luz y, al instante, como disparado por algún tipo de resorte, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás.
 				^^
 				Aferras el hacha con firmeza y das otro paso adelante, hacia el calor…";
 				new_line;
@@ -480,7 +480,7 @@ BlindingDarkness -> AbismoOscuridad "oscuridad"
 		description [;
 			if (self hasnt described) {
 				move AbismoResplandor to Abismo;
-				print "Te dejas llevar por el abrazo de las [self](sombras). Solo e inmóvil en mitad de la nada, lejos de obligaciones, de las monótonas rutinas del día a día, de la gente y sus juicios constantes. Casi desearías dejarlo todo y quedarte aquí para siempre. Pero no es más que una idea infantil, por supuesto.
+				print "Te dejas llevar por el abrazo de las [self](sombras). Solo e inmóvil en mitad de la nada, lejos de obligaciones, lejos de las monótonas rutinas del día a día, de la gente y sus reglas y expectativas y juicios constantes. Casi desearías dejarlo todo y quedarte aquí para siempre. Pero no es más que una idea infantil, por supuesto.
 				^^
 				Alcanzas a percibir [un AbismoResplandor] rompiendo apenas la oscuridad.";
 			} else {
@@ -593,7 +593,7 @@ Indoors GrutaVestibulo
 			if (Baron.is_blind) {
 				print "Todo es [GrutaLuz] a tu alrededor. El universo entero reducido a una quemadura blanca.";
 			} else {
-				print "Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
+				print "[if:self has visited]Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo[else]Estás en una pequeña sala rectangular excavada directamente en la roca, cuyas paredes y techo[fi] han sido recubiertos después con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
 			}
 			new_line;
 			return true;
@@ -741,13 +741,13 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 		description [;
 			if (self hasnt described && ~~Baron.is_burning) {
 				ChoiceSetManager.start(ConversacionHombreArdiendo, true);
-				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un hombre ardiendo, muestra algo muy distinto; un ansia profundo, excitación. No agoniza en las llamas de bronce sino que se deleita con ellas.
+				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un hombre ardiendo, muestra algo muy distinto; un ansia profundo. Excitación. No agoniza en las llamas de bronce sino que se deleita con ellas.
 				^^
 				Al observarla bajo la luz cambiante de la gruta, la [self](figura) parece contorsionarse lentamente, danzando junto a las sombras. Como si estuviera viva. El efecto es tan sugestivo que por un momento tu mente te traiciona y crees escuchar una vocecilla metálica.
 				^^
-				—¡Un compañero nuevo! ¡Vaya sorpresa! —sus inmóviles ojos recorren los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Vas a tener que buscar muy bien para encontrarte un hueco.";
+				—¡Un compañero nuevo! ¡Vaya sorpresa! —sus inmóviles ojos parecen barrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Vas a tener que buscar muy bien para encontrarte un hueco.";
 			} else {
-				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un [self](hombre) ardiendo, muestra algo muy distinto; un ansia profundo.";
+				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un [self](hombre) ardiendo, muestra una suerte de intenso deseo.";
 				if (~~Baron.is_burning) {
 					print  "^^
 					La voz que has creído escuchar hace un momento ahora guarda silencio.";
@@ -956,7 +956,7 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 		],
 		initial_action [;
 			self.add_choice(EstasVivo);
-			self.add_choice(EnfrentadoBestia);
+			self.add_choice(QuienEres);
 		],
 		inter_action [;
 			print (string) random(
@@ -967,18 +967,21 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 			return true;
 		],
 		response [;
-			new_line;
 			if (self.counter == 0) {
 				self.counter++;
+				self.add_choice(EnfrentadoBestia);
 				!! TODO si lleva el yelmo puesto
 				print "—El rostro descubierto, bien —ignora tu pregunta, pero percibes una nota de aprobación en la vocecilla estridente—. Mucho mejor que la mayoría de esos cobardes.";
 			} else {
 				!! TODO si lleva el yelmo puesto
 				self.counter++;
 				self.add_choice(ComoVencer);
+				self.remove_choice(EstasVivo);
+				self.remove_choice(QuienEres);
+				self.remove_choice(EnfrentadoBestia);
 				print "—Dime, ¿quién se acerca al fuego si tiene miedo a quemarse las pestañas? —escupe con desprecio un pequeño rodamiento de bronce que se pierde en las sombras.
 				^^
-				—La bestia —insistes—. ¿Qué aspecto tiene?
+				Insistes en que te hable sobre la bestia. Que te cuente cómo es, qué aspecto tiene.
 				^^
 				—¡Oh, lo verás muy pronto!";
 			}
@@ -1009,13 +1012,26 @@ ChoiceSetItem EstasVivo
 		append_choice_set true,
 		final_choice false,
 		reaction [;
-			if (ConversacionHombreArdiendo.has_choice(EnfrentadoBestia)) {
-				print "—¿Has… has hablado de ";
-			} else {
-				print "—¿Estás… estás hablado de ";
-			}
-			print "verdad? ¿Estás vivo?";
-			new_line;
+			return ConversacionHombreArdiendo.response();
+		],
+;
+
+!! @QuienEres
+ChoiceSetItem QuienEres
+ with	entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+			print "—¿Quién ";
+			PRT__("eres", 0, REMARKABLE_OBJECT);
+			print "?";
+			Utils.set_text_style(previous_style);
+			return true;
+		],
+		keys 'eres' 'verdad',
+		!!
+		append_choice_set true,
+		final_choice false,
+		reaction [;
 			return ConversacionHombreArdiendo.response();
 		],
 ;
@@ -1036,18 +1052,19 @@ ChoiceSetItem EnfrentadoBestia
 		append_choice_set true,
 		final_choice false,
 		reaction [;
-			print "—Eso te lo ha hecho la bestia, ¿no es así?";
-			new_line;
 			return ConversacionHombreArdiendo.response();
 		],
 ;
 
 !! @ComoVencer
 ChoiceSetItem ComoVencer
- with	entry [;
+ with	entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
 			print "—¿Sabes cómo puedo ";
 			PRT__("vencerla", 0, REMARKABLE_OBJECT);
-			print "?";
+			print "? Tendrá algún punto débil…";
+			Utils.set_text_style(previous_style);
 			return true;
 		],
 		keys 'como' 'venzo' 'vencer' 'vencerla',
@@ -1055,11 +1072,9 @@ ChoiceSetItem ComoVencer
 		append_choice_set false,
 		final_choice true,
 		reaction [;
-			print "—¿Sabes cómo puedo vencerla? Tendrá algún punto débil…
+			print "El hombre sonríe, señalando de nuevo los huesos a tus pies.
 			^^
-			El hombre sonríe, señalando de nuevo los huesos a tus pies.
-			^^
-			—Pregúntales a ellos.";
+			—Pregúntale a ellos.";
 			new_line;
 			return true;
 		],
