@@ -14,7 +14,7 @@
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:		0.0
-!!	Fecha:			2021/05/XX
+!!	Fecha:			2023/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -37,15 +37,16 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2021, J. Francisco Martín
+!!	Copyright (c) 2023, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 
 
 !! @Tutorial
 Object	Tutorial "(Tutorial)"
- has	~on,
- with
+	has
+		~on,
+	with
 		hint_hesitations [;
 			if (~~self.hint_hesitations_printed) {
 				self.hint_hesitations_on = true;
@@ -73,6 +74,12 @@ Object	Tutorial "(Tutorial)"
 		hint_keywords_b [;
 			if (~~self.hint_keywords_b_printed) {
 				self.hint_keywords_b_on = true;
+				give self on;
+			}
+		],
+		hint_look_a [;
+			if (~~self.hint_look_a_printed) {
+				self.hint_look_a_on = true;
 				give self on;
 			}
 		],
@@ -112,6 +119,10 @@ Object	Tutorial "(Tutorial)"
 					self.hint_keywords_b_text();
 					jump hint_printed;
 				}
+				if (self.hint_look_a_on) {
+					self.hint_look_a_text();
+					jump hint_printed;
+				}
 				.hint_printed;
 				print (string) TEXT_STYLE_PARSER_SUFIX;
 				Utils.set_text_style(previous_style);
@@ -135,7 +146,7 @@ Object	Tutorial "(Tutorial)"
 		hint_hesitations_text [;
 			self.hint_hesitations_on = false;
 			self.hint_hesitations_printed = true;
-			print "Cuando el protagonista da muestras de duda o indecisión suele significar que estás a punto de iniciar una acción con consecuencias irreversibles. Si de verdad quieres seguir adelante, simplemente vuelve a";
+			print "Cuando tu personaje da muestras de duda o indecisión suele significar que estás a punto de iniciar una acción con consecuencias irreversibles. Si de verdad quieres seguir adelante, simplemente vuelve a";
 			if (self.are_hyperlinks_enabled()) print " utilizar";
 			else print " teclear";
 			print " la misma acción de nuevo.";
@@ -146,7 +157,7 @@ Object	Tutorial "(Tutorial)"
 		hint_highlight_key_a_text [;
 			self.hint_highlight_key_a_on = false;
 			self.hint_highlight_key_a_printed = true;
-			print "Mantén pulsada la tecla «Shift/Mayús.» para ver los objetos con los que se puede interactuar. Puedes hacer clic con el ratón sobre cualquiera de las palabras que aparezcan destacadas.";
+			print "Mantén pulsada la tecla «Shift/Mayús.» para ver los objetos con los que se puede interactuar. Puedes hacer clic con el ratón sobre cualquier palabra que aparezca destacada.";
 			return true;
 		],
 		hint_highlight_key_b_on false,
@@ -163,8 +174,7 @@ Object	Tutorial "(Tutorial)"
 			self.hint_keywords_a_on = false;
 			self.hint_keywords_a_printed = true;
 			print "Al mantener pulsado «Shift/Mayús.» pueden aparecer dos tipos de palabra destacada diferente. El primero de ellos, con un estilo blanco brillante, lo utilizan aquellos objetos que puedes investigar o manipular con mayor detalle, como por ejemplo «mármol» o «puertas».";
-			self.hint_keywords_b_on = true;
-			give self on;
+			self.hint_look_a();
 			return true;
 		],
 		hint_keywords_b_on false,
@@ -172,14 +182,23 @@ Object	Tutorial "(Tutorial)"
 		hint_keywords_b_text [;
 			self.hint_keywords_b_on = false;
 			self.hint_keywords_b_printed = true;
-			print "Con el segundo estilo de texto, en rojo brillante, se muestran las salidas sobre las que puedes hacer clic para desplazarte desde una localidad a otra diferente.";
+			print "Las salidas sobre las que puedes hacer clic para desplazarte desde una localidad a otra diferente se muestran con el segundo estilo de texto, en rojo brillante.";
 			return true;
 		],
+		hint_look_a_on false,
+		hint_look_a_printed false,
+		hint_look_a_text [;
+			self.hint_look_a_on = false;
+			self.hint_look_a_printed = true;
+			print "Puedes volver a consultar la descripción del lugar en el que te encuentras, junto con todos los objetos que hay presentes, pulsando la tecla «Intro».";
+			return true;
+		],		
 		hint_repeated_actions_on false,
 		hint_repeated_actions_printed false,
 		hint_repeated_actions_text [;
 			self.hint_repeated_actions_on = false;
 			self.hint_repeated_actions_printed = true;
 			print "En general, al hacer clic sobre el nombre de un objeto interactivo el protagonista lo examinará y podrás conseguir más información sobre él. Pero hay algunos objetos sobre los que resulta natural intentar acciones adicionales (como coger, abrir, vestir, etc.). Si haces clic por segunda vez sobre alguno de estos objetos podrás ver cómo el protagonista intenta una acción distinta a la de la primera vez.";
+			return true;
 		],
 ;

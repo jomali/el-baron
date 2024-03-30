@@ -7,37 +7,34 @@
 !!
 !!==============================================================================
 !!
-!!	Archivo:		baronClasses.inf
+!!	Archivo:			baronClasses.inf
 !!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2021/01/XX
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Este archivo forma parte de la ficción interactiva EL BARÓN.
 !!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
 !!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
 !!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2021, J. Francisco Martín
+!!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -49,7 +46,10 @@
 !!	<>	Thing:Atrezzo
 !!	<>	Thing:Atrezzo:AdjacentRoom
 !!	<>	Thing:Atrezzo:Background
-!!	<>	Thing:Atrezzo:Background:Darkness
+!!	<>	Thing:Atrezzo:Background:BlindingObject
+!!	<>	Thing:Atrezzo:Background:BlindingObject:BlindingDarkness
+!!	<>	Thing:Atrezzo:Background:BlindingObject:BlindingLight
+!!	<>	Thing:Atrezzo:Fire
 !!	<>	Thing:Atrezzo:Room
 !!	<>	Thing:Atrezzo:Room:Indoors
 !!	<>	Thing:Atrezzo:Room:Outdoors
@@ -642,7 +642,7 @@ Class	Atrezzo
 !!
 !!	@dependency arrays.h
 !!	@dependency textStyles.h
-!!	@version 2021/04/11
+!!	@version 2023/03/25
 !!------------------------------------------------------------------------------
 Class	AdjacentRoom
  class	Atrezzo
@@ -706,10 +706,6 @@ Class	AdjacentRoom
 		],
 		description [;
 			return L__M(##Look, 7, self);
-		],
-		onChangeLocation [;
-			Utils.clear_hyperlinks();
-			return true;
 		],
 ;
 
@@ -808,18 +804,33 @@ Class	Background
 ;
 
 !!------------------------------------------------------------------------------
-!! Thing:Atrezzo:Background:Darkness
+!! Thing:Atrezzo:Background:BlindingObject
 !!------------------------------------------------------------------------------
-!! Objetos oscuridad que modifican las respuestas por defecto de la librería 
-!! al intentar actuar sobre cualesquiera otros objetos presentes en la misma 
-!! localidad.
+!! Objetos para simular ceguera en el protagonista, modificando las respuestas 
+!! por defecto de la librería al intentar actuar sobre cualesquiera otros 
+!! objetos presentes en la misma localidad.
 !!
-!!	@version 2020/11/28
+!!	@version 2023/03/25
 !!------------------------------------------------------------------------------
-Class Darkness
-	class Background
-	has female on,
+Class BlindingObject
+	class
+		Background
+	has
+		on,
 	private
+		cant_drop [;
+			print "Si dejases ", (the) noun, " aquí no podrías encontrar", (lo) noun, " de nuevo por culpa ", (del) self, ".";
+			new_line;
+			return true;
+		],
+		cant_rub [;
+			return self.cant_see();
+		],
+		cant_see [;
+			print "No puedes ver nada por culpa ", (del) self, ".";
+			new_line;
+			return true;
+		],
 		is_interactive_object [ obj
 			current i result;
 			result = false;
@@ -833,19 +844,9 @@ Class Darkness
 			return result;
 		],
 	with
-		short_name [;
-			print "[](oscuridad)";
-			return true;
-		],
-		name_f 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
-		name_fp 'penumbras' 'sombras' 'tinieblas',
-		gender G_FEMENINO,
-		article "la",
-		!!
-		!! Array de objetos con los que se puede interactuar a oscuras:
+		!! Array de objetos con los que se puede interactuar a ciegas:
 		interactive_objects 0,
-		react_before [
-			i obj;
+		react_before [;
 			if (self hasnt on) {
 				return false;
 			}
@@ -858,30 +859,129 @@ Class Darkness
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
-				if (noun ofclass AdjacentRoom) return false;
 				if (self.is_interactive_object(noun)) return false;
-				<<Examine self>>;
+				return self.cant_see();
 			DefaultAction:
 				return false;
 			Drop:
 				if (noun == nothing) return false;
 				if (~~IndirectlyContains(player, noun)) return false;
-				print "Si dejas [el noun] aquí es posible que más tarde no puedas encontrar", (lo) noun, " de nuevo en [la self].";
-				new_line;
-				return true;
+				return self.cant_drop();
 			Inv,
 			InvTall,
 			InvWide:
-				<<Examine self>>;
+				return self.cant_see();
 			Rub:
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
-				if (noun ofclass Atrezzo) return false;
+				if (noun ofclass Background) return false;
 				if (self.is_interactive_object(noun)) return false;
+				return self.cant_rub();
+		],
+;
+
+!!------------------------------------------------------------------------------
+!! Thing:Atrezzo:Background:BlindingObject:BlindingDarkness
+!!------------------------------------------------------------------------------
+!! Oscuridad cegadora.
+!!
+!!	@version 2023/03/25
+!!------------------------------------------------------------------------------
+Class BlindingDarkness
+	class BlindingObject
+	has female on,
+	private
+		cant_rub [;			
+			print "Es difícil limpar ", (the) noun, " —o cualquier otra cosa— en completa oscuridad.";
+			new_line;
+			return true;
+		],
+		cant_see [;
+			print "No puedes ver nada en ", (the) self, ".";
+			new_line;
+			return true;
+		],
+	with
+		short_name [;
+			PRT__("oscuridad", "oscuridad");
+			return true;
+		],
+		name_f 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
+		name_fp 'penumbras' 'sombras' 'tinieblas',
+		gender G_FEMENINO,
+		article "la",
+;
+
+!!------------------------------------------------------------------------------
+!! Thing:Atrezzo:Background:BlindingObject:BlindingLight
+!!------------------------------------------------------------------------------
+!! Luz cegadora.
+!!
+!!	@version 2023/03/25
+!!------------------------------------------------------------------------------
+Class BlindingLight
+	class
+		BlindingObject
+	has
+		female on,
+	private
+		cant_see [;
+			print "No puedes ver nada en ", (the) self, ".";
+			new_line;
+			return true;
+		],
+	with
+		short_name [;
+			PRT__("luz", "luz");
+			return true;
+		],
+		name_f 'claridad' 'luz',
+		gender G_FEMENINO,
+		article "la",
+;
+
+!!------------------------------------------------------------------------------
+!! Thing:Atrezzo:Fire
+!!------------------------------------------------------------------------------
+!!	@version 2023/03/01
+!!------------------------------------------------------------------------------
+Class Fire
+	class
+		Atrezzo,
+	has
+		light male,
+	with
+		name_f 'llama' 'llamarada',
+		name_fp 'llamas' 'llamaradas',
+		name_m 'fuego' 'incendio' 'infierno',
+		name_mp 'fuegos',
+		gender G_MASCULINO,
+		adjectives 'lengua' 'lenguas',
+		!!
+		before [;
+			Blow,
+			SwitchOff:
+				print "Nadie ";
+				switch (Utils.get_grammatical_inflection()) {
+					FIRST_PERSON_PRESENT,
+					SECOND_PERSON_PRESENT,
+					THIRD_PERSON_PRESENT:
+						print "podría";
+					FIRST_PERSON_PAST,
+					SECOND_PERSON_PAST,
+					THIRD_PERSON_PAST:
+						print "hubiese podido";
+					FIRST_PERSON_FUTURE,
+					SECOND_PERSON_FUTURE,
+					THIRD_PERSON_FUTURE:
+						print "podrá";
+				}
+				print " apagar un fuego como ese.";
+				new_line;
 				return true;
 		],
-; 
+;
 
 
 !!------------------------------------------------------------------------------
@@ -1042,9 +1142,11 @@ Class	Outdoors
 !!------------------------------------------------------------------------------
 !!	@version 2020/01/26
 !!------------------------------------------------------------------------------
-Class	Snow
- class	Atrezzo
- with	before [;
+Class Snow
+	class
+		Atrezzo,
+	with
+		before [;
 			Dig:
 				switch (Utils.get_grammatical_inflection()) {
 					FIRST_PERSON_PRESENT:

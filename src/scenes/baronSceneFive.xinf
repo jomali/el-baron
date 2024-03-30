@@ -266,7 +266,7 @@ AdjacentRoom -> DirPortonesCastillo "portones"
 ;
 
 !! @GaleriaOscuridad
-Darkness -> GaleriaOscuridad "oscuridad"
+BlindingDarkness -> GaleriaOscuridad "oscuridad"
 	has	female,
 	with
 		description [;

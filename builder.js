@@ -94,7 +94,7 @@ const preprocessFile = async (inputFile, outputFile) => {
         result = result.replace(/\[\s*lista\s+de\s+objetos\s+(en|sobre)\s+(.+?)\s*\<\s*(.+?)\s*\>\s*\]/g, '";\nWriteListFrom(child($2), $3);\nprint "');
         // [lista de objetos en/sobre obj]
         result = result.replace(/\[\s*lista\s+de\s+objetos\s+(en|sobre)\s+(.+?)\s*\]/g, '";\nWriteListFrom(child($2), ENGLISH_BIT + CONCEAL_BIT);\nprint "');
-    
+
         // Hipervínculo asociado a un objeto, con texto alternativo:
         // [obj](texto:código_estilo)
         result = result.replace(/(?<!\\)\[([^\[\]]+)(?<!\\)\](?<!\\)\(([^\(\)\:]+)(?<!\\)\:\s*([^\(\)\:\s]+)(?<!\\)\)/g, '";\nPRT__($1, "$2", $3);\nprint "');
@@ -116,19 +116,41 @@ const preprocessFile = async (inputFile, outputFile) => {
     writeStream.end();
 };
 
-const preprocessor = async () => {
+const preprocessor = async (options = { clear: false }) => {
     try {
+        const processedFiles = [];
         const files = await getFiles(path.join(__dirname, 'src'));
         for (const file of files) {
             const parsedFile = path.parse(file);
             if (parsedFile.ext === '.xinf') {
-                // await fs.unlinkSync(path.join(parsedFile.dir, `${parsedFile.name}.inf`));
-                await preprocessFile(path.join(parsedFile.dir, parsedFile.base), path.join(parsedFile.dir, `${parsedFile.name}.inf`))
+                const sourceXinf = 
+                    path.join(parsedFile.dir, parsedFile.base);
+                const sourceInf = 
+                    path.join(parsedFile.dir, `${parsedFile.name}.inf`);
+
+                // Removes .inf files:
+                if (fs.existsSync(sourceInf)) {
+                    await fs.unlinkSync(sourceInf);
+                    if (options.clear) {
+                        processedFiles.push(`'${sourceInf}'`);
+                    }
+                }
+
+                // Proprocess .xinf files:
+                if (!options.clear) {
+                    await preprocessFile(sourceXinf, sourceInf);
+                    processedFiles.push(`'${sourceXinf}'`);
+                }
             }
         }
+
+        processedFiles.unshift(options.clear
+            ? `Cleared ${processedFiles.length} files.`
+            : `Processed ${processedFiles.length} files.`
+        );
+        return processedFiles.join('\n');
     } catch (error) {
-        console.error(error);
-        process.exit(1);
+        throw new Error('Tried to delete a file that does not exist.');
     }
 };
 
@@ -138,40 +160,46 @@ const main = async() => {
     const args = process.argv.slice(2);
     const compiler = args[0];
     const gameFile = args[1];
-    
-    const informPath = 'src/libs';
+
+    const informPath = 'src/,src/libs/DaGWindows,src/libs/Extensions,src/libs/Inform6/library611,src/libs/INFSP6,src/libs/Vorple6';
     
     try {
-        console.log('Glulx compilation...');
-        await preprocessor();
+        console.log('\x1b[36m%s\x1b[0m', 'XINF preprocessor...');
+        const preprocessorResult = await preprocessor();
+        console.log(preprocessorResult);
+        console.log();
 
-        // console.log([
-        //     compiler,
-        //     `+include_path=${informPath}`,
-        //     '-G',
-        //     `${gameFile}.inf`,
-        //     `${gameFile}.ulx`
-        // ].join(' '))
+        console.log('\x1b[36m%s\x1b[0m', 'Glulx compilation...');        
+        const gameFileName = function (completePath) {
+            const completePathArray = completePath.split('/');
+            return completePathArray[completePathArray.length - 1];
+        }(gameFile);
 
-        // const { stdout, stderr } = await exec(compiler, [
-        //     `+include_path=${informPath}`,
-        //     '-G',
-        //     `src/${gameFile}.inf`,
-        //     `${gameFile}.ulx`
-        // ]);
+        const { stdout } = await exec([
+            compiler,
+            `+include_path=${informPath}`,
+            '-G',
+            `${gameFile}.inf`,
+            `${gameFileName}.ulx`
+        ].join(' '));
+        console.log(stdout);
 
-        // if (Boolean(stderr)) {
-        //     console.log(stderr);
-        // }
-        // console.log(stdout)
-
-        // clear
-        // other...
+        console.log('\x1b[36m%s\x1b[0m', 'Clear...');
+        const clearResult = await preprocessor({ clear: true });
+        console.log(clearResult);
+        console.log();
         
-        process.exit(0);    
+        process.exit(0);
     } catch (error) {
-        console.error(error);
-        process.exit(1);
+        console.error('\x1b[31m%s: \x1b[90m%s\x1b[0m', 'Error', error.cmd);
+        console.trace();
+        if (Boolean(error.stderr)) {
+            console.error(error.stderr);
+        }
+        if (Boolean(error.stdout)) {
+            console.error(error.stdout);
+        }
+        process.exit(0);
     }
 };
 

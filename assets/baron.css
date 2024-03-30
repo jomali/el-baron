@@ -1,0 +1,207 @@
+
+/* CONFIGURACIÓN GENERAL */
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #202020;
+	color: #dddddd;
+	margin: 0;
+	overflow-x: hidden;
+	padding: 0;
+	text-rendering: optimizeLegibility;
+}
+
+.gameport {
+	margin: 0 auto;
+	width: 100%;
+	max-width: 960px;
+	padding: 0 16px;
+}
+
+#output {
+	/*
+	 * Golden ratio (Bitter): https://grtcalculator.com/
+	 */
+	font-family: 'Bitter', serif;
+	font-size: 20px;
+	font-weight: 400;
+	line-height: 34px;
+	max-width: 696px; /* 680 - 16 (padding) */
+}
+
+hr.choice-set-divider {
+	opacity: 0.6;
+}
+
+.turn:not(.previous) span {
+	color: #606060;
+	-webkit-transition: 250ms linear 0s;
+	-moz-transition: 250ms linear 0s;
+	-o-transition: 250ms linear 0s;
+	transition: 250ms linear 0s;
+}
+
+.turn:not(.previous) hr.choice-set-divider {
+	opacity: 0.2;
+}
+
+/* ENTRADA */
+
+/* #lineinput, .lineinput, .lineinput.last {
+	margin-top: 32px;
+} */
+
+#press-intro-to-continue-container {
+	background-color: transparent;
+	color: inherit;
+	font-size: 17px;
+	font-weight: 700;
+}
+
+#lineinput-field {
+	background-color: transparent;
+	color: #F0F0F0;
+	font-family: inherit;
+	font-weight: 700;
+	width: 90% !important;
+}
+
+#lineinput-prefix {
+	background-color: transparent;
+	color: inherit;
+	font-weight: 700;
+	margin-right: 8px;
+	/* FIXME */
+}
+
+.prompt-prefix {
+	font-weight: 700;
+	margin-right: 8px;
+	/* FIXME */
+}
+
+.prompt-input {
+	color: #FFFFFF;
+	font-weight: 700;
+}
+
+/* ENLACES */
+
+.vorple-commandlink, .vorple-weblink {
+	color: inherit !important;
+	text-decoration: none;
+	-webkit-transition: 250ms linear 0s;
+	-moz-transition: 250ms linear 0s;
+	-o-transition: 250ms linear 0s;
+	transition: 250ms linear 0s;
+	outline: 0 none;
+}
+
+.vorple-commandlink:hover, .vorple-weblink:hover {
+	text-decoration: none;
+}
+
+.vorple-commandlink:visited {
+	color: inherit;
+}
+
+.isDisabled {
+	cursor: text;
+	text-decoration: none;
+}
+
+/* ESTILOS DE TEXTO */
+
+.dark-gray-background {
+	/* Nombres de las localidades */
+	color: #ffffff;
+	display: block;
+	font-size: 1.1em;
+	margin: 1.2em 0;
+}
+
+/* .dark-gray-letters {
+	Nombres de las localidades (alt.)
+} */
+
+.light-gray-letters {
+	/* Parser */
+	color: #606060;
+	font-style: italic;
+}
+
+.red-letters, .red-letters a:hover {
+	/* Hipervínculos: direction */
+	color: #ff8080 !important;
+	text-shadow: -2px 2px 8px #ff2121, 2px -2px 8px #ff2121;
+}
+
+.white-letters, .white-letters a:hover {
+	/* Hipervínculos: remarkable, choice, other */
+	color: #ffffff !important;
+	text-shadow: -2px 2px 8px #fffce2, 2px -2px 8px #fffce2;
+}
+
+/* FONDO: FILTRO DE COLOR, VIDEO Y EFECTO VIGNETTE */
+
+.fullscreen-bg {
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: -100;
+}
+
+.fullscreen-bg .overlay {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 2;
+	background: #202020;
+	opacity: 0.7;
+}
+
+.fullscreen-bg__video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.vignette {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	box-shadow: 0 0 200px rgba(0, 0, 0, 0.9) inset;
+	z-index: -100;
+}
+
+@media (min-aspect-ratio: 16/9) {
+	.fullscreen-bg__video {
+		height: 300%;
+		top: -100%;
+	}
+}
+
+@media (max-aspect-ratio: 16/9) {
+	.fullscreen-bg__video {
+		width: 300%;
+		left: -100%;
+	}
+}
+
+@media (max-width: 767px) {
+	.fullscreen-bg__video {
+		display: none;
+	}
+}

@@ -15,37 +15,34 @@
 !!
 !!==============================================================================
 !!
-!!	Archivo:		baron.inf
+!!	Archivo:			baron.inf
 !!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2022/XX/XX
+!!	Versión:			0.0
+!!	Fecha:				2022/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Este archivo forma parte de la ficción interactiva EL BARÓN.
 !!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
 !!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
 !!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2022, J. Francisco Martín
+!!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -90,7 +87,7 @@
 !!------------------------------------------------------------------------------
 
 Constant Story
-"El Barón";
+"El barón";
 
 Constant Headline
 "Una historia interactiva. Escrita por Victor Gijsbers y publicada bajo la Licencia Pública General de GNU en su versión 3 (o cualquier versión posterior). La presente edición ha sido desarrollada por J. Francisco Martín.";
@@ -103,7 +100,7 @@ Release 0;
 !!------------------------------------------------------------------------------
 
 !! Descomentar para compilar la versión Web/Móvil:
- Constant VERSION_WEB_MOBILE;
+Constant VERSION_WEB_MOBILE;
 
 #Ifndef VERSION_WEB_MOBILE;
 !! Si no se está compilando para Web/Móvil, es que se compila para escritorio:
@@ -187,13 +184,13 @@ Constant WITHOUT_DIRECTIONS;
 !!------------------------------------------------------------------------------
 
 Constant CSET_STYLE 1;
-Constant CSET_PREFIX "(";
-Constant CSET_SUFIX ").";
+Constant CSET_PREFIX "";
+Constant CSET_SUFIX "";
 Constant CSET_MSG1 "";
 Constant CSET_MSG2 "";
-Constant CSET_COMMA " / ";
-Constant CSET_OR " / ";
-Constant CSET_NO_MSG "Listado de opciones vacío";
+Constant CSET_COMMA "^";
+Constant CSET_OR "^";
+Constant CSET_NO_MSG "Listado de opciones vacío.";
 
 !!------------------------------------------------------------------------------
 !!	Configuración de la interfaz gráfica con 'GWindows'
@@ -261,7 +258,7 @@ Global _hyperlinks_command = "";
 !!------------------------------------------------------------------------------
 
 #Ifdef USE_SPANISH_LM;
-Constant PS1 "-";				! Inductor
+Constant PS1 ">";				! Inductor
 
 Global FORMER__TX	= "tu antiguo ~yo~";
 Global YOURSELF__TX	= "ti mismo";
@@ -391,11 +388,11 @@ Include "SpanishLM.h";
 
 #Ifdef USE_EXTENDED_LIBRARY;
 !! Personalizaciones a la librería:
-Include ">baronLib.inf";
+Include "baronLib.inf";
 #Endif; ! USE_EXTENDED_LIBRARY;
 
 !! Mensajes personalizados de la librería:
-Include ">baronLangLM.inf";
+Include "baronLangLM.inf";
 
 #Ifdef USE_GWINDOWS;
 !! GWindows: Window Class Framework:
@@ -707,7 +704,7 @@ Include "gWindowsGUI.h";		! Interfaz gráfica adaptativa con GWindows
 #Endif; ! USE_GWINDOWS;
 
 #Ifdef TARGET_GLULX;
-Include ">baron.bli";			! Recursos multimedia de la aplicación
+Include "baron.bli";			! Recursos multimedia de la aplicación
 #Endif; ! TARGET_GLULX;
 
 Include "arrays.h";				! Operaciones con arrays
@@ -751,19 +748,10 @@ Include "vorple-screen-effects.h";
 !! decir, después de que todas las impresiones en pantalla derivadas del turno
 !! actual hayan finalizado.
 !!
-!!	@returns Nada
-!!	@version 2019/06/24
+!!	@version 2023/03/26
 !!------------------------------------------------------------------------------
 [ AfterPrompt;
-	#Ifdef USE_VORPLE;
-	!! Simula el evento de haber dejado de pulsar una de las teclas para
-	!! resaltar palabras clave, de modo que tras cada acción ejecutada, las
-  	!! palabras clave vuelven a dejar de estar resaltadas:
-	VorpleExecuteJavaScriptCommand(BuildCommand("
-		ifjs.keyUp({ keyCode: ifjs.config.highlightKeyCodes[0] });
-	"));
-!	VorpleScrollToBottom();
-	#Endif; ! USE_VORPLE;
+	Utils.reset_highlights();
 ];
 
 !!------------------------------------------------------------------------------
@@ -774,10 +762,15 @@ Include "vorple-screen-effects.h";
 !! puede manipular estas tablas libremente mientras permanezcan consistentes la
 !! una con la otra, y puede dejar el contador de palabras en cualquier punto.
 !!
-!!	@returns Nada
-!!	@version 2019/07/15
+!!	@version 2023/03/04
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
+	if (PulsaIntroParaContinuar.fixed) {
+		parse-->1 = 'temp';
+		num_words = 1;
+	}
+
+	Utils.clear_hyperlinks();
 	#Ifdef CHOICE_SETS;
 	ChoiceSetManager.run();
 	#Endif; ! CHOICE_SETS;
@@ -868,6 +861,9 @@ Include "vorple-screen-effects.h";
 !!------------------------------------------------------------------------------
 [ Initialise
 	previous_style;
+	!! Por evitar advertencia del compilador en VERSION_WEB_MOBILE:
+	previous_style = 0;
+	
 	Utils.erase_window();
 
 	!! Inicializaciones para la VM Glulx ---------------------------------------
@@ -915,7 +911,6 @@ Include "vorple-screen-effects.h";
 	Utils.set_hyperlinks_status(OTHER_OBJECT, true);
 	!! Palabras destacadas:
 	#Ifdef VERSION_WEB_MOBILE;
-	VorpleOpenHTMLTag("div", "current-location");
 	Utils.set_highlight_style(REMARKABLE_OBJECT, TEXT_STYLE_NOTE);
 	Utils.set_highlight_style(DIRECTION_OBJECT, TEXT_STYLE_QUOTE);
 	Utils.set_highlight_style(CHOICE_OBJECT, TEXT_STYLE_NOTE);
@@ -979,7 +974,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = Abismo;
+	location = GrutaSalon; ! Abismo
 	Storyteller.start_scene(1);
 	print "^^";
 
@@ -995,7 +990,7 @@ Include "vorple-screen-effects.h";
 !!	@returns {boolean} Falso para indicar al sistema que añada todos los
 !!		objetos que suelen estar por defecto al alcance, o verdadero para
 !!		indicar que no se debe añadir nada más al alcance
-!!	@version 2019/06/18
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 [ InScope person
 	item;
@@ -1004,7 +999,7 @@ Include "vorple-screen-effects.h";
 	!! En la oscuridad, se mueven al foco todos aquellos objetos que hayan sido
 	!! manipulados ya previamente por el PC:
 	if ((person == player) && (location == thedark)) {
-		objectloop(item in parent(self))
+		objectloop(item in parent(player))
 			if (item has moved) PlaceInScope(item);
 	}
 
@@ -1014,14 +1009,25 @@ Include "vorple-screen-effects.h";
 !!------------------------------------------------------------------------------
 !! Permite imprimir un inductor personalizado en Vorple.
 !!
+!! Reemplaza el inductor genérico por el mensaje "Pulsa «Intro» para continuar" 
+!! cuando la acción está bloqueada mientras se espera la pulsación de tecla del 
+!! usuario.
+!!
 !!	@returns {boolean} Verdadero si se imprime el inductor definido en la
 !!		constante PS1 (si es que existe y está bien definido). Falso en caso
 !!		contrario
-!!	@version 2019/06/18
+!!	@version 2023/03/26
 !!------------------------------------------------------------------------------
 #Ifdef TARGET_GLULX;
 #Ifdef USE_VORPLE;
 [ MyVorplePrompt;
+	if (PulsaIntroParaContinuar.fixed) {
+		VorpleExecuteJavaScriptCommand(BuildCommand("
+			ifjs.pressIntroToContinuePrompt();
+		"));
+		return true;
+	}
+
 	#Ifdef PS1;
 	if (metaclass(PS1) == String) {
 		print (string) PS1;
@@ -1088,7 +1094,15 @@ Include "SpanishG.h";
 Include "SpanishEG.h";
 
 !! Gramática propia de la obra:
-Include ">baronGrammar.inf";
+Include "baronGrammar.inf";
+
+Verb meta 'temp'
+	*								-> Temp
+;
+
+[ TempSub;
+	return Utils.press_intro_to_continue_lock();
+];
 
 
 !!==============================================================================
@@ -1097,16 +1111,16 @@ Include ">baronGrammar.inf";
 !!
 !!------------------------------------------------------------------------------
 
-Include ">baronClasses.inf";
-Include ">baronMenu.inf";
-Include ">baronTutorial.inf";
-Include ">baronUtils.inf";
+Include "baronClasses.inf";
+Include "baronMenu.inf";
+Include "baronTutorial.inf";
+Include "baronUtils.inf";
 
-Include ">scenes/baronSceneZero.inf";
-Include ">scenes/baronSceneOne.inf";
-Include ">scenes/baron_scene-two.inf";
-Include ">scenes/baron_scene-three.inf";
-Include ">scenes/baron_scene-four.inf";
-Include ">scenes/baronSceneFive.inf";
-Include ">scenes/baron_scene-six.inf";
-Include ">scenes/baron_scene-seven.inf";
+Include "scenes/baronSceneZero.inf";
+Include "scenes/baronSceneOne.inf";
+Include "scenes/baron_scene-two.inf";
+Include "scenes/baron_scene-three.inf";
+Include "scenes/baron_scene-four.inf";
+Include "scenes/baronSceneFive.inf";
+Include "scenes/baron_scene-six.inf";
+Include "scenes/baron_scene-seven.inf";

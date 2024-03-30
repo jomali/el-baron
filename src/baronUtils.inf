@@ -6,44 +6,43 @@
 !!
 !!==============================================================================
 !!
-!!	Archivo:		baronUtils.inf
+!!	Archivo:			baronUtils.inf
 !!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2021/01/XX
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Este archivo forma parte de la ficción interactiva EL BARÓN.
 !!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
 !!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
 !!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2021, J. Francisco Martín
+!!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Interfaz del objeto `Utils`:
 !!
-!!	- check_object_capacity
 !!	- clear_hyperlinks
+!!	- reset_highlights
+
+!!	- check_object_capacity
 !!	- create_vorple_hiperlink
 !!	- erase_window
 !!	- fade_in
@@ -80,9 +79,95 @@ Array _hyperlinks_utility_array_a buffer LEN_HUGEHUGESTR;
 #Endif; ! USE_VORPLE;
 #Endif; ! TARGET_GLULX;
 
-Object	Utils "(Utilities)"
- with	!!----------------------------------------------------------------------
-		!! Comprueba si un objto contenedor/soporte 'obj' tiene capacidad
+Global _tempDestination = 0;
+
+!! @PulsaIntroParaContinuar
+ChoiceSet PulsaIntroParaContinuar
+	with
+		initial_action [; 
+			self.fixed = true;
+			self.add_choice(EleccionContinuar);
+		],
+;
+
+!! @EleccionContinuar
+ChoiceSetItem EleccionContinuar
+ with	entry [
+			previous_style;
+			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+			print "Pulsa intro para ";
+			PRT__("continuar", 0, REMARKABLE_OBJECT);
+			Utils.set_text_style(previous_style);
+			return true;
+		],
+		keys 'continuar',
+		!!
+		reaction [;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.clearLastInput();
+			"));
+			PulsaIntroParaContinuar.fixed = false;
+			PlayerTo(_tempDestination);
+			return true;
+		],
+;
+
+Object Utils
+	with
+		!!----------------------------------------------------------------------
+		!! Si es compilación para Vorple, deshabilita todos los hipervínculos 
+		!! impresos hasta el momento.
+		!!
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2023/02/19
+		!!----------------------------------------------------------------------
+		clear_hyperlinks [;
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.clearHyperlinks();
+			"));
+			#Endif; ! USE_VORPLE;
+		],
+		!!----------------------------------------------------------------------
+		!! Si es compilación para Vorple, simula el evento de haber dejado de 
+		!! pulsar una de las teclas configuradas para resaltar palabras clave, 
+		!! de modo que se asegura que después de ejecutar una acción las 
+		!! palabras clave no están resaltadas.
+		!!
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2023/03/26
+		!!----------------------------------------------------------------------
+		reset_highlights [;
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.resetHighlights();
+			"));
+			#Endif; ! USE_VORPLE;
+		],
+
+		
+
+		press_intro_to_continue [ obj
+			hide_choice_inventory;
+			_tempDestination = obj;
+			hide_choice_inventory = true,
+			ChoiceSetManager.start(
+				PulsaIntroParaContinuar, 
+				hide_choice_inventory
+			);
+			return true;
+		],
+		press_intro_to_continue_lock [;
+			if (PulsaIntroParaContinuar.fixed) {
+				VorpleChangeLastCommand("");
+				VorpleRemoveLastCommandInHistory();
+				return EleccionContinuar.reaction();
+			}
+		],
+		!!----------------------------------------------------------------------
+		!! Comprueba si un objeto contenedor/soporte 'obj' tiene capacidad
 		!! suficiente para contener un segundo objeto 'second', pasados ambos
 		!! como parámetro.
 		!!
@@ -99,28 +184,11 @@ Object	Utils "(Utilities)"
 		!!		-5) se supera la capacidad de peso máximo de 'obj'
 		!!		-6) el peso agregado supera la capacidad máxima de 'obj'
 		!!	@dependency capacities.h
-		!!	@version 2019/07/15
+		!!	@version 1.0 - 2019/07/15
 		!!----------------------------------------------------------------------
 		check_object_capacity [ obj second;
 			!! Rutina definida por la extensión 'capacities.h':
 			return CheckIfObjectFits(obj, second);
-		],
-		!!----------------------------------------------------------------------
-		!! Si es compilación para Vorple, limpia todos los hipervínculos 
-		!! impresos hasta el momento, cierra el último TAG HTML abierto, y 
-		!! abre uno nuevo con la clase `current-location`.
-		!!
-		!! Permite la definición de estilos y el uso de hipervínculos por 
-		!! localidad.
-		!!----------------------------------------------------------------------
-		clear_hyperlinks [;
-			#Ifdef USE_VORPLE;
-			VorpleExecuteJavaScriptCommand(BuildCommand("
-				ifjs.clearHyperlinks();
-			"));
-			VorpleCloseHTMLTag();
-			VorpleOpenHTMLTag("div", "current-location");
-			#Endif; ! USE_VORPLE;
 		],
 		!!----------------------------------------------------------------------
 		!! Crea un hipervínculo en Vorple.
@@ -149,7 +217,7 @@ Object	Utils "(Utilities)"
 		!! Elimina los contenidos de todas las ventanas de la interfaz.
 		!!
 		!!	@returns {boolean} Verdadero
-		!!	@version 2019/07/15
+		!!	@version 1.0 - 2019/07/15
 		!!----------------------------------------------------------------------
 		erase_window [;
 		    #Ifdef TARGET_ZCODE;
@@ -355,7 +423,7 @@ Object	Utils "(Utilities)"
 		!!	9)	Futuro, tercera persona
 		!!
 		!!	@returns {integer} Código numérico de la flexión gramatical actual
-		!!	@version 2019/09/14
+		!!	@version 1.0 - 2019/09/14
 		!!----------------------------------------------------------------------
 		get_grammatical_inflection [
 			result;
@@ -374,7 +442,7 @@ Object	Utils "(Utilities)"
 		!!		para el que se pretende conocer el estilo de texto resaltado
 		!!	@returns {integer} Código numérico del estilo de texto resaltado
 		!!		para los objetos de tipo 'object_type'. -1 por defecto
-		!!	@version 2019/09/14
+		!!	@version 1.0 - 2019/09/14
 		!!----------------------------------------------------------------------
 		get_highlight_style [ object_type
 			result;
@@ -421,7 +489,7 @@ Object	Utils "(Utilities)"
 		!!
 		!!	@returns {integer} Código numérico del estilo de texto utilizado
 		!!		actualmente. 0 por defecto
-		!!	@version 2019/09/14
+		!!	@version 1.0 - 2019/09/14
 		!!----------------------------------------------------------------------
 		get_text_style [
 			result;
@@ -438,7 +506,7 @@ Object	Utils "(Utilities)"
 		!!	@param {Object} obj - Objeto del que se desea averiguar su
 		!!		antecesor más lejano
 		!!	@returns {Object} Antecesor más lejano de 'obj'
-		!!	@version 2019/09/14
+		!!	@version 1.0 - 2019/09/14
 		!!----------------------------------------------------------------------
 		get_top_holder [ obj
 			aux;
@@ -456,7 +524,7 @@ Object	Utils "(Utilities)"
 		!! recursos multimedia...
 		!!
 		!!	@returns {boolean} Verdadero
-		!!	@version 2019/06/18
+		!!	@version 1.0 - 2019/06/18
 		!!----------------------------------------------------------------------
 		initialise_glulx [;
 			#Ifdef TARGET_GLULX;
@@ -534,7 +602,7 @@ Object	Utils "(Utilities)"
 		!!
 		!!	@returns Verdadero si la navegación se realiza a través de los
 		!!		puntos cardinales. Falso en caso contrario
-		!!	@version 2019/09/14
+		!!	@version 1.0 - 2019/09/14
 		!!----------------------------------------------------------------------
 		is_compass_enabled [;
 			return self.compass_mode;
@@ -584,7 +652,7 @@ Object	Utils "(Utilities)"
 		!!		la ejecución tras esperar una cantidad 'delay' de décimas de
 		!!		segundo, aún si el usuario no ha pulsado ninguna tecla
 		!!	@returns {char} Caracter introducido por el usuario
-		!!	@version 2019/03/21
+		!!	@version 1.0 - 2019/03/21
 		!!----------------------------------------------------------------------
 		press_any_key [ txt delay
 			previous_style result;
@@ -610,7 +678,7 @@ Object	Utils "(Utilities)"
 		!!
 		!!	@returns {boolean} Verdadero
 		!!	@dependency arrays.h
-		!!	@version 2019/06/22
+		!!	@version 1.0 - 2019/06/22
 		!!----------------------------------------------------------------------
 		print_horizontal_rule [
 			length previous_style txt;
@@ -661,7 +729,7 @@ Object	Utils "(Utilities)"
 		!!		pronombre con la primera letra en mayúscula
 		!!	@returns {boolean} Falso si el objeto pasado como parámetro no es
 		!!		un objeto. Verdadero en caso contrario
-		!!	@version 2020/01/27
+		!!	@version 1.0 - 2020/01/27
 		!!----------------------------------------------------------------------
 		print_spanish_nominative_pronoun [ obj capitalized;
 			if (metaclass(obj) == Object) {
@@ -697,7 +765,7 @@ Object	Utils "(Utilities)"
 		!!		leen los parámetros de configuración
 		!!	@returns {boolean} Verdadero si el fichero se lee con éxito. Falso
 		!!		en caso contrario
-		!!	@version 2019/06/24
+		!!	@version 1.0 - 2019/06/24
 		!!----------------------------------------------------------------------
 		!! FIXME - comprobar funcionalidades de fichero externo
 		read_configuration_file [ file_name
@@ -803,7 +871,7 @@ Object	Utils "(Utilities)"
 		!! Reestablece el modelo del mundo a su estado inicial.
 		!!
 		!!	@returns {boolean} Verdadero
-		!!	@version 2019/10/31
+		!!	@version 1.0 - 2019/10/31
 		!!----------------------------------------------------------------------
 		restart [
 			obj;
@@ -826,7 +894,7 @@ Object	Utils "(Utilities)"
 		!!		través de la brújula (si 'mode' es verdadero) o no (si 'mode'
 		!!		es falso)
 		!!	@returns {boolean} Modo de navegación reemplazado
-		!!	@version 2019/09/14
+		!!	@version 1.0 - 2019/09/14
 		!!----------------------------------------------------------------------
 		set_compass_mode [ mode
 			result;
@@ -870,7 +938,7 @@ Object	Utils "(Utilities)"
 		!!	@returns {integer} Código numérico del estilo de texto resaltado
 		!!		que se había estado utilizando previamente para los objetos del
 		!!		tipo 'object_type'. -1 si 'object_type' no es un código válido
-		!!	@date 2019/06/24
+		!!	@version 1.0 - 2019/06/24
 		!!----------------------------------------------------------------------
 		set_highlight_style [ object_type text_style
 			result status;
@@ -926,7 +994,7 @@ Object	Utils "(Utilities)"
 		!!		alineación: {0 - izquierda; 1 - centro; 2 - derecha}
 		!!	@returns {boolean} Verdadero si se está utilizando una barra de
 		!!		estado modificable. Falso en caso contrario
-		!!	@version 2019/06/18
+		!!	@version 1.1 - 2022/08/07
 		!!----------------------------------------------------------------------
 		set_status_bar_alignment [ alignment
 			result;
@@ -934,6 +1002,8 @@ Object	Utils "(Utilities)"
 			StatusBar.set_alignment(alignment);
 			result = true;
 			#Endif; ! USE_GWINDOWS;
+			!! Por evitar advertencias del compilador si no USE_GWINDOWS:
+			alignment = 0;
 			return result;
 		],
 		!!----------------------------------------------------------------------
@@ -944,7 +1014,7 @@ Object	Utils "(Utilities)"
 		!!		localidad actual del usuario
 		!!	@returns {boolean} Verdadero si se está utilizando una barra de
 		!!		estado modificable. Falso en caso contrario
-		!!	@version 2019/06/18
+		!!	@version 1.1 - 2022/08/07
 		!!----------------------------------------------------------------------
 		set_status_bar_contents [ contents
 			result;
@@ -952,6 +1022,8 @@ Object	Utils "(Utilities)"
 			StatusBar.set_contents(contents);
 			result = true;
 			#Endif; ! USE_GWINDOWS;
+			!! Por evitar advertencias del compilador si no USE_GWINDOWS:
+			contents = 0;
 			return result;
 		],
 		!!----------------------------------------------------------------------
@@ -974,7 +1046,7 @@ Object	Utils "(Utilities)"
 		!!----------------------------------------------------------------------
 		!!	@param {number} num - Nueva escena
 		!!	@returns {boolean} Verdadero
-		!!	@version 2020/01/27
+		!!	@version 1.0 - 2020/01/27
 		!!----------------------------------------------------------------------
 		start_scene [ num;
 			switch (num) {
@@ -1013,7 +1085,7 @@ Object	Utils "(Utilities)"
 		!!		escriben los parámetros de configuración
 		!!	@returns {boolean} Verdadero si el fichero se escribe con éxito.
 		!!		Falso en caso contrario
-		!!	@version 2019/06/24
+		!!	@version 1.0 - 2019/06/24
 		!!----------------------------------------------------------------------
 		write_configuration_file [ file_name
 			file_ref str i temp_txt temp_code;

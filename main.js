@@ -6,19 +6,18 @@ const path = require('path')
 function createWindow () {
   // Create and start the server.
   const server = express();
-  const port = 9000;
+  const port = process.env.PORT || 9000;
 
-  server.get('/', (req, res) => 
-    res.sendFile(path.join(__dirname, 'index.html'))
-  );
+  server.use(express.static(path.join(__dirname, './')));
+
   server.listen(port, () => 
     console.log(`App started on http://localhost:${port}`)
   );
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1420,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }

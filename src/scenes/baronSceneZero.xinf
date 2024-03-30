@@ -14,7 +14,7 @@
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:		0.0
-!!	Fecha:			2021/06/XX
+!!	Fecha:			2023/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -37,7 +37,7 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2021, J. Francisco Martín
+!!	Copyright (c) 2023, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 
@@ -98,6 +98,11 @@ Character Baron "protagonista" Limbo
 		name_m 'personaje' 'protagonista',
 		gender G_MASCULINO,
 		!!
+		is_blind false,
+		!!
+		is_burning false,
+		
+		!! TODO - revisar
 		become_a_wolf [;
 			if (self.is_a_wolf()) return true;
 			self.wolf = true;
@@ -139,10 +144,6 @@ Character Baron "protagonista" Limbo
 		is_a_wolf [;
 			return self.wolf;
 		],
-		!!	@returns {boolean} `true` si el PC está ardiendo
-		is_burning [;
-			return self.burning;
-		],
 		!!	@returns {boolean} `true` si el PC está desnudo
 		is_naked [
 			n_clothes obj;
@@ -158,12 +159,18 @@ Character Baron "protagonista" Limbo
 		],
 		react_before [;
 			Smell:
-				if (noun == nothing
-					&& ~~self.tried_to_smell
-					&& real_location ofclass Outdoors) {
-					self.tried_to_smell = true;
-					print "Llenas tus pulmones con el aire helado y exhalas de nuevo, formando una nubecilla de condensación. ";
-					return false;
+				!! la comprobación de clase de la localidad actual podría
+				!! incluirse dentro del mismo bloque condicional; pero por
+				!! algún motivo en ese caso la condición devuelve `true` tanto
+				!! si la localidad tiene clase `Outdoors` como `Indoors`. Por
+				!! ese motivo se ha extraído a su propia sentencia
+				!! independiente:
+				if (real_location ofclass Outdoors) {
+					if (noun == nothing && ~~self.tried_to_smell) {
+						self.tried_to_smell = true;
+						print "Llenas tus pulmones con el aire helado y exhalas de nuevo, formando una nubecilla de condensación. ";
+						return false;
+					}
 				}
 		],
 		reset [;
