@@ -7,37 +7,34 @@
 !!
 !!==============================================================================
 !!
-!!	Archivo:		baronClasses.inf
+!!	Archivo:			baronClasses.inf
 !!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2023/XX/XX
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Este archivo forma parte de la ficción interactiva EL BARÓN.
 !!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
 !!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
 !!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2023, J. Francisco Martín
+!!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -816,8 +813,10 @@ Class	Background
 !!	@version 2023/03/25
 !!------------------------------------------------------------------------------
 Class BlindingObject
-	class Background
-	has on,
+	class
+		Background
+	has
+		on,
 	private
 		cant_drop [;
 			print "Si dejases ", (the) noun, " aquí no podrías encontrar", (lo) noun, " de nuevo por culpa ", (del) self, ".";
@@ -922,14 +921,11 @@ Class BlindingDarkness
 !!	@version 2023/03/25
 !!------------------------------------------------------------------------------
 Class BlindingLight
-	class BlindingObject
-	has female on,
+	class
+		BlindingObject
+	has
+		female on,
 	private
-		cant_rub [;			
-			print "Es difícil limpar ", (the) noun, " —o cualquier otra cosa— en completa oscuridad.";
-			new_line;
-			return true;
-		],
 		cant_see [;
 			print "No puedes ver nada en ", (the) self, ".";
 			new_line;

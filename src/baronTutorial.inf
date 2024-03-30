@@ -157,7 +157,7 @@ Object	Tutorial "(Tutorial)"
 		hint_highlight_key_a_text [;
 			self.hint_highlight_key_a_on = false;
 			self.hint_highlight_key_a_printed = true;
-			print "Mantén pulsada la tecla «Shift/Mayús.» para ver los objetos con los que se puede interactuar. Puedes hacer clic con el ratón sobre cualquiera de las palabras que aparezcan destacadas.";
+			print "Mantén pulsada la tecla «Shift/Mayús.» para ver los objetos con los que se puede interactuar. Puedes hacer clic con el ratón sobre cualquier palabra que aparezca destacada.";
 			return true;
 		],
 		hint_highlight_key_b_on false,

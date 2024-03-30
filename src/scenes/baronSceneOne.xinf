@@ -7,37 +7,34 @@
 !!
 !!==============================================================================
 !!
-!!	Archivo:		baronSceneOne.xinf
+!!	Archivo:			baronSceneOne.xinf
 !!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2023/XX/XX
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Este archivo forma parte de la ficción interactiva EL BARÓN.
 !!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
 !!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
 !!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2023, J. Francisco Martín
+!!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 
@@ -140,6 +137,8 @@ BlindingLight -> GrutaLuz "luz"
 		react_before [;
 			Drop:
 				return false;
+			default:
+				return self.BlindingLight::react_before();
 		],
 ;
 
@@ -413,7 +412,7 @@ Indoors Abismo
 			if (AbismoOscuridad hasnt described) {
 				print "No hay ningún lugar al que ir. Nada. Sólo [AbismoOscuridad].";
 			} else {
-				print "Todo cuanto puedes distinguir en la oscuridad es ese [AbismoResplandor] indefinido que llega desde algún lugar más [f_obj].";
+				print "Todo cuanto puedes percibir en la oscuridad es ese [AbismoResplandor] indefinido que llega desde más [f_obj].";
 			}
 			new_line;
 			return true;
@@ -442,9 +441,10 @@ AdjacentRoom -> DirAbismoAdelante
 				if (AbismoOscuridad hasnt described) {
 					print "Alcanzas a distinguir un resplandor entre las sombras.";
 				} else {
-					print "Ha llegado el momento de plantar cara a la bestia.";
+					print "Ha llegado el momento. Después de todo tú eres la única persona que puede plantar cara a la bestia.";
 				}
-				print " Das un paso en la dirección de la que proviene la luz y, al instante, como disparado por algún tipo de resorte, suena un portazo atronador a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás.
+				print "^^
+				Das un paso en la dirección de la que proviene la luz y, al instante, como disparado por algún tipo de resorte, un portazo truena a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás.
 				^^
 				Aferras el hacha con firmeza y das otro paso adelante, hacia el calor…";
 				new_line;
@@ -480,7 +480,9 @@ BlindingDarkness -> AbismoOscuridad "oscuridad"
 		description [;
 			if (self hasnt described) {
 				move AbismoResplandor to Abismo;
-				print "Te dejas llevar por el abrazo de las [self](sombras). Solo e inmóvil en mitad de la nada, lejos de obligaciones, lejos de las monótonas rutinas del día a día, de la gente y sus reglas y expectativas y juicios constantes. Casi desearías dejarlo todo y quedarte aquí para siempre. Pero no es más que una idea infantil, por supuesto.
+				print "Te dejas llevar por el abrazo cálido de las [self](sombras). Sólo e inmóvil en mitad de la nada, lejos de obligaciones, de las monótonas rutinas del día a día, de la charlatanería vacía y superficial de la gente y de sus reglas y sus expectativas y sus juicios constantes. Casi desearías abandonar ese mundo y quedarte aquí para siempre.
+				^^
+				Pero no es más que una idea infantil, por supuesto.
 				^^
 				Alcanzas a percibir [un AbismoResplandor] rompiendo apenas la oscuridad.";
 			} else {
@@ -593,7 +595,7 @@ Indoors GrutaVestibulo
 			if (Baron.is_blind) {
 				print "Todo es [GrutaLuz] a tu alrededor. El universo entero reducido a una quemadura blanca.";
 			} else {
-				print "[if:self has visited]Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo[else]Estás en una pequeña sala rectangular excavada directamente en la roca, cuyas paredes y techo[fi] han sido recubiertos después con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
+				print "[if:self has visited]Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después[else]Estás en una pequeña sala rectangular excavada directamente en la roca, cuyas paredes y techo han sido recubiertos[fi] con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
 			}
 			new_line;
 			return true;
@@ -676,7 +678,7 @@ Item -> GrutaVestibuloPuertas
 			if (~~Baron.is_burning) {
 				print "Dos imponentes puertas de bronce bloquean la única salida de la gruta.";
 				if (self hasnt described) {
-					print " Tienen unos grabados ornamentales, de factura muy tosca, entre los que adviertes la figura de un [GrutaVestibuloPuertasGrabado](hombre:REMARKABLE_OBJECT) que parece arder en llamas.";
+					print " Tienen unos grabados ornamentales de factura muy tosca entre los que adviertes la figura de un [GrutaVestibuloPuertasGrabado](hombre:REMARKABLE_OBJECT) que está ardiendo en llamas.";
 				} else {
 					print " Están decoradas con el [GrutaVestibuloPuertasGrabado](grabado) de un hombre que arde en llamas.";
 				}
@@ -704,12 +706,6 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 		!!
 		before [
 			obj;
-			DefaultAction:
-				if (self hasnt described || self.tried_to_speak) {
-					<<Examine self>>;
-				} else {
-					<<TalkTo self>>;
-				}
 			Pull,
 			Push,
 			PushDir,
@@ -721,9 +717,7 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 				<<Take obj>>;
 			TalkTo:
 				!! TODO hablar con hombre mientras estás ardiendo
-				if (ConversacionHombreArdiendo.has_ended() 
-					&& ~~self.tried_to_speak) {
-					self.tried_to_speak = true;
+				if (ConversacionHombreArdiendo.has_ended()) {
 					print "El hombre parece perder interés en ti. —Pronto. Muy pronto —repite, antes de volver toda su atención de nuevo a sus llamas de metal.";
 					new_line;
 					return true;
@@ -743,23 +737,21 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 				ChoiceSetManager.start(ConversacionHombreArdiendo, true);
 				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un hombre ardiendo, muestra algo muy distinto; un ansia profundo. Excitación. No agoniza en las llamas de bronce sino que se deleita con ellas.
 				^^
-				Al observarla bajo la luz cambiante de la gruta, la [self](figura) parece contorsionarse lentamente, danzando junto a las sombras. Como si estuviera viva. El efecto es tan sugestivo que por un momento tu mente te traiciona y crees escuchar una vocecilla metálica.
+				Al observarla bajo la luz cambiante de la gruta, la [self](figura) parece contorsionarse lentamente, danzando junto a las sombras. Como si estuviera viva. El efecto es tan sugestivo que por un momento tu mente te traiciona y crea una vocecilla metálica.
 				^^
-				—¡Un compañero nuevo! ¡Vaya sorpresa! —sus inmóviles ojos parecen barrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Vas a tener que buscar muy bien para encontrarte un hueco.";
+				—¡Un compañero nuevo! ¡Vaya sorpresa! —sus inmóviles ojos parecen recorrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Si quieres tu propio hueco vas a tener que buscar bien.";
 			} else {
-				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un [self](hombre) ardiendo, muestra una suerte de intenso deseo.";
 				if (~~Baron.is_burning) {
-					print  "^^
-					La voz que has creído escuchar hace un momento ahora guarda silencio.";
-				} else {
-					print " Horrorizado comprendes que tu propio rostro debe estar mostrando exactamente lo mismo en este momento.";
+					print "Bajo la luz cambiante de la gruta, la figura parece cobrar vida y contorsionarse lentamente en un perturbador efecto óptico. ";
 				}
-			}
+				print "Su rostro muestra una suerte de intenso deseo en lugar de la expresión de tormento que cabría esperar de un hombre ardiendo.";
+				if (Baron.is_burning) {
+					print " Horrorizado comprendes que tu propia cara debe estar mostrando exactamente lo mismo en este momento.";
+				}
+			}				
 			new_line;
 			return true;
 		],
-	private
-		tried_to_speak false,
 ;
 
 !! @GrutaVestibuloMarmol
@@ -917,13 +909,11 @@ Atrezzo -> GrutaVestibuloHuesos "huesos"
 				new_line;
 				return true;
 		],
-		describe [
-			rnd;
-			rnd = random(2);
+		describe [;
 			new_line;
 			if (parent(self) == parent(Yelmo)) {
 				print "Un antiguo [Yelmo] descansa entre [los self] del suelo.";
-			} else if (real_location hasnt visited || rnd == 1) {
+			} else if (real_location hasnt visited || random(2) == 1) {
 				print "Una auténtica alfombra de [self] oculta el suelo.";
 			} else {
 				print "[Los self] del suelo proyectan sombras temblorosas a tu alrededor.";
@@ -939,9 +929,6 @@ Atrezzo -> GrutaVestibuloHuesos "huesos"
 			}
 			new_line;
 			return true;
-		],
-		reset [;
-			self.tried_to_search = false;
 		],
 	private
 		tried_to_search false,
@@ -960,8 +947,9 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 		],
 		inter_action [;
 			print (string) random(
-				"La figura de bronce parece seguir tus movimientos con atención.",
-				"La figura te observa atentamente."
+				"La figura de bronce parece seguir tus movimientos, como uno de esos retratos que siempre te devuelven la mirada.",
+				"La figura te observa atentamente.",
+				"El hombre de bronce sigue tus movimientos con atención."
 			);
 			new_line;
 			return true;
@@ -970,10 +958,12 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 			if (self.counter == 0) {
 				self.counter++;
 				self.add_choice(EnfrentadoBestia);
-				!! TODO si lleva el yelmo puesto
-				print "—El rostro descubierto, bien —ignora tu pregunta, pero percibes una nota de aprobación en la vocecilla estridente—. Mucho mejor que la mayoría de esos cobardes.";
+				if (Yelmo has worn) {
+					print "—Es una auténtica pena. Todos ellos igual de cobardes.";
+				} else {
+					print "—El rostro descubierto, bien —ignora tu pregunta, pero percibes una nota de aprobación en la vocecilla estridente—. Mucho mejor que la mayoría de esos cobardes.";
+				}
 			} else {
-				!! TODO si lleva el yelmo puesto
 				self.counter++;
 				self.add_choice(ComoVencer);
 				self.remove_choice(EstasVivo);
@@ -981,9 +971,12 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 				self.remove_choice(EnfrentadoBestia);
 				print "—Dime, ¿quién se acerca al fuego si tiene miedo a quemarse las pestañas? —escupe con desprecio un pequeño rodamiento de bronce que se pierde en las sombras.
 				^^
+				Le pides/
 				Insistes en que te hable sobre la bestia. Que te cuente cómo es, qué aspecto tiene.
 				^^
-				—¡Oh, lo verás muy pronto!";
+				—¡Oh, descuida! ¡Lo verás muy pronto!";
+				!! TODO
+				print "Si es que puedes ver algo con esa mierda en la cabeza";
 			}
 			new_line;
 			return true;
@@ -1112,14 +1105,14 @@ AdjacentRoom DirGrutaPasadizo "pasadizo"
 							if (Dragon has described) {
 								print "Ese fuego es demasiado terrible";
 							} else {
-								print "Hay algo… algo innatural en la mirada del monstruo que resulta demasiado terrible";
+								print "Hay algo… algo innatural en la mirada del monstruo… algo que resulta demasiado terrible";
 							}
 							print ". Huyes incapaz de enfrentarte a él.";
 						}
 						new_line;
 					GrutaVestibulo:
 						if (~~Baron.is_burning) {
-							print "Los huesos del suelo crujen destrozados bajo tus botas.";
+							print "Los huesos del suelo crujen destrozados a tu paso.";
 							new_line;
 						}
 						GrutaPasadizo.is_leading_inwards = true;
@@ -1168,7 +1161,7 @@ Indoors GrutaPasadizo
 		description [;
 			Tutorial.hint_keywords_b();
 			if (~~Baron.is_burning) {
-				print "[if:self has visited]El [self](corredor) es[else]Entras en un [self](corredor)[fi] largo y estrecho, con[if:self has visited] un[fi] suelo de [Cenizas](ceniza) compactada y un techo tan bajo que te obliga a inclinarte para poder pasar. Desde la [DirGrutaSalon](guarida) del dragón, en el extremo del [self](pasillo), llegan oleadas de un calor infernal que";
+				print "[if:self has visited]El corredor es[else]Entras en un corredor[fi] largo y estrecho, con[if:self has visited] un[fi] suelo de [Cenizas](ceniza) compactada y un techo tan bajo que te obliga a inclinarte. Desde la [DirGrutaSalon](guarida) del dragón, en el extremo del pasillo, llegan oleadas de un calor infernal que";
 				if (self.is_leading_inwards && Yelmo has worn) {
 					print " se cuelan entre las rendijas [del Yelmo], abrasándote los ojos,";
 				} else if (self.is_leading_inwards) {
@@ -1176,7 +1169,7 @@ Indoors GrutaPasadizo
 				} else {
 					print " te abrasan la espalda";
 				}
-				print " y provocan que estés empapado en sudor dentro de tu [Armadura](armadura). [El DirGrutaVestibulo] se antoja ahora fresco en comparación.";
+				print " y provocan que estés empapado en sudor dentro de la [Armadura](armadura). [El DirGrutaVestibulo] se antoja ahora fresco en comparación.";
 			} else {
 				print "El mundo a tu alrededor es sólo un bosquejo agónico bajo [el GrutaBaronFuego]. [in_obj](Adentro): el dragón. [out_obj](Afuera): la salida.";
 			}
@@ -1315,7 +1308,7 @@ AdjacentRoom DirGrutaSalon
 				if (self.is_hesitating) {
 					self.is_hesitating = false;
 					Tutorial.hint_hesitations();
-					print "La entrada al cubil parece la entrada misma a los avernos. Existen multitud de leyendas acerca de cómo el monstruo llegó a vivir ahí, pero lo cierto es que nadie lo sabe con certeza. Algunos sabios afirman que el dragón es tan antiguo como la propia Tierra y que ha habitado en las profundidades de la gruta desde el origen de los tiempos.
+					print "La entrada al [self](cubil) parece la entrada misma a los avernos. Existen multitud de leyendas acerca de cómo el monstruo llegó a vivir ahí, pero lo cierto es que nadie lo sabe con certeza. Algunos sabios afirman que el dragón es tan antiguo como la propia Tierra y que ha habitado en las profundidades de la gruta desde el origen de los tiempos.
 					^^
 					Por un momento dudas, preguntándote si tienes realmente el valor necesario para dar el paso.";
 					new_line;
@@ -1430,6 +1423,9 @@ Character -> Dragon "dragón"
 		adjectives 'carmesi' 'roja' 'rojo',
 		article "el",
 		!!
+		counter 0,
+		tried_to_talk_to_again false,
+		!!
 		before [;
 			Attack:
 				if (Baron.is_blind) {
@@ -1449,7 +1445,7 @@ Character -> Dragon "dragón"
 						print " el puño dispuesto a intentar cegarlo";
 					}
 					print ". Entonces la cola del dragón se agita y te golpea en un costado, enviándote volando por la gruta en un vertiginoso arco que finaliza abruptamente con tu cabeza impactando contra la pared";
-					!! el jugador no podría leer esto a menos que tenga el
+					!! El jugador no podría leer esto a menos que tenga el
 					!! casco puesto (si no, el Barón hubiese quedado cegado).
 					!! Aún así se añade la comprobación para asegurar la
 					!! coherencia del texto ante posibles errores o cambios de
@@ -1464,11 +1460,21 @@ Character -> Dragon "dragón"
 					new_line;
 					return true;
 				} else {
-					print "—¡Escucha bien, bestia! —gritas[if:IndirectlyContains(player, Percunos)], alzando el hacha con ambas manos[else], sorprendido de la seguridad de tus propias palabras[fi]. —¡Ha llegado tu hora! —y, por un instante, la estampa es la de un auténtico caballero sacado de un cuento de hadas; el enfrentamiento del héroe contra el mal.
-					^^
-					El [self](monstruo) te observa impasible mientras cargas contra él. A pesar de sus dientes largos como una vara, te lanzas a la carrera sin pensártelo, espoleado por una rabia suicida. En ese momento";
 					give self on; !! detiene el daemon durante el prox. turno
-					return self.spits_fire_on_attack();
+					self.spits_fire();
+					print "—¡Escucha bien, bestia! —gritas[if:IndirectlyContains(player, Percunos)], alzando el hacha con ambas manos[else], sorprendido de la seguridad de tus propias palabras[fi]. —¡Ha llegado tu hora! —y, por un instante, la estampa es la de un auténtico caballero sacado de un cuento de hadas. El enfrentamiento del héroe contra el mal.
+					^^
+					El [self](monstruo) te observa impasible mientras cargas contra él. A pesar de sus dientes largos como una vara, te lanzas a la carrera sin pensártelo, espoleado por una rabia suicida. En ese momento, veloz y repentino como un relámpago, un surtidor de fuego estalla desde el interior de su boca y te envuelve por completo.";
+					if (Baron.is_blind) {
+						print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
+						new_line;
+					} else {
+						print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido un dolor semejante.";
+						new_line;
+						new_line;
+						GrutaSalon.description();
+					}
+					return true;
 				}
 			DefaultAction:
 				if (Baron.is_blind) {
@@ -1488,29 +1494,22 @@ Character -> Dragon "dragón"
 				give self on; !! detiene el daemon durante el prox. turno
 				return ChoiceSetManager.start(ConversacionDragon);
 		],
-		counter 0,
 		daemon [;
-			!! El daemon gestiona el movimiento del dragón, con sus intentos
-			!! por incinerar o comerse al Barón:
+			!! El daemon gestiona el movimiento del dragón, en su intento por
+			!! incinerar o comerse al Barón. Es posible interrumpir su ejecución
+			!! durante un turno asignando el atributo `on` al dragón:
 			if (self has on) {
 				give self ~on;
 				return true;
 			}
-			if (location == GrutaSalon
-				&& self.counter == 3
-				&& ~~Baron.is_blind) {
-				self.counter++;
-				return true;
-			} else {
-				new_line;
-				return self.reacts();
-			}
+			return self.acts();
 		],
-		description [;
+		description [
+			skip_new_line;
 			if (self hasnt described && ~~Baron.is_burning) {
 				print "Si bien creías haberte preparado para lo peor, no estabas preparado para esto.
 				^^
-				Es grande, desde luego —calculas al menos una treintena de varas desde la punta de la cola hasta la testa—, y sus escamas rojas refulgen con el mismo brillo del acero endurecido. Cualquiera pensaría que ningún arma corriente podría atravesarlas. Pero ya te has enfrentado a monstruos colosales antes y";
+				Es grande, desde luego —calculas al menos una treintena de varas desde la punta de la cola hasta la testa—, y sus escamas rojas refulgen con el mismo brillo del acero endurecido. Cualquiera pensaría que ningún arma corriente podría atravesarlas, pero ya te has enfrentado a monstruos colosales antes y";
 				if (IndirectlyContains(player, Percunos)) {
 					print " el tuyo no es un hacha ordinario";
 				} else {
@@ -1519,122 +1518,148 @@ Character -> Dragon "dragón"
 				print ". Sin embargo… el *fuego*. Ése que se adivina en sus ojos y en su garganta, el baile de llamas tras la blanca hilera de dientes afilados. Es ese incendio lo que imbuye tu alma de un horror insoportable.
 				^^
 				No se trata de otro engendro escupe-fuego cualquiera, ni tiene nada que ver con un elemental. No, esto no es natural. Es mucho más aterrador, más insondable, más perverso. Sabes muy bien que ese fuego no podrá ser sometido en absoluto, ningún hombre podrá jamás doblegarlo y obligarlo a ceder a su voluntad; pues lo reconoces y cualquier otra persona lo reconocería también. Este monstruo, esta bestia, este fuego abrasador habita en el rincón más profundo del alma de todos nosotros. Siempre lo ha hecho y siempre lo hará. Y no hay modo alguno de derrotarlo.";
+				new_line;
 			} else {
-				give self on;
-				return self.reacts();
+				give self on; !! detiene el daemon durante el prox. turno
+				skip_new_line = true;
+				self.acts(skip_new_line);
 			}
-			new_line;
 			return true;
 		],
-		spits_fire_on_attack [;
-			return self.spits_fire(1);
-		],
-		spits_fire_on_talk_to [;
-			give self on; !! detiene el daemon durante el prox. turno
-			return self.spits_fire(2);
-		],
-		tried_to_talk_to_again false,
 	private
-		reacts [;
+		acts [ skip_new_line;
+			!! Se incrementa el contador interno hasta que el dragón consigue prender
+			!! fuego al barón:
+			if (~~Baron.is_burning) {
+				self.counter++;
+			}
+
+			!! La acción del dragón dependerá de la localidad actual:
 			switch (location) {
 				GrutaPasadizo:
-					if (self.counter == 1) {
-						self.counter = 2;
-						print "El monstruo lanza un chillido estremecedor que perfora tus oídos. No está dispuesto a dejarte escapar.";
-						new_line;
-						return true;
-					} else if (self.counter == 2) {
-						self.counter = 3;
-						print "Distingues la figura [del self] más allá de la abertura del fondo del pasadizo. Ves su cabeza. Ves el baile de las llamas tras sus afilados dientes blancos.";
-						new_line;
-						return true;
-					} else if (self.counter == 3) {
-						self.counter = 4;
-						self.spits_fire();
-						Utils.clear_hyperlinks();
-						print "Un torrente de [GrutaBaronFuego] estalla al fondo del pasadizo. Corres desesperadamente hacia el [GrutaVestibulo](vestíbulo) pero las llamas corren mucho más rápido que tú.";
-						if (Baron.is_blind) {
-							move GrutaLuz to GrutaVestibulo;
-							print " Tu rostro desprotegido se calcina en la llamarada. Una luz deslumbrante y el dolor más intenso que nunca has conocido lo ocupan todo.";
-						} else {
-							print " A pesar de que el yelmo y la armadura te protegen de lo peor de la llamarada, tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
+					if (~~Baron.is_burning) {
+						if (self.counter == 2) {
+							self.conditional_new_line(skip_new_line);
+							print "El monstruo lanza un chillido estremecedor que perfora tus oídos. No está dispuesto a dejarte escapar.";
+							new_line;
+							return true;
+						} else if (self.counter == 3) {
+							self.conditional_new_line(skip_new_line);
+							print "Distingues la figura [del self] más allá de la abertura del fondo del pasadizo. Ves su cabeza. Ves el baile de las llamas tras sus afilados dientes blancos.";
+							new_line;
+							return true;
+						} else if (self.counter > 3) {
+							self.spits_fire();
+							Utils.clear_hyperlinks();
+							PlayerTo(GrutaVestibulo, 1);
+							self.conditional_new_line(skip_new_line);
+							print "Un torrente de [GrutaBaronFuego] estalla al fondo del pasadizo. Corres desesperadamente hacia el [GrutaVestibulo](vestíbulo) pero las llamas corren mucho más rápido que tú.";
+							if (Baron.is_blind) {
+								print " Tu rostro desprotegido se calcina en la llamarada. Una luz deslumbrante y el dolor más intenso que nunca has conocido lo ocupan todo.";
+							} else {
+								print " A pesar de que el yelmo y la armadura te protegen de lo peor de la llamarada, tu cuerpo empiza a arder. Nunca antes habías sentido un dolor semejante.";
+							}
+							new_line;
+							return true;
 						}
-						PlayerTo(GrutaVestibulo, 1);
-						new_line;
-						return true;
 					}
-				GrutaSalon:
-					if (self.counter == 0) {
-						self.counter = 1;
-						print "La mole de escamas rojas [del self] yace en el suelo en mitad de la cueva, observándote fijamente con su malévolo ojo amarillo.";
-						new_line;
-						return true;
-					} else if (self.counter == 1) {
-						self.counter = 2;
-						print "[El self] se incorpora con una agilidad sorprendente para su corpulencia, provocando un temblor que sacude toda la [GrutaSalon](cueva) y que a punto está de tirarte al suelo. Sólo gracias a tus rápidos reflejos y a décadas de experiencia llevando armaduras pesadas eres capaz de mantener el equilibrio.";
-						new_line;
-						return true;
-					} else if (self.counter == 2) {
-						self.counter = 3;
-						self.spits_fire();
-						print "Un inmenso chorro de fuego sale escupido desde la boca [del self] y te alcanza antes siquiera de que puedas pensar en apartarte.";
-						if (Baron.is_blind) {
-							print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
-						} else {
-							print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
+				GrutaVestibulo:
+					if (~~Baron.is_burning) {
+						if (self.counter == 3) {
+							self.conditional_new_line(skip_new_line);
+							print "Un estruendo ensordecedor hace temblar las paredes de la cueva. El olor a azufre es más intenso de pronto y hace difícil respirar.";
+							new_line;
+							return true;
+						} else if (self.counter == 4) {
+							self.conditional_new_line(skip_new_line);
+							print "Ves un fogonazo a tu espalda. El [DirGrutaPasadizo](pasillo) que conduce a la guarida del dragón se ha llenado de pronto de un torrente de fuego que se propaga a toda velocidad hacia el vestíbulo, como un tentáculo ardiente en busca de su presa.";
+							new_line;
+							return true;
+						} else if (self.counter >= 5) {
+							self.spits_fire();
+							self.conditional_new_line(skip_new_line);
+							print "Y de nuevo el alarido sobrenatural y aterrador de la bestia, tan sólo un instante antes de que la tempestad de llamas estalle en el interior del vestíbulo. No hay escapatoria.";
+							if (Baron.is_blind) {
+								print " Tu rostro desprotegido se calcina en la llamarada. Una luz deslumbrante y el dolor más intenso que nunca has conocido lo ocupan todo.";
+							} else {
+								print " A pesar de que el yelmo y la armadura te protegen de lo peor de la llamarada, tu cuerpo empiza a arder. El dolor que sucede al fuego supera cualquier límite concebible.";
+							}
+							new_line;
+							return true;
 						}
-						new_line;
-						return true;
-					} else if (self.counter >= 3) {
-						StopDaemon(self);
-						if (Baron.is_blind) {							
-							print "No llegas a verlo acercarse a ti ni a sentirlo a tu lado. No ves ni sientes nada más que blanco y dolor. Un dolor blanco mientras sus dientes atraviesan tu armadura con la misma facilidad con la que atravesarían la piel de una manzana. Algo cruje de forma repugnante y un torrente de sangre te inunda la boca.
+					}
+				default:
+					!! GrutaSalon
+					if (Baron.is_burning) {
+						self.conditional_new_line(skip_new_line);
+						if (Baron.is_blind) {
+							print "No llegas a verlo acercarte a ti ni a sentirlo a tu lado. No ves ni sientes más que blanco y dolor. Un desgarro blanco mientras sus dientes atraviesan tu armadura con la misma facilidad con la que atravesarían la piel de una manzana. Algo cruje de manera repugnante y un torrente de sangre te inunda la boca.
 							^^
 							Después incluso el blanco y el dolor desaparecen.";
 						} else {
-							print "Desorientado por el torbellino de llamas pierdes de vista al monstruo por un momento. Cuando alcanzas a ver de nuevo su borrón rojo lo tienes ya encima y es demasiado tarde para reaccionar; sus dientes atraviesan la armadura con la misma facilidad con la que atravesarían la piel de una manzana. Hay un crujido repugnante y un torrente de sangre te inunda la boca.
+							print "Desorientado por el torbellino de llamas pierdes de vista al monstruo por un momento. Cuando alcanzas a ver de nuevo su borrón rojo lo tienes ya encima y es demasiado tarde para reaccionar; sus dientes atraviesan tu armadura con la misma facilidad con la que atravesarían la piel de una manzana. Hay un crujido repugnante y un torrente de sangre te inunda la boca.
 							^^
 							Después no hay nada más.";
 						}
-						give LogroYEseRuido on;
 						!! TODO - fin escena 1
 						new_line;
 						return true;
-					}
+					} else {
+						if (self.counter == 1) {
+							self.conditional_new_line(skip_new_line);
+							print "La mole de escamas rojas [del self] yace en el suelo en mitad de la cueva, observándote fijamente con su malévolo ojo amarillo.";
+							new_line;
+							return true;
+						} else if (self.counter == 2) {
+							self.conditional_new_line(skip_new_line);
+							print "[El self] se incorpora con una agilidad sorprendente para su corpulencia, provocando un temblor que sacude toda la cueva y que a punto está de tirarte al suelo. Mantienes el equilibrio únicamente gracias a tus rápidos reflejos y a décadas de experiencia enfundado en una armadura pesada.";
+							new_line;
+							return true;
+						} else if (self.counter == 3) {
+							self.conditional_new_line(skip_new_line);
+							print "El cuello [del self] se ilumina en un efecto terrible y hermoso. Como si una aurora estuviese creciendo en el interior de su garganta.";
+							new_line;
+							return true;
+						} else if (self.counter == 4) {
+							self.spits_fire();
+							self.conditional_new_line(skip_new_line);
+							print "Un inmenso chorro de fuego sale escupido desde la boca de la [self](bestia) y te alcanza antes siquiera de que puedas pensar en apartarte.";
+							if (Baron.is_blind) {
+								print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
+							} else {
+								print " El yelmo y la armadura te protegen de la peor parte de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido un dolor semejante.";
+							}
+							new_line;
+							return true;
+						}
+					} 
 			}
 		],
-		spits_fire [ context;
+		conditional_new_line [ skip_new_line;
+			if (~~skip_new_line) {
+				new_line;
+			}
+		],
+		spits_fire [;
 			!! Actualiza estado del Barón
 			if (parent(Yelmo) ~= player || Yelmo hasnt worn) {
 				Baron.is_blind = true;
 			}
 			Baron.is_burning = true;
+
 			!! Actualiza estado del Dragón
-			if (self.counter < 3) {
-				self.counter = 3;
-			}
-			!! Actualiza estado del resto del mundo
-			move GrutaSalonFuego to Limbo;
-			move GrutaBaronFuego to Baron;
 			ConversacionDragon.remove_choice(DragonAmenazar);
 			ConversacionDragon.remove_choice(DragonRazonar);
 			ConversacionDragon.add_choice(DragonAmenazarOtraVez);
 			ConversacionDragon.add_choice(DragonPedirClemencia);
-			!! TODO - iniciar daemon del fuego
-			if (context == 1 or 2) {
-				!! Descripción al atacar/hablar
-				print ", veloz y repentino como un relámpago, un surtidor de fuego estalla desde el interior de su boca y te envuelve por completo.";
-				if (Baron.is_blind) {
-					print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
-				} else {
-					print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido dolor semejante.";
-				}
-				new_line;
-				if (~~Baron.is_blind) {
-					new_line;
-					GrutaSalon.description();
-				}
-				return true;
+
+			!! Actualiza estado del resto del mundo
+			move GrutaSalonFuego to Limbo;
+			move GrutaBaronFuego to Baron;
+			move GrutaLuz to GrutaVestibulo;
+
+			if (~~Baron.is_blind) {
+				!! TODO - iniciar daemon del fuego
 			}
 		],
 ;
@@ -1767,7 +1792,7 @@ ChoiceSetItem DragonAmenazar
 			print "—¡Escucha bien, [Dragon](bestia)! —gritas, sorprendido de la seguridad de tus propias palabras. —¡Ha llegado tu hora! —y, por un instante, la estampa es la de un auténtico caballero sacado de un cuento de hadas; el enfrentamiento del héroe contra el mal.
 			^^
 			Un instante después";
-			return Dragon.spits_fire_on_talk_to();
+			return true;
 		],
 		relatives DragonRazonar,
 ;
@@ -1791,7 +1816,7 @@ ChoiceSetItem DragonRazonar
 			print "—¡No deberías estar aquí, [Dragon](bestia)! —gritas, tratando de dar a tus palabras una seguridad que en realidad no sientes. —Tienes… tienes que marcharte. ¡Tienes que a-
 			^^
 			La última frase queda interrumpida cuando";
-			return Dragon.spits_fire_on_talk_to();
+			return true;
 		],
 		relatives DragonAmenazar,
 ;

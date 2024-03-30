@@ -250,9 +250,6 @@ Item	-> GrutaPuertas
 		],
 ;
 
-!! @GrutaPuertasGrabado
-Atrezzo	-> -> GrutaPuertasGrabado;
-
 !! @GrutaVestibuloFuego
 Atrezzo	-> GrutaVestibuloFuego "fuego"
  class	Background,
@@ -357,54 +354,3 @@ AdjacentRoom	DirGrutaDragon
 		PC_hesitates true,
 ;
 
-!! @GrutaDragon
-Indoors	GrutaDragon
-		initial [;
-			if (self hasnt visited) {
-				Baron.is_running_away = true;
-				StartDaemon(Dragon);
-			}
-		],
-;
-
-!! @Dragon
-Character	-> Dragon "dragón"
-		daemon [;
-			!! El daemon gestiona el movimiento del dragón, con sus intentos
-			!! por incinerar o comerse al Barón:
-			switch (location) {
-				GrutaVestibulo:
-					if (~~Baron.is_burning()) {
-						if (self.counter == 2) {
-							new_line;
-							print "Un estruendo ensordecedor hace temblar las paredes de la cueva. El olor a azufre es más intenso de pronto. Cuesta respirar.";
-							new_line;
-						} else if (self.counter == 3) {
-							new_line;
-							print "Ves un fogonazo de luz a tu espalda. El [DirGrutaPasadizo](pasillo) que conduce a la guarida del dragón se ha llenado de pronto con un torrente de fuego que se propaga a toda velocidad hacia el vestíbulo, como un tentáculo ardiente en busca de su presa.";
-							new_line;
-						} else if (self.counter >= 4) {
-							self.spit_fire();
-							new_line;
-							print "Y de nuevo el alarido sobrenatural y aterrador de la bestia, tan sólo un instante antes de que la tempestad de llamas estalle en el interior del vestíbulo. No hay escapatoria. El dolor que sucede [al Fuego] supera cualquier límite concebible.";
-							new_line;
-						}
-					}
-			}
-			self.counter++;
-			return true;
-		],
-		!!------------------
-		counter 0,
- private
-		spit_fire [;
-			StartDaemon(Baron);
-			move GrutaDragonFuego to Limbo;
-			move GrutaPasadizoFuego to Limbo;
-			move GrutaVestibuloFuego to Limbo;
-			move Fuego to Baron;
-			Baron.is_burning = true;
-			if (self.counter < 3) self.counter = 3;
-		],
-		!!------------------
-;
