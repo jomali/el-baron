@@ -15,37 +15,34 @@
 !!
 !!==============================================================================
 !!
-!!	Archivo:		baron.inf
+!!	Archivo:			baron.inf
 !!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2022/XX/XX
+!!	Versión:			0.0
+!!	Fecha:				2022/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Este archivo forma parte de la ficción interactiva EL BARÓN.
 !!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
 !!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
 !!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2004, Victor Gijsbers
-!!	Copyright (c) 2022, J. Francisco Martín
+!!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -977,7 +974,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = Abismo;
+	location = GrutaSalon; ! Abismo
 	Storyteller.start_scene(1);
 	print "^^";
 
@@ -993,7 +990,7 @@ Include "vorple-screen-effects.h";
 !!	@returns {boolean} Falso para indicar al sistema que añada todos los
 !!		objetos que suelen estar por defecto al alcance, o verdadero para
 !!		indicar que no se debe añadir nada más al alcance
-!!	@version 2019/06/18
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 [ InScope person
 	item;
@@ -1002,7 +999,7 @@ Include "vorple-screen-effects.h";
 	!! En la oscuridad, se mueven al foco todos aquellos objetos que hayan sido
 	!! manipulados ya previamente por el PC:
 	if ((person == player) && (location == thedark)) {
-		objectloop(item in parent(self))
+		objectloop(item in parent(player))
 			if (item has moved) PlaceInScope(item);
 	}
 
