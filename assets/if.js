@@ -55,7 +55,10 @@ var ifjs = (function (controller) {
   };
 
   const clearScreen = () => {
-    // TODO
+    const elements = Array.from(
+      document.getElementsByClassName("turn")
+    );
+    elements.forEach((element) => element.remove());    
   };
 
   const keyDown = (event) => {

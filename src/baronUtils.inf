@@ -107,9 +107,9 @@ Object Utils
 		!! <>	`baronLangLM.Miscellany#10`: captura la entrada de una línea en
 		!!		blanco y ejecuta el `callback`, interrumpiendo el flujo
 		!!		ordinario.
-		!! <>	`GamePreRoutine`: captura cualquier comando conocido y lo trata
-		!!		como un sinónimo de pulsación de INTRO, interrumpiendo el flujo
-		!!		ordinario del comando.
+		!! <>	`BeforeParsing`: captura cualquier comando conocido y lo trata
+		!!		como un sinónimo de pulsación de INTRO, interrumpiendo el flujo 
+		!!		ordinario de la aplicación.
 		!! <>	`MyVorplePrompt`: cambia el inductor para indicar al usuario que
 		!!		la historia ha quedado a la espera de una pulsación de INTRO para
 		!!		continuar.
@@ -201,16 +201,22 @@ Object Utils
 		!!	@version 1.0 - 2019/07/15
 		!!----------------------------------------------------------------------
 		erase_window [;
-		    #Ifdef TARGET_ZCODE;
-		    @erase_window -1;
-		    #Ifnot; ! TARGET_GLULX
-		    if (gg_quotewin) {
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.clearScreen();
+			"));
+			#Ifnot;
+		  #Ifdef TARGET_ZCODE;
+		  @erase_window -1;
+		  #Ifnot; ! TARGET_GLULX
+		  if (gg_quotewin) {
 				glk($0024, gg_quotewin, 0); ! close_window
 				gg_quotewin = 0;
-		    }
-		    glk($002A, gg_mainwin); ! window_clear
-		    if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
-		    #Endif;
+		  }
+		  glk($002A, gg_mainwin); ! window_clear
+		  if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
+		  #Endif;
+			#Endif; ! USE_VORPLE;
 			return true;
 		],
 		!!----------------------------------------------------------------------
