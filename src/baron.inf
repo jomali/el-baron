@@ -3,11 +3,6 @@
 !% -S
 !% -s
 !% +language_name=Spanish
-!% $MAX_OBJ_PROP_COUNT=100
-!% $MAX_PROP_TABLE_SIZE=100000
-!% $MAX_STATIC_DATA=25000
-!% $MAX_VERBS=160
-!% $MAX_VERBSPACE=4800
 
 !!==============================================================================
 !!
@@ -732,16 +727,6 @@ Include "vorple-screen-effects.h";
 !!	6)	Puntos de entrada de la librería Inform y del resto de extensiones
 !!
 !!------------------------------------------------------------------------------
-!!	<>	AfterPrompt()
-!!	<>	BeforeParsing()
-!!	<>	BeforeSettingTextStyle()
-!!	<>	GamePostRoutine()
-!!	<>	Initialise()
-!!	<>	InScope()
-!!	<>	MyVorplePrompt()
-!!	<>	PrintVerb()
-!!	<>	UnknownVerb()
-!!------------------------------------------------------------------------------
 
 !!------------------------------------------------------------------------------
 !! Punto de entrada invocado justo tras la impresión del inductor (prompt); es
@@ -762,14 +747,9 @@ Include "vorple-screen-effects.h";
 !! puede manipular estas tablas libremente mientras permanezcan consistentes la
 !! una con la otra, y puede dejar el contador de palabras en cualquier punto.
 !!
-!!	@version 2023/03/04
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
-	if (PulsaIntroParaContinuar.fixed) {
-		parse-->1 = 'temp';
-		num_words = 1;
-	}
-
 	Utils.clear_hyperlinks();
 	#Ifdef CHOICE_SETS;
 	ChoiceSetManager.run();
@@ -847,6 +827,22 @@ Include "vorple-screen-effects.h";
 	return false;
 ];
 #Endif; ! TEXT_STYLES;
+
+!!------------------------------------------------------------------------------
+!! Una suerte de super-regla `before`, que se aplica a todas las acciones de la
+!! aplicación.
+!!
+!! Cuando la aplicación queda a la espera de una pulsación de INTRO para
+!! continuar, captura todos los comandos conocidos e interrumpe el flujo
+!! ordinario de ejecución.
+!!
+!!	@returns {boolean} Falso para permitir que el sistema continúe con la
+!!		ejecución normal, o verdadero para interrumpir el flujo de ejecución
+!!	@version 2024/03/30
+!!------------------------------------------------------------------------------
+[ GamePreRoutine;
+	return PressIntroSub();
+];
 
 !!------------------------------------------------------------------------------
 !! Inicializaciones del relato. Esta rutina es obligatoria y, entre otras
@@ -974,7 +970,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = GrutaSalon; ! Abismo
+	location = Abismo;
 	Storyteller.start_scene(1);
 	print "^^";
 
@@ -1016,12 +1012,12 @@ Include "vorple-screen-effects.h";
 !!	@returns {boolean} Verdadero si se imprime el inductor definido en la
 !!		constante PS1 (si es que existe y está bien definido). Falso en caso
 !!		contrario
-!!	@version 2023/03/26
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 #Ifdef TARGET_GLULX;
 #Ifdef USE_VORPLE;
 [ MyVorplePrompt;
-	if (PulsaIntroParaContinuar.fixed) {
+	if (Utils.on_press_intro ~= 0) {
 		VorpleExecuteJavaScriptCommand(BuildCommand("
 			ifjs.pressIntroToContinuePrompt();
 		"));
@@ -1067,10 +1063,14 @@ Include "vorple-screen-effects.h";
 !!	@returns {boolean} Falso para permitir que el sistema continúe con la
 !!		ejecución normal e imprima un mensaje de error, o un valor de
 !!		diccionario del verbo a utilizar en lugar del verbo desconocido
-!!	@version 2019/06/18
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 [ UnknownVerb
 	obj;
+	if (Utils.on_press_intro ~= 0) {
+		return 'pressAnyKey.verb';
+	}
+
 	obj = ParsingPreprocessor.get_selected_object();
 	if (TestScope(obj, player)) {
 		verb_wordnum = 0;
@@ -1096,12 +1096,27 @@ Include "SpanishEG.h";
 !! Gramática propia de la obra:
 Include "baronGrammar.inf";
 
-Verb meta 'temp'
-	*								-> Temp
-;
 
-[ TempSub;
-	return Utils.press_intro_to_continue_lock();
+Verb meta 'pressAnyKey.verb' * -> PressIntro;
+
+[ PressIntroSub
+	callback;
+	if (Utils.on_press_intro ~= 0) {
+		#Ifdef USE_VORPLE;
+		VorpleChangeLastCommand("");
+		VorpleRemoveLastCommandInHistory();
+		VorpleExecuteJavaScriptCommand(BuildCommand("
+			ifjs.clearLastInput();
+		"));
+		#Endif; ! USE_VORPLE
+
+		callback = Utils.on_press_intro;
+		Utils.on_press_intro = 0;
+		callback();
+		return true;
+	} else {
+		return false;
+	}
 ];
 
 

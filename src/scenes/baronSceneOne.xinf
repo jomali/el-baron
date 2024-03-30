@@ -37,13 +37,46 @@
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
+!!
+!!	TABLA DE CONTENIDOS
+!!
+!!	0)	Preámbulo
+!!	1)	En el abismo
+!!	2)	Vestíbulo de la gruta
+!!	3)	Un pequeño pasadizo
+!!	4)	La guarida del dragón
+!!
+!!------------------------------------------------------------------------------
 
 
 !!==============================================================================
 !!
-!!	0)
+!!	0)	Preámbulo
 !!
 !!------------------------------------------------------------------------------
+
+!! @FinalEscena1
+Room FinalEscena1 "Final de la escena 1",
+	with
+		description [;
+			new_line;
+			print (stressed) "Chi l'anima mi lacera?^
+			Chi m'agita le viscere?^
+			Che strazio, ohimè, che smania!^
+			Che inferno, che terror!^";
+			new_line;
+			print (stressed) "«¿Quién es aquel que lacera mi alma?^
+			¿Quién aquel que tortura mi cuerpo?^
+			¡Qué tormento! ¡Oh! ¡Qué agonía!^
+			¡Qué infierno! ¡Qué terror!»^";
+			new_line;
+			print "De la ópera ~Don Giovanni~^
+			Texto: Lorenzo da Ponte^
+			Música: Wolfgang A. Mozart^";
+			new_line;
+			return true;
+		],
+;
 
 !! @Armadura
 Item Armadura Limbo
@@ -118,9 +151,6 @@ Atrezzo -> GrutaBaronFuego "fuego"
 				return true;
 			}
 		],
-		reset [;
-			move self to Limbo;
-		],
 ;
 
 !! @GrutaLuz
@@ -134,6 +164,34 @@ BlindingLight -> GrutaLuz "luz"
 			return true;
 		],
 	with
+		name_f "claridad" "llama" "luz",
+		name_fp "llamas",
+		name_m "fuego" "fulgor" "resplandor",
+		name_mp "fuegos",
+		gender G_FEMENINO,
+		adjectives "blanca" "blanco",
+		!!
+		description [;
+			if (self hasnt described) {
+				print "Te das cuenta de algo que rompe apenas el vacío blanco. Un pequeño borrón, casi imperceptible, delante tuyo.
+				^^";
+				if (GrutaVestibuloPuertas has described
+					|| GrutaVestibuloPuertasGrabado has described) {
+					print "Al acercarte, la débil sombra va creciendo y cogiendo forma ante tus ojos, hasta convertirse en la talla del hombre de la puerta, ardiendo entre sus llamas de bronce. —¡Disfruta del calor!— te grita sin palabras —Aprenderás a amarlo.
+					^^
+					Quieres responder pero el fuego arrasa tus cuerdas vocales. Tus piernas no pueden sostenerte por más tiempo y te desplomas, fundiéndote en la nada.";
+				} else {
+					print "Al acercarte, la débil sombra va creciendo y cogiendo forma ante tus ojos, hasta convertirse en la silueta de un hombre. Entonces tus piernas ceden, incapaz de sostenerte por más tiempo y te desplomas en el suelo. Intentas gritar, pedir ayuda al desconocido. Pero el fuego arrasa tus cuerdas vocales.
+					^^
+					Te fundes en la luz.";
+				}
+				!! TODO - fin escena 1
+			} else {
+				<<Look>>;
+			}
+			new_line;
+			return true;
+		],
 		react_before [;
 			Drop:
 				return false;
@@ -420,13 +478,6 @@ Indoors Abismo
 		f_to [;
 			<<Enter DirAbismoAdelante>>;
 		],
-		react_before [;
-			default:
-				return Utils.press_intro_to_continue_lock();
-		],
-		reset [;
-			self.counter = 0;
-		],
 	private
 		counter 0,
 ;
@@ -448,11 +499,15 @@ AdjacentRoom -> DirAbismoAdelante
 				^^
 				Aferras el hacha con firmeza y das otro paso adelante, hacia el calor…";
 				new_line;
-				Utils.press_intro_to_continue(GrutaVestibulo);
+				Utils.press_intro_to_continue(self._enter);
 				return true;
 		],
 		!! No necesita descripción. Al intentar examinarlo entran en juego las
 		!! reglas "react_before" de AbismoOscuridad.
+	private
+		_enter [;
+			PlayerTo(GrutaVestibulo);
+		],
 ;
 
 !! @AbismoOscuridad
@@ -509,9 +564,6 @@ Background AbismoResplandor "resplandor" Limbo
 			print "Se trata de una luz parpadeante muy tenue. Llega desde algún lugar más [f_obj].";
 			new_line;
 			return true;
-		],
-		reset [;
-			move self to Limbo;
 		],
 ;
 
@@ -617,9 +669,6 @@ Indoors GrutaVestibulo
 		],
 		out_to [;
 			<<Enter GrutaVestibuloPuertas>>;
-		],
-		reset [;
-			self.tried_to_listen = false;
 		],
 	private
 		tried_to_listen false,
@@ -828,7 +877,7 @@ Atrezzo -> -> GrutaVestibuloMarmolVetas "vetas"
 !! @GrutaVestibuloFuego
 Atrezzo -> GrutaVestibuloFuego "fuego"
 	class
-		Background,
+		Background Fire,
 	has
 		light male,
 	with
@@ -1195,9 +1244,6 @@ Indoors GrutaPasadizo
 		out_to [;
 			<<Enter DirGrutaVestibulo>>;
 		],
-		reset [;
-			self.is_leading_inwards = true;
-		],
 ;
 
 !! @Cenizas
@@ -1232,9 +1278,6 @@ Atrezzo -> Cenizas "cenizas"
 			if (noun == d_obj) {
 				noun = self;
 			}
-		],
-		reset [;
-			self.tried_to_take = false;
 		],
 	private
 		tried_to_take false,
@@ -1283,7 +1326,7 @@ Atrezzo -> GrutaPasadizoFuego "fuego"
 
 !!==============================================================================
 !!
-!!	4)	Enorme salón subterráneo / guarida del dragón
+!!	4)	La guarida del dragón
 !!
 !!------------------------------------------------------------------------------
 
@@ -1335,9 +1378,6 @@ AdjacentRoom DirGrutaSalon
 				}
 				new_line;
 				return self.AdjacentRoom::before();
-		],
-		reset [;
-			self.is_hesitating = true;
 		],
 	private
 		is_hesitating true,
@@ -1466,7 +1506,7 @@ Character -> Dragon "dragón"
 					^^
 					El [self](monstruo) te observa impasible mientras cargas contra él. A pesar de sus dientes largos como una vara, te lanzas a la carrera sin pensártelo, espoleado por una rabia suicida. En ese momento, veloz y repentino como un relámpago, un surtidor de fuego estalla desde el interior de su boca y te envuelve por completo.";
 					if (Baron.is_blind) {
-						print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
+						print " Tu rostro desprotegido se calcina en la llamarada. Ardes entre una luz deslumbrante y el dolor más intenso que nunca has conocido.";
 						new_line;
 					} else {
 						print " El yelmo y la armadura te protegen de lo peor de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido un dolor semejante.";
@@ -1555,7 +1595,7 @@ Character -> Dragon "dragón"
 							self.conditional_new_line(skip_new_line);
 							print "Un torrente de [GrutaBaronFuego] estalla al fondo del pasadizo. Corres desesperadamente hacia el [GrutaVestibulo](vestíbulo) pero las llamas corren mucho más rápido que tú.";
 							if (Baron.is_blind) {
-								print " Tu rostro desprotegido se calcina en la llamarada. Una luz deslumbrante y el dolor más intenso que nunca has conocido lo ocupan todo.";
+								print " Tu rostro desprotegido se calcina en la llamarada. Ardes entre una luz deslumbrante y el dolor más intenso que nunca has conocido.";
 							} else {
 								print " A pesar de que el yelmo y la armadura te protegen de lo peor de la llamarada, tu cuerpo empiza a arder. Nunca antes habías sentido un dolor semejante.";
 							}
@@ -1580,7 +1620,7 @@ Character -> Dragon "dragón"
 							self.conditional_new_line(skip_new_line);
 							print "Y de nuevo el alarido sobrenatural y aterrador de la bestia, tan sólo un instante antes de que la tempestad de llamas estalle en el interior del vestíbulo. No hay escapatoria.";
 							if (Baron.is_blind) {
-								print " Tu rostro desprotegido se calcina en la llamarada. Una luz deslumbrante y el dolor más intenso que nunca has conocido lo ocupan todo.";
+								print " Tu rostro desprotegido se calcina en la llamarada. Ardes entre una luz deslumbrante y el dolor más intenso que nunca has conocido.";
 							} else {
 								print " A pesar de que el yelmo y la armadura te protegen de lo peor de la llamarada, tu cuerpo empiza a arder. El dolor que sucede al fuego supera cualquier límite concebible.";
 							}
@@ -1625,7 +1665,7 @@ Character -> Dragon "dragón"
 							self.conditional_new_line(skip_new_line);
 							print "Un inmenso chorro de fuego sale escupido desde la boca de la [self](bestia) y te alcanza antes siquiera de que puedas pensar en apartarte.";
 							if (Baron.is_blind) {
-								print " Tu rostro desprotegido se calcina en la llamarada. El dolor y un color blanco perfecto lo ocupan todo.";
+								print " Tu rostro desprotegido se calcina en la llamarada. Ardes entre una luz deslumbrante y el dolor más intenso que nunca has conocido.";
 							} else {
 								print " El yelmo y la armadura te protegen de la peor parte de la llamarada, pero tu cuerpo empieza a arder. Nunca antes habías sentido un dolor semejante.";
 							}
@@ -1655,10 +1695,11 @@ Character -> Dragon "dragón"
 
 			!! Actualiza estado del resto del mundo
 			move GrutaSalonFuego to Limbo;
-			move GrutaBaronFuego to Baron;
+			move GrutaVestibuloFuego to Limbo;
 			move GrutaLuz to GrutaVestibulo;
 
 			if (~~Baron.is_blind) {
+				move GrutaBaronFuego to Baron;
 				!! TODO - iniciar daemon del fuego
 			}
 		],
@@ -1734,9 +1775,6 @@ Atrezzo -> GrutaSalonFuego "fuego"
 			print "Llamas gigantescas brotan del suelo allá dónde mires.";
 			new_line;
 			return true;
-		],
-		reset [;
-			move self to GrutaSalon;
 		],
 ;
 

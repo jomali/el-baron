@@ -720,8 +720,10 @@ Class	AdjacentRoom
 !!	@version 2019/09/19
 !!------------------------------------------------------------------------------
 Class	Background
- class	Atrezzo
- with	before [
+	class
+		Atrezzo
+	with
+		before [
 			previous_style;
 			DefaultAction,
 			Examine:

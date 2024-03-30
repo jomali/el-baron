@@ -81,37 +81,6 @@ Array _hyperlinks_utility_array_a buffer LEN_HUGEHUGESTR;
 
 Global _tempDestination = 0;
 
-!! @PulsaIntroParaContinuar
-ChoiceSet PulsaIntroParaContinuar
-	with
-		initial_action [; 
-			self.fixed = true;
-			self.add_choice(EleccionContinuar);
-		],
-;
-
-!! @EleccionContinuar
-ChoiceSetItem EleccionContinuar
- with	entry [
-			previous_style;
-			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
-			print "Pulsa intro para ";
-			PRT__("continuar", 0, REMARKABLE_OBJECT);
-			Utils.set_text_style(previous_style);
-			return true;
-		],
-		keys 'continuar',
-		!!
-		reaction [;
-			VorpleExecuteJavaScriptCommand(BuildCommand("
-				ifjs.clearLastInput();
-			"));
-			PulsaIntroParaContinuar.fixed = false;
-			PlayerTo(_tempDestination);
-			return true;
-		],
-;
-
 Object Utils
 	with
 		!!----------------------------------------------------------------------
@@ -129,6 +98,35 @@ Object Utils
 			"));
 			#Endif; ! USE_VORPLE;
 		],
+		!!----------------------------------------------------------------------
+		!! Define la función dada como `callback` a ejecutar cuando el usuario
+		!! pulse la tecla INTRO. Para reconocer la entrada del usuario y
+		!! ejecutar el `callback` es necesario añadir lógica adicional en las 
+		!! siguientes funciones:
+		!!
+		!! <>	`baronLangLM.Miscellany#10`: captura la entrada de una línea en
+		!!		blanco y ejecuta el `callback`, interrumpiendo el flujo
+		!!		ordinario.
+		!! <>	`GamePreRoutine`: captura cualquier comando conocido y lo trata
+		!!		como un sinónimo de pulsación de INTRO, interrumpiendo el flujo
+		!!		ordinario del comando.
+		!! <>	`MyVorplePrompt`: cambia el inductor para indicar al usuario que
+		!!		la historia ha quedado a la espera de una pulsación de INTRO para
+		!!		continuar.
+		!! <>	`UnknownVerb`: captura cualquier comando desconocido y lo trata
+		!!		como un sinónimo de pulsación de INTRO, en lugar a través de la
+		!!		gestión de errores ordinaria.
+		!!
+		!! Además se introduce una línea de gramática para la nueva acción
+		!! `pressAnyKey.verb`.
+		!!
+		!!	@version 2024/03/30
+		!!----------------------------------------------------------------------
+		press_intro_to_continue [ callback;
+			self.on_press_intro = callback;
+			return true;
+		],
+		on_press_intro 0,
 		!!----------------------------------------------------------------------
 		!! Si es compilación para Vorple, simula el evento de haber dejado de 
 		!! pulsar una de las teclas configuradas para resaltar palabras clave, 
@@ -149,23 +147,6 @@ Object Utils
 
 		
 
-		press_intro_to_continue [ obj
-			hide_choice_inventory;
-			_tempDestination = obj;
-			hide_choice_inventory = true,
-			ChoiceSetManager.start(
-				PulsaIntroParaContinuar, 
-				hide_choice_inventory
-			);
-			return true;
-		],
-		press_intro_to_continue_lock [;
-			if (PulsaIntroParaContinuar.fixed) {
-				VorpleChangeLastCommand("");
-				VorpleRemoveLastCommandInHistory();
-				return EleccionContinuar.reaction();
-			}
-		],
 		!!----------------------------------------------------------------------
 		!! Comprueba si un objeto contenedor/soporte 'obj' tiene capacidad
 		!! suficiente para contener un segundo objeto 'second', pasados ambos

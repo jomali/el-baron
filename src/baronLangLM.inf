@@ -84,7 +84,8 @@ Array _prefill_array buffer 100;
 !!------------------------------------------------------------------------------
 
 Object	LibraryMessages
- with	before [
+	with
+		before [
 			previous_style;
 
 	Answer, Ask, AskFor, Order, Tell:
@@ -194,8 +195,10 @@ Object	LibraryMessages
 				anteriores.";
 			10:
 				!! Mensaje cuando el usuario introduce una linea en blanco.
-				Utils.clear_hyperlinks();
-				<Look>;
+				if (~~PressIntroSub()) {
+					Utils.clear_hyperlinks();
+					<Look>;
+				}
 				InformLibrary.end_turn_sequence();
 				return true;
 			11:
