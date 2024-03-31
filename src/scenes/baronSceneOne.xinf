@@ -535,9 +535,7 @@ BlindingDarkness -> AbismoOscuridad "oscuridad"
 		description [;
 			if (self hasnt described) {
 				move AbismoResplandor to Abismo;
-				print "Te dejas llevar por el abrazo cálido de las [self](sombras). Sólo e inmóvil en mitad de la nada, lejos de obligaciones, de las monótonas rutinas del día a día, de la charlatanería vacía y superficial de la gente y de sus reglas y sus expectativas y sus juicios constantes. Casi desearías abandonar ese mundo y quedarte aquí para siempre.
-				^^
-				Pero no es más que una idea infantil, por supuesto.
+				print "Solo e inmóvil en mitad de la nada, te abandonas al abrazo cálido de las [self](sombras). Lejos de obligaciones. Lejos de las tediosas rutinas del día a día. Lejos de la charlatanería vana y superficial de la gente, y de sus reglas y sus expectativas y sus juicios constantes. Casi desearías dejar atrás ese mundo y quedarte aquí para siempre. Pero no es más que una idea infantil, por supuesto.
 				^^
 				Alcanzas a percibir [un AbismoResplandor] rompiendo apenas la oscuridad.";
 			} else {
@@ -655,17 +653,23 @@ Indoors GrutaVestibulo
 		exits [;
 			if (~~Baron.is_burning) {
 				print "Aparte de la salida bloqueada por las puertas únicamente se puede seguir [f_obj]. Hacia el fuego.";
-			} else {
+			} else if (~~Baron.is_blind) {
 				print "Las [GrutaVestibuloPuertas](puertas:DIRECTION_OBJECT) son la única salida de este infierno.";
+			} else {
+				print "No hay ningún lugar al que ir. Sólo blanco.";
 			}
 			new_line;
 			return true;
 		],
 		f_to [;
-			<<Enter DirGrutaPasadizo>>;
+			return self.in_to();
 		],
 		in_to [;
-			<<Enter DirGrutaPasadizo>>;
+			if (Baron.is_blind) {
+				return false;
+			} else {
+				<<Enter DirGrutaPasadizo>>;
+			}
 		],
 		out_to [;
 			<<Enter GrutaVestibuloPuertas>>;
@@ -767,11 +771,7 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 			TalkTo:
 				!! TODO hablar con hombre mientras estás ardiendo
 				if (ConversacionHombreArdiendo.has_ended()) {
-					print "El hombre parece perder interés en ti. —Pronto. Muy pronto —repite, antes de volver toda su atención de nuevo a sus llamas de metal.";
-					new_line;
-					return true;
-				} else if (ConversacionHombreArdiendo.has_ended()) {
-					print "La figura del hombre tiene toda su atención puesta en su mundo de metal.";
+					print "La [self](figura) guarda silencio. Toda su atención puesta ahora en el infierno de bronce que le consume.";
 					new_line;
 					return true;
 				} else {
@@ -782,22 +782,22 @@ Atrezzo -> -> GrutaVestibuloPuertasGrabado
 				<<Touch obj>>;
 		],
 		description [;
-			if (self hasnt described && ~~Baron.is_burning) {
-				ChoiceSetManager.start(ConversacionHombreArdiendo, true);
-				print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un hombre ardiendo, muestra algo muy distinto; un ansia profundo. Excitación. No agoniza en las llamas de bronce sino que se deleita con ellas.
-				^^
-				Al observarla bajo la luz cambiante de la gruta, la [self](figura) parece contorsionarse lentamente, danzando junto a las sombras. Como si estuviera viva. El efecto es tan sugestivo que por un momento tu mente te traiciona y crea una vocecilla metálica.
-				^^
-				—¡Un compañero nuevo! ¡Vaya sorpresa! —sus inmóviles ojos parecen recorrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Si quieres tu propio hueco vas a tener que buscar bien.";
+			if (~~Baron.is_burning) {
+				if (self hasnt described) {
+					ChoiceSetManager.start(ConversacionHombreArdiendo, true);
+					print "Su rostro, lejos de reflejar la expresión de tormento que cabría esperar de un hombre ardiendo, muestra algo muy distinto; un ansia profundo. Excitación. No agoniza en las llamas de bronce sino que se deleita con ellas.
+					^^
+					Al observarla bajo la luz cambiante de la gruta, la [self](figura) parece contorsionarse lentamente, como si estuviera viva. El efecto es tan sugestivo que por un momento tu mente te traiciona y cree escuchar una vocecilla metálica.
+					^^
+					—¡Un compañero nuevo! ¡Vaya sorpresa! —sus inmóviles ojos parecen recorrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Te va a tocar buscar bien si quieres tu propio sitio.";
+				} else if (ConversacionHombreArdiendo.has_ended()) {
+					print "Perdido ya su interés en ti, el hombre vuelve a tener toda su atención puesta en las llamas de bronce. Su rostro muestra una suerte de intenso deseo en lugar de la expresión de tormento que cabría esperar de un hombre ardiendo.";
+				} else {
+					print "Bajo la luz cambiante de la gruta, la figura parece contorsionarse lentamente en un perturbador efecto óptico. Y aunque ahora guarde silencio sientes como si sus ojos de bronce siguiesen tus movimientos con atención.";
+				}
 			} else {
-				if (~~Baron.is_burning) {
-					print "Bajo la luz cambiante de la gruta, la figura parece cobrar vida y contorsionarse lentamente en un perturbador efecto óptico. ";
-				}
-				print "Su rostro muestra una suerte de intenso deseo en lugar de la expresión de tormento que cabría esperar de un hombre ardiendo.";
-				if (Baron.is_burning) {
-					print " Horrorizado comprendes que tu propia cara debe estar mostrando exactamente lo mismo en este momento.";
-				}
-			}				
+				print "Su rostro muestra una suerte de intenso deseo en lugar de la expresión de tormento que cabría esperar de un hombre ardiendo. Horrorizado comprendes que tu propia cara debe estar mostrando exactamente lo mismo en este momento.";
+			}		
 			new_line;
 			return true;
 		],
@@ -861,7 +861,7 @@ Atrezzo -> -> GrutaVestibuloMarmolVetas "vetas"
 		],
 		description [;
 			if (self hasnt described && ~~Baron.is_burning) {
-				print "Al estudiar las líneas del mármol se apodera de ti el presentimiento de que, de algún modo, esas estrías blancas codifican un significado oculto. Como si bajo el aparente caos se hayase la respuesta a un profundo misterio. Pero al esforzarte por desentrañarlo los patrones comienzan a bailar ante tus ojos; se retuercen y giran y se arremolinan unos con otros.
+				print "Al estudiar las líneas del mármol se apodera de ti el presentimiento de que, de algún modo, esas estrías blancas codifican un significado oculto. Como si bajo el aparente caos se hayase la respuesta a un profundo misterio. Sin embargo, al esforzarte por desentrañarlo los patrones comienzan a bailar ante tus ojos; se retuercen y giran y se arremolinan unos con otros.
 				^^
 				Mareado, tienes que apartar la mirada.";
 			} else if (~~Baron.is_burning) {
@@ -957,6 +957,10 @@ Atrezzo -> GrutaVestibuloHuesos "huesos"
 				print "Son los restos de aquellos que vinieron aquí antes que tú, y no tienes ninguna intención de cargar con recuerdos de su fracaso.";
 				new_line;
 				return true;
+			TalkTo:
+				print "Si pudiesen hablar, estás seguro de que no te gustaría lo que fueran a contar.";
+				new_line;
+				return true;
 		],
 		describe [;
 			new_line;
@@ -988,44 +992,50 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 	with
 		fixed true,
 		final_action [;
-			!!
+			return true;
 		],
 		initial_action [;
 			self.add_choice(EstasVivo);
-			self.add_choice(QuienEres);
+			self.add_choice(AQueHeVenido);
 		],
 		inter_action [;
 			print (string) random(
 				"La figura de bronce parece seguir tus movimientos, como uno de esos retratos que siempre te devuelven la mirada.",
-				"La figura te observa atentamente.",
+				"La figura parece observarte atentamente.",
 				"El hombre de bronce sigue tus movimientos con atención."
 			);
 			new_line;
 			return true;
 		],
-		response [;
-			if (self.counter == 0) {
-				self.counter++;
+		response [ flag;
+			self.counter++;
+			if (self.counter == 1) {
 				self.add_choice(EnfrentadoBestia);
-				if (Yelmo has worn) {
-					print "—Es una auténtica pena. Todos ellos igual de cobardes.";
+				if (Yelmo hasnt worn) {
+					print "—El rostro descubierto, bien —pese a ignorar tu [if:flag]pregunta[else]comentario[fi], percibes una nota de aprobación en la vocecilla estridente—. Mucho mejor que la mayoría de esos cobardes.";
 				} else {
-					print "—El rostro descubierto, bien —ignora tu pregunta, pero percibes una nota de aprobación en la vocecilla estridente—. Mucho mejor que la mayoría de esos cobardes.";
+					print "—Es una auténtica pena —afirma, ignorando tu [if:flag]pregunta[else]comentario[fi]—. Todos ellos igual de cobardes.";
 				}
-			} else {
-				self.counter++;
+			} else if (self.counter == 2) {
 				self.add_choice(ComoVencer);
 				self.remove_choice(EstasVivo);
-				self.remove_choice(QuienEres);
+				self.remove_choice(AQueHeVenido);
 				self.remove_choice(EnfrentadoBestia);
 				print "—Dime, ¿quién se acerca al fuego si tiene miedo a quemarse las pestañas? —escupe con desprecio un pequeño rodamiento de bronce que se pierde en las sombras.
 				^^
-				Le pides/
-				Insistes en que te hable sobre la bestia. Que te cuente cómo es, qué aspecto tiene.
+				[if:flag]Le pides[else]Insistes en[fi] que te hable sobre la bestia. Que te cuente cómo es, qué aspecto tiene.
 				^^
 				—¡Oh, descuida! ¡Lo verás muy pronto!";
-				!! TODO
-				print "Si es que puedes ver algo con esa mierda en la cabeza";
+				if (Yelmo has worn) {
+					print " Si es que puedes ver algo con esa mierda en la cabeza.";
+				}
+			} else {
+				self.end();
+				print "El hombre sonríe, señalando de nuevo los huesos a tus pies.
+				^^
+				—Pregúntale a ellos.
+				^^
+				Y, sin decir nada más, deja de mirarte y vuelve a poner toda su atención en el incendio de metal que le rodea.";
 			}
 			new_line;
 			return true;
@@ -1039,13 +1049,15 @@ ChoiceSetItem EstasVivo
  with	entry [
 			previous_style;
 			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
-			if (ConversacionHombreArdiendo.has_choice(EnfrentadoBestia)) {
+			if (ConversacionHombreArdiendo.has_choice(AQueHeVenido)) {
 				print "—¿Has… has hablado de ";
+				PRT__("verdad", 0, REMARKABLE_OBJECT);
+				print "? ¿Estás vivo?";
 			} else {
-				print "—¿Estás… estás hablado de ";
+				print "—¿Estás… estás hablando de ";
+				PRT__("verdad", 0, REMARKABLE_OBJECT);
+				print "?";
 			}
-			PRT__("verdad", 0, REMARKABLE_OBJECT);
-			print "? ¿Estás vivo?";
 			Utils.set_text_style(previous_style);
 			return true;
 		],
@@ -1054,22 +1066,22 @@ ChoiceSetItem EstasVivo
 		append_choice_set true,
 		final_choice false,
 		reaction [;
-			return ConversacionHombreArdiendo.response();
+			return ConversacionHombreArdiendo.response(true);
 		],
 ;
 
-!! @QuienEres
-ChoiceSetItem QuienEres
+!! @AQueHeVenido
+ChoiceSetItem AQueHeVenido
  with	entry [
 			previous_style;
 			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
-			print "—¿Quién ";
-			PRT__("eres", 0, REMARKABLE_OBJECT);
-			print "?";
+			print "—He venido a acabar con la ";
+			PRT__("bestia", 0, REMARKABLE_OBJECT);
+			print ".";
 			Utils.set_text_style(previous_style);
 			return true;
 		],
-		keys 'eres' 'verdad',
+		keys 'acabar' 'bestia',
 		!!
 		append_choice_set true,
 		final_choice false,
@@ -1083,13 +1095,13 @@ ChoiceSetItem EnfrentadoBestia
  with	entry [
 			previous_style;
 			previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
-			print "—Eso te lo ha hecho la ";
-			PRT__("bestia", 0, REMARKABLE_OBJECT);
+			print "—Eso te lo ha hecho el ";
+			PRT__("dragón", 0, REMARKABLE_OBJECT);
 			print ", ¿no es así?";
 			Utils.set_text_style(previous_style);
 			return true;
 		],
-		keys 'enfrentado' 'bestia' 'dragon' 'monstruo',
+		keys 'dragon',
 		!!
 		append_choice_set true,
 		final_choice false,
@@ -1114,11 +1126,7 @@ ChoiceSetItem ComoVencer
 		append_choice_set false,
 		final_choice true,
 		reaction [;
-			print "El hombre sonríe, señalando de nuevo los huesos a tus pies.
-			^^
-			—Pregúntale a ellos.";
-			new_line;
-			return true;
+			return ConversacionHombreArdiendo.response();
 		],
 ;
 

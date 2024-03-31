@@ -970,7 +970,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = Abismo;
+	location = GrutaVestibulo;
 	Storyteller.start_scene(1);
 	print "^^";
 
