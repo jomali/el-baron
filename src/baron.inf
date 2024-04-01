@@ -750,6 +750,16 @@ Include "vorple-screen-effects.h";
 !!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
+	!! cuando la aplicación queda a la espera de una pulsación de INTRO para
+	!! continuar, transforma la entrada del usuario por el comando de apoyo
+	!! `pressAnyKey.verb` de manera que se fuerce la interrupción del flujo
+	!! ordinario de ejecución (de otro modo, comandos conocidos funcionarían con
+	!! normalidad)
+	if (Utils.on_press_intro ~= 0) {
+		parse-->1 = 'pressAnyKey.verb';
+		num_words = 1;
+	}
+
 	Utils.clear_hyperlinks();
 	#Ifdef CHOICE_SETS;
 	ChoiceSetManager.run();
@@ -827,22 +837,6 @@ Include "vorple-screen-effects.h";
 	return false;
 ];
 #Endif; ! TEXT_STYLES;
-
-!!------------------------------------------------------------------------------
-!! Una suerte de super-regla `before`, que se aplica a todas las acciones de la
-!! aplicación.
-!!
-!! Cuando la aplicación queda a la espera de una pulsación de INTRO para
-!! continuar, captura todos los comandos conocidos e interrumpe el flujo
-!! ordinario de ejecución.
-!!
-!!	@returns {boolean} Falso para permitir que el sistema continúe con la
-!!		ejecución normal, o verdadero para interrumpir el flujo de ejecución
-!!	@version 2024/03/30
-!!------------------------------------------------------------------------------
-[ GamePreRoutine;
-	return PressIntroSub();
-];
 
 !!------------------------------------------------------------------------------
 !! Inicializaciones del relato. Esta rutina es obligatoria y, entre otras
