@@ -368,6 +368,8 @@ Include "gwindefs.h";
 #Ifdef USE_VORPLE;
 !! Funcionalidades básicas de Vorple UI:
 Include "vorple.h";
+!! Manipulación del inductor y del historial de comandos:
+Include "vorple-command-prompt-control.h";
 #Endif; ! USE_VORPLE;
 #Endif; ! TARGET_GLULX;
 
@@ -964,7 +966,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = GrutaVestibulo;
+	location = Abismo;
 	Storyteller.start_scene(1);
 	print "^^";
 

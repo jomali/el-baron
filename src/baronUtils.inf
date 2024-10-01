@@ -145,6 +145,15 @@ Object Utils
 			#Endif; ! USE_VORPLE;
 		],
 
+		!! TODO - doc
+		end_history [;
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand("vorple.prompt.hide()");
+			#Ifnot;
+			quit;
+			#Endif; ! USE_VORPLE;
+		],
+
 		
 
 		!!----------------------------------------------------------------------

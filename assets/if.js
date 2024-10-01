@@ -47,7 +47,7 @@ var ifjs = (function (controller) {
     const elements = Array.from(
       document.getElementsByClassName("lineinput last")
     );
-    elements.forEach((element) => element.remove());    
+    elements.forEach((element) => element.remove());
     const containerNode = await _waitForElm(
       "#press-intro-to-continue-container"
     );
@@ -58,6 +58,7 @@ var ifjs = (function (controller) {
     const elements = Array.from(
       document.getElementsByClassName("turn")
     );
+    elements.pop(); // we remove the last element (ie: the current turn)
     elements.forEach((element) => element.remove());    
   };
 

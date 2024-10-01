@@ -29,7 +29,7 @@ body {
 	font-size: 20px;
 	font-weight: 400;
 	line-height: 34px;
-	max-width: 696px; /* 680 - 16 (padding) */
+	max-width: 696px;  /* 680 - 16 (padding) */
 }
 
 hr.choice-set-divider {
@@ -46,6 +46,11 @@ hr.choice-set-divider {
 
 .turn:not(.previous) hr.choice-set-divider {
 	opacity: 0.2;
+}
+
+/* Used when hidding prompt. */
+#lineinput.force-hidden {
+	display: none;
 }
 
 /* ENTRADA */

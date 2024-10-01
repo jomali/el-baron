@@ -1,0 +1,173 @@
+
+
+!!==============================================================================
+!!
+!!	EL BARÓN
+!!	Escena primera - En el abismo
+!!
+!!==============================================================================
+!!
+!!	Archivo:			1-1-abismo.xinf
+!!	Autor(es):		Victor Gijsbers
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
+!!
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
+!!
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2024, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+
+!! @Abismo
+Indoors Abismo
+	has
+		concealed male,
+	with
+		short_name [;
+			print "En el abismo";
+			return true;
+		],
+		gender G_MASCULINO,
+		!!
+		before [;
+			Smell:
+				print "La [AbismoOscuridad] penetra en tus pulmones, arrastrando consigo una ligera pestilencia.";
+				new_line;
+				return true;
+		],
+		description [;
+			Tutorial.hint_highlight_key_a();
+			if (AbismoOscuridad hasnt described) {
+				print "Todo es [AbismoOscuridad] a tu alrededor. El universo entero reducido a un vacío negro.";
+			} else {
+				print "Distingues un débil [AbismoResplandor](fulgor) entre las sombras.";
+			}
+			new_line;
+			return true;
+		],
+		each_turn [;
+			if (self.counter < 2) {
+				self.counter++;
+			} else {
+				Tutorial.hint_highlight_key_b();
+				return true;				
+			}
+		],
+		exits [;
+			if (AbismoOscuridad hasnt described) {
+				print "No hay ningún lugar al que ir. Nada. Sólo [AbismoOscuridad].";
+			} else {
+				print "Todo cuanto puedes percibir en la oscuridad es ese [AbismoResplandor] indefinido que llega desde más [f_obj].";
+			}
+			new_line;
+			return true;
+		],
+		f_to [;
+			<<Enter DirAbismoAdelante>>;
+		],
+	private
+		counter 0,
+;
+
+!! @DirAbismoAdelante
+AdjacentRoom -> DirAbismoAdelante
+	has
+		male,
+	with
+		before [;
+			Enter:
+				if (AbismoOscuridad hasnt described) {
+					print "Alcanzas a distinguir un resplandor entre las sombras.";
+				} else {
+					print "Ha llegado el momento. Después de todo tú eres la única persona que puede plantar cara a la bestia.";
+				}
+				print "^^
+				Das un paso en la dirección de la que proviene la luz y, al instante, como disparado por algún tipo de resorte, un portazo truena a tu espalda seguido del chirrido de cerrojos contra el metal. Ya no hay marcha atrás.
+				^^
+				Aferras el hacha con firmeza y das otro paso adelante, hacia el calor…";
+				new_line;
+				Utils.press_intro_to_continue(self._enter);
+				return true;
+		],
+		!! No necesita descripción. Al intentar examinarlo entran en juego las
+		!! reglas "react_before" de AbismoOscuridad.
+	private
+		_enter [;
+			PlayerTo(GrutaVestibulo);
+		],
+;
+
+!! @AbismoOscuridad
+BlindingDarkness -> AbismoOscuridad "oscuridad"
+	has
+		female on,
+	private
+		cant_see [;
+			if (self hasnt described) {
+				print "No puedes ver nada en [la self].";
+			} else {
+				print "No puedes ver nada en [la self], aparte de [un AbismoResplandor] muy débil que llega desde algún lugar más [f_obj].";
+			}
+			new_line;
+			return true;
+		],
+	with
+		name_f 'abismo' 'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
+		name_fp 'penumbras' 'sombras' 'tinieblas',
+		name_m 'vacio',
+		gender G_FEMENINO,
+		adjectives 'negro',
+		article "la",
+		!!
+		description [;
+			if (self hasnt described) {
+				move AbismoResplandor to Abismo;
+				print "Te abandonas al abrazo cálido de las [self](sombras). Solo e inmóvil en mitad de la nada. Lejos de obligaciones. Lejos de las tediosas rutinas del día a día. Lejos de la cháchara superficial de la gente, y de sus reglas y sus expectativas y sus juicios constantes. Casi desearías dejar atrás ese mundo y quedarte aquí para siempre. Pero no es más que una idea infantil, por supuesto.
+				^^
+				Alcanzas a percibir [un AbismoResplandor] rompiendo apenas la oscuridad.";
+			} else {
+				<<Look>>;
+			}
+			new_line;
+			return true;
+		],
+		interactive_objects AbismoResplandor,
+;
+
+!! @AbismoResplandor
+Background AbismoResplandor "resplandor" Limbo
+	has
+		male,
+	with
+		name_f 'luminosidad' 'luz',
+		name_m 'fulgor' 'resplandor',
+		gender G_MASCULINO,
+		adjectives
+			'anaranjada' 'anaranjado' 'imprecisa' 'impreciso' 'tenue',
+		!!
+		description [;
+			print "Se trata de una luz parpadeante muy tenue. Llega desde algún lugar más [f_obj].";
+			new_line;
+			return true;
+		],
+;
