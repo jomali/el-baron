@@ -196,60 +196,6 @@ AdjacentRoom	DirGrutaVestibulo "vestíbulo"
 		],
 ;
 
-!! TODO - actualizar PC_is_coming_in
-!! @GrutaVestibulo
-Indoors	GrutaVestibulo
-		description [;
-			if (Baron.is_burning()) {
-				print "A través de las llamas alcanzas a distinguir [Marmol](mármol:REMARKABLE_OBJECT) negro. [Huesos](Huesos:REMARKABLE_OBJECT) en el suelo. Las dos [GrutaPuertas](puertas:REMARKABLE_OBJECT) de bronce que bloquean la única salida.";
-			} else {
-				Tutorial.hint_keywords_a();
-				print "Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertas después con planchas de [Marmol](mármol) negro. Dos [GrutaPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
-			}
-			new_line;
-			return true;
-		],
-;
-
-!! @GrutaPuertas
-Item	-> GrutaPuertas
-		!!------------------
-		before [;
-			!! TODO Touch/Pull/Push
-			Attack,
-			KnockOn:
-				if (Dragon.counter > 0) {
-					if (Baron.is_burning()) {
-						give E1_UnGongInfernal on;
-						print "Te abalanzas contra las puertas de bronce enloquecido por el dolor";
-						if (self has described) {
-							print ". El grabado del hombre ardiente te recibe con los ojos risueños y una sonrisa exultante. —¡Disfruta del calor!— te dice sin palabras —Aprenderás a amarlo—. Lo golpeas ferozmente con toda la fuerza de la que eres capaz y tu";
-						} else {
-							print " y las golpeas ferozmente con toda la fuerza de la que eres capaz. Tu";
-						}
-						print " guantelete arranca un sonido brutal al bronce. Una atroz disonancia que resuena contra las paredes de la cueva.";
-						new_line;
-						Utils.press_any_key();
-						new_line;
-						print "Sin embargo las puertas no se mueven. Nadie acude a abrir. Chillando de dolor mientras el calor de las llamas vaporiza la sangre de tus venas golpeas de nuevo y el áspero sonido desgarra el vestíbulo una vez más, como si el mismo Satanás estuviese golpeando un gong diabólico en las profundidades del Infierno. Pero la puerta permanece inmóvil. Nadie responde a tu llamada. Estás echando el puño hacia atrás para golpear otra vez cuando tus rodillas se doblan. Tus piernas no pueden sostenerte por más tiempo y te desplomas en el suelo. La mente embotada por el dolor. Calor… Oscuridad… No ves nada más.";
-						new_line;
-						print "^^^", (parser) "Pulsa una tecla.";
-						Utils.press_any_key();
-						return EndSceneOne();
-					} else if (self.state == 0) {
-						self.state = 1;
-						print "Golpeas frenéticamente sobre su superficie de bronce pero no responde nadie.";
-					} else {
-						print "Insistes entre sollozos, desesperado. *Abridme. Abrid… Por favor…*";
-					}
-				} else {
-					print "¿Sin haberte enfrentado antes al dragón? No. No eres un cobarde.";
-				}
-				new_line;
-				return true;
-		],
-;
-
 !! @GrutaVestibuloFuego
 Atrezzo	-> GrutaVestibuloFuego "fuego"
  class	Background,
@@ -282,29 +228,6 @@ Atrezzo	-> GrutaVestibuloFuego "fuego"
 !!
 !!------------------------------------------------------------------------------
 
-!! @DirGrutaPasadizo
-AdjacentRoom	DirGrutaPasadizo "pasadizo"
-		before [;
-			Enter:
-				switch (location) {
-					GrutaVestibulo:
-						if (Dragon.counter == 4) {
-							print "Al girarte la visión es tan horrible que te deja clavado en el sitio.";
-							new_line;
-							return Dragon.daemon();
-						} else if (Baron.is_burning()) {
-							GrutaPasadizo.PC_is_coming_in = true;
-							print "Corres desorientado, aplastando los huesos de aquellos que no tuvieron mejor suerte que tú al plantar cara al dragón.";
-						} else {
-							GrutaPasadizo.PC_is_coming_in = true;
-							print "Haces lo posible por evitar los restos humanos. A cada paso, sin embargo, el chasquido de huesos aplastados bajo tus botas.";
-						}
-						new_line;
-				}
-				return self.AdjacentRoom::before();
-		],
-;
-
     !! Object grot_fake_draak "dragon" GrutaPasadizo
     !!   with name 'dragon',
     !!        description
@@ -317,40 +240,3 @@ AdjacentRoom	DirGrutaPasadizo "pasadizo"
 	!!      default: "You will first have to enter the hall to the north.";
 	!!    ],
     !!    has male animate scenery;
-
-
-
-!!==============================================================================
-!!
-!!	3)	Guarida del dragón
-!!
-!!------------------------------------------------------------------------------
-
-!! @DirGrutaDragon
-AdjacentRoom	DirGrutaDragon
-		short_name [;
-			print "[](guarida:DIRECTION_OBJECT) del dragón";
-			return true;
-		],
-		!!------------------
-		adjacent_room GrutaDragon,
-		before [;
-			Enter:
-				if (Baron.is_burning()) {
-					print "Aullando por culpa de las quemaduras e incapaz de pensar con claridad, entras corriendo de nuevo en la guarida del dragón.";
-				!! TODO - magic numbers
-				} else if (Dragon.counter == 3) {
-					print "Lo piensas mejor y decides plantar cara a la bestia, pero quedas congelado por la visión.";
-					new_line;
-					return Dragon.daemon();
-				} else if (Baron.is_running_away()) {
-					print "Recompones el ánimo tras unos instantes. No puedes huir así. No eres un cobarde. Estás dispuesto a plantar cara.";
-				} else if (self.PC_hesitates) {
-				} else {}
-				new_line;
-				return self.AdjacentRoom::before();
-		],
- private
-		PC_hesitates true,
-;
-

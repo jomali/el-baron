@@ -7,6 +7,8 @@ var ifjs = (function (controller) {
     highlightStyleId: "highlights"
   };
 
+  let historyLength = undefined;
+
   const _waitForElm = (selector) => {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
@@ -44,6 +46,13 @@ var ifjs = (function (controller) {
 
   const clearLastInput = async () => {
     clearHyperlinks();
+
+    if (typeof historyLength === "number" && 
+      historyLength !== haven.prompt.history.get().length) {
+      haven.prompt.history.remove()
+    }
+    historyLength = undefined;
+
     const elements = Array.from(
       document.getElementsByClassName("lineinput last")
     );
@@ -117,6 +126,9 @@ var ifjs = (function (controller) {
     keyUp,
     pressIntroToContinuePrompt,
     resetHighlights,
+    saveHistoryLength: () => {
+      historyLength = haven.prompt.history.get().length;
+    },
   };
 }(ifjs || {}));
 

@@ -642,7 +642,7 @@ Class	Atrezzo
 !!
 !!	@dependency arrays.h
 !!	@dependency textStyles.h
-!!	@version 2023/03/25
+!!	@version 2024/10/03
 !!------------------------------------------------------------------------------
 Class	AdjacentRoom
  class	Atrezzo
@@ -659,7 +659,6 @@ Class	AdjacentRoom
 					if (metaclass(self.adjacent_room) == Object) {
 						obj = self.adjacent_room;
 					}
-					new_line;
 					PlayerTo(obj);
 				} else {
 					switch (Utils.get_grammatical_inflection()) {

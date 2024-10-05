@@ -26,10 +26,10 @@ body {
 	 * Golden ratio (Bitter): https://grtcalculator.com/
 	 */
 	font-family: 'Bitter', serif;
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: 400;
-	line-height: 34px;
-	max-width: 696px;  /* 680 - 16 (padding) */
+	line-height: 31px;
+	max-width: 680px;  /* 680 + 16 (padding) */
 }
 
 hr.choice-set-divider {
@@ -140,7 +140,7 @@ hr.choice-set-divider {
 
 .red-letters, .red-letters a:hover {
 	/* Hipervínculos: direction */
-	color: #ff8080 !important;
+	color: #d23939 !important;
 	text-shadow: -2px 2px 8px #ff2121, 2px -2px 8px #ff2121;
 }
 

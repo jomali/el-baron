@@ -68,9 +68,24 @@ AdjacentRoom DirGrutaPasadizo "pasadizo"
 							print ". Huyes incapaz de enfrentarte a él.";
 						}
 						new_line;
+						new_line;
 					GrutaVestibulo:
-						if (~~Baron.is_burning) {
+						if (ChoiceSetManager.is_running(ConversacionHombreArdiendo)) {
+							ChoiceSetManager.stop();	
+						}
+						if (Dragon.is_awake) {
+							if (Baron.is_blind) {
+								return GrutaVestibulo.cant_go(); !! TODO - revisar
+							} else if (Baron.is_burning) {
+								print "Avanzas dando tumbos y tropezando con los huesos del suelo.";
+								new_line;
+								new_line;
+							} else {
+								return Dragon.awaits_baron();
+							}
+						} else {
 							print "Los huesos del suelo crujen destrozados a tu paso.";
+							new_line;
 							new_line;
 						}
 						GrutaPasadizo.is_leading_inwards = true;
@@ -131,7 +146,7 @@ Indoors GrutaPasadizo
 				}
 				print " y provocan que estés empapado en sudor dentro de la [Armadura](armadura). [El DirGrutaVestibulo] se antoja ahora fresco en comparación.";
 			} else {
-				print "El mundo a tu alrededor es sólo un bosquejo agónico bajo [el GrutaBaronFuego]. [in_obj](Adentro): el dragón. [out_obj](Afuera): la salida.";
+				print "El mundo que te rodea es sólo un bosquejo agónico bajo [el GrutaBaronFuego]. [in_obj](Adentro): el dragón. [out_obj](Afuera): la salida.";
 			}
 			new_line;
 			return true;
@@ -152,6 +167,11 @@ Indoors GrutaPasadizo
 			<<Enter DirGrutaSalon>>;
 		],
 		is_leading_inwards true,
+		list_visible_objects [;
+			if (Baron.is_burning) {
+				return true;
+			}
+		],
 		out_to [;
 			<<Enter DirGrutaVestibulo>>;
 		],

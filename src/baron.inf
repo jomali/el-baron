@@ -966,7 +966,7 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = Abismo;
+	location = GrutaSalon;
 	Storyteller.start_scene(1);
 	print "^^";
 
@@ -1099,8 +1099,6 @@ Verb meta 'pressAnyKey.verb' * -> PressIntro;
 	callback;
 	if (Utils.on_press_intro ~= 0) {
 		#Ifdef USE_VORPLE;
-		VorpleChangeLastCommand("");
-		VorpleRemoveLastCommandInHistory();
 		VorpleExecuteJavaScriptCommand(BuildCommand("
 			ifjs.clearLastInput();
 		"));

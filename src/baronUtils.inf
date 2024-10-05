@@ -120,10 +120,17 @@ Object Utils
 		!! Además se introduce una línea de gramática para la nueva acción
 		!! `pressAnyKey.verb`.
 		!!
-		!!	@version 2024/03/30
+		!!	@version 2024/10/05
 		!!----------------------------------------------------------------------
 		press_intro_to_continue [ callback;
 			self.on_press_intro = callback;
+			
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.saveHistoryLength();
+			"));
+			#Endif; ! USE_VORPLE
+
 			return true;
 		],
 		on_press_intro 0,
@@ -679,7 +686,7 @@ Object Utils
 		print_horizontal_rule [
 			length previous_style txt;
 			length = 0;
-			txt = "* * *";
+			txt = "*";
 			previous_style = self.set_text_style(TEXT_STYLE_MONOSPACED);
 			#Ifdef VERSION_DESKTOP;
 			PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, txt);

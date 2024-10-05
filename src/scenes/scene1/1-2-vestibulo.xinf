@@ -110,8 +110,10 @@ Indoors GrutaVestibulo
 			Tutorial.hint_keywords_a();
 			if (Baron.is_blind) {
 				print "Todo es [GrutaLuz] a tu alrededor. El universo entero reducido a una quemadura blanca.";
+			} else if (Baron.is_burning) {
+				print "A tu alrededor ves [el GrutaVestibuloMarmol] negro. [GrutaVestibuloHuesos](Huesos) en el suelo. Las dos [GrutaVestibuloPuertas] que bloquean la única salida. Y el infierno de fuego engulléndolo todo.";
 			} else {
-				print "[if:self has visited]Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después[else]Estás en una pequeña sala rectangular excavada directamente en la roca, cuyas paredes y techo han sido recubiertos[fi] con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
+				print "[if:self has visited]Esta pequeña sala rectangular ha sido excavada en la roca y sus paredes y su techo han sido recubiertos después[else]Estás en una pequeña sala rectangular excavada directamente en la roca cuyas paredes y techo han sido recubiertos[fi] con finas planchas de [GrutaVestibuloMarmol] negro. Dos [GrutaVestibuloPuertas] sellan la única salida. Frente a ellas, en la pared opuesta del vestíbulo, un estrecho [DirGrutaPasadizo](corredor) se interna aún más en las ardientes profundidades de la montaña.";
 			}
 			new_line;
 			return true;
@@ -138,7 +140,14 @@ Indoors GrutaVestibulo
 			}
 		],
 		out_to [;
-			<<Enter GrutaVestibuloPuertas>>;
+			print "La única salida de la gruta está bloqueada por dos enormes [GrutaVestibuloPuertas](puertas) de metal.";
+			new_line;
+			return true;
+		],
+		list_visible_objects [;
+			if (Baron.is_burning) {
+				return true;
+			}
 		],
 	private
 		tried_to_listen false,
@@ -161,10 +170,35 @@ Item -> GrutaVestibuloPuertas
 		before [;
 			Attack,
 			KnockOn:
-				if (~~Baron.is_burning) {
-					print "¿Sin haberte enfrentado antes a la bestia? No. No eres un cobarde.";
+				!! TODO - golpear al hombre
+				if (Baron.is_burning) {
+					give LogroGongInfernal on;
+					print "Te abalanzas sobre las puertas enloquecido por el dolor";
+					if (GrutaVestibuloPuertasGrabado has described) {
+						print ". El grabado del hombre ardiente te recibe con los ojos risueños y una sonrisa exultante: —¡Disfruta del calor! —grita sin palabras—. Aprenderás a amarlo.
+						^^
+						Lo golpeas ferozmente con toda la fuerza de la que eres capaz y tu";
+					} else {
+						print " y golpeas ferozmente con toda la fuerza de la que eres capaz. Tu";
+					}
+					print " guantelete arranca un sonido brutal al bronce. Una disonancia atroz que resuena incluso por encima del estrépito de las llamas.
+					^^
+					Sin embargo las puertas no se mueven. Nadie acude a abrir. Chillando de dolor mientras el fuego vaporiza la sangre de tus venas golpeas de nuevo y el áspero sonido desgarra el vestíbulo una vez más, como si el mismo Satanás estuviese golpeando un gong diabólico en las profundidades del Infierno. Pero la puerta permanece inmóvil. Nadie responde a tu llamada. Estás llevando el puño hacia atrás para golpear por tercera vez cuando tus rodillas se doblan. Tus piernas no pueden sostenerte por más tiempo y te desplomas en el suelo. La mente embotada por el dolor… por el calor… la luz…";
+					new_line;
+					return Utils.press_intro_to_continue(FinalEscena1);
+				} else if (Dragon.is_awake) {
+					if (~~self.tried_to_call_for_help) {
+						self.tried_to_call_for_help = true;
+						print "Aporreas las puertas para que te dejen salir de aquí. Pero no responde nadie. Estás atrapado.";
+						if (GrutaVestibuloPuertasGrabado has described) {
+							print "^^
+							—Ha llegado el momento —te susurra al oído la figura grabada en el bronce, con una risita histérica.";
+						}
+					} else {
+						print "Insistes entre sollozos: —¡Abridme! Abrid… por favor…";
+					}
 				} else {
-					!! TODO - Llamada después de haber visto al dragón
+					print "¿Sin haberte enfrentado antes a la bestia? No. No eres un cobarde.";
 				}
 				new_line;
 				return true;
@@ -177,7 +211,7 @@ Item -> GrutaVestibuloPuertas
 			Pull,
 			Push,
 			PushDir:
-				if (~~Baron.is_burning) {
+				if (~~Dragon.is_awake) {
 					print "Las [self](puertas) han sido trancadas desde el otro lado y ni siquiera el monstruo podría abrirlas desde aquí. El acuerdo es que llamarás con un golpe para que te abran una vez hayas lo hayas derrotado.";
 				} else {
 					<<KnockOn self>>;
@@ -194,19 +228,17 @@ Item -> GrutaVestibuloPuertas
 				return true;
 		],
 		description [;
-			if (~~Baron.is_burning) {
-				print "Dos imponentes puertas de bronce bloquean la única salida de la gruta.";
-				if (self hasnt described) {
-					print " Tienen unos grabados ornamentales de factura muy tosca entre los que adviertes la figura de un [GrutaVestibuloPuertasGrabado](hombre:REMARKABLE_OBJECT) que está ardiendo en llamas.";
-				} else {
-					print " Están decoradas con el [GrutaVestibuloPuertasGrabado](grabado) de un hombre que arde en llamas.";
-				}
+			print "Dos imponentes puertas de bronce bloquean la única salida de la gruta.";
+			if (~~Baron.is_burning && self hasnt described) {
+				print " Tienen unos grabados ornamentales de factura muy tosca entre los que adviertes la figura de un [GrutaVestibuloPuertasGrabado](hombre:REMARKABLE_OBJECT) que está ardiendo en llamas.";
 			} else {
-				!! TODO Barón en llamas
+				print " Están decoradas con el [GrutaVestibuloPuertasGrabado](grabado) de un hombre que arde en llamas.";
 			}
 			new_line;
 			return true;
 		],
+	private
+		tried_to_call_for_help false,
 ;
 
 !! @GrutaVestibuloPuertasGrabado
@@ -473,7 +505,7 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 			self.add_choice(AQueHeVenido);
 			print "Al observarla bajo la luz cambiante de la gruta, la [self](figura) parece contorsionarse lentamente, como si estuviera viva. El efecto es tan sugestivo que por un momento tu mente te traiciona y cree escuchar una vocecilla metálica.
 			^^
-			—¡Un compañero nuevo! ¡Vaya sorpresa! —sus inmóviles ojos parecen recorrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Te va a tocar buscar bien si quieres tu propio sitio.";
+			—¡Un compañero nuevo! ¡Vaya sorpresa! —Hace una breve pausa mientras sus inmóviles ojos parecen recorrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Vas a tener que buscar muy bien si quieres tu propio sitio.";
 			new_line;
 			return true;
 		],
@@ -489,23 +521,22 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 		],
 		response [ flag;
 			self.counter++;
+			new_line;
 			if (self.counter == 1) {
 				self.add_choice(EnfrentadoBestia);
 				if (Yelmo hasnt worn) {
-					print "—El rostro descubierto, bien. Mucho mejor que la mayoría de esos cobardes.
-					^^
-					Ignora tu [if:flag]pregunta[else]comentario[fi], pero percibes una nota de aprobación en la vocecilla estridente.";
+					print "—El rostro descubierto, bien —dice, ignorando tu [if:flag]pregunta[else]comentario[fi]. Aunque percibes una nota de aprobación en la vocecilla estridente—. Mucho mejor que la mayoría de esos cobardes.";
 				} else {
-					print "—Es una auténtica pena —afirma, ignorando tu [if:flag]pregunta[else]comentario[fi]—. Todos ellos son igual de cobardes.";
+					print "—Es una auténtica pena —afirma, ignorando tu [if:flag]pregunta[else]comentario[fi]—. Todos ellos igual de cobardes.";
 				}
 			} else if (self.counter == 2) {
 				self.add_choice(ComoVencer);
 				self.remove_choice(EstasVivo);
 				self.remove_choice(AQueHeVenido);
 				self.remove_choice(EnfrentadoBestia);
-				print "—Dime, ¿quién se acerca al fuego si tiene miedo a quemarse las pestañas? —escupe con desprecio un pequeño rodamiento de bronce que se pierde en las sombras.
+				print "—Dime, ¿quién se acerca al fuego si tiene miedo a quemarse las pestañas? —Escupe con desprecio un pequeño rodamiento de bronce que se pierde en las sombras.
 				^^
-				[if:flag]Le pides[else]Insistes en[fi] que te hable sobre la bestia. Que te cuente cómo es, qué aspecto tiene.
+				Le pides que te hable sobre la bestia. Que te cuente cómo es, qué aspecto tiene.
 				^^
 				—¡Oh, descuida! ¡Lo verás muy pronto!";
 				if (Yelmo has worn) {
@@ -536,7 +567,7 @@ ChoiceSetItem EstasVivo
 				PRT__("verdad", 0, REMARKABLE_OBJECT);
 				print "? ¿Estás vivo?";
 			} else {
-				print "—¿Estás… estás hablando de ";
+				print "—¿Estás hablando de ";
 				PRT__("verdad", 0, REMARKABLE_OBJECT);
 				print "?";
 			}
@@ -548,6 +579,8 @@ ChoiceSetItem EstasVivo
 		append_choice_set true,
 		final_choice false,
 		reaction [;
+			print "—¿Eres real? ¿Estás hablando de verdad?";
+			new_line;
 			return ConversacionHombreArdiendo.response(true);
 		],
 ;
@@ -568,6 +601,8 @@ ChoiceSetItem AQueHeVenido
 		append_choice_set true,
 		final_choice false,
 		reaction [;
+			print "—He venido para matar a la bestia.";
+			new_line;
 			return ConversacionHombreArdiendo.response();
 		],
 ;
@@ -588,6 +623,8 @@ ChoiceSetItem EnfrentadoBestia
 		append_choice_set true,
 		final_choice false,
 		reaction [;
+			print "—Eso te lo ha hecho el dragón, ¿no es así?";
+			new_line;
 			return ConversacionHombreArdiendo.response();
 		],
 ;
@@ -608,6 +645,8 @@ ChoiceSetItem ComoVencer
 		append_choice_set false,
 		final_choice true,
 		reaction [;
+			print "—Necesito saber cómo puedo vencerla —insistes—. Necesito saber si tiene algún punto débil.";
+			new_line;
 			return ConversacionHombreArdiendo.response();
 		],
 ;
