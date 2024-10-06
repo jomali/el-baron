@@ -80,9 +80,6 @@ Object Storyteller "(Narrador)"
 					move Armadura to Baron;
 					move Percunos to Baron;
 					give Armadura worn;
-
-					move Yelmo to Baron;
-					give Yelmo worn;
 					return true;
 				2:
 					return true;

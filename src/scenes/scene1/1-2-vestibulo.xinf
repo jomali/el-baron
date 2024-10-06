@@ -185,7 +185,8 @@ Item -> GrutaVestibuloPuertas
 					^^
 					Sin embargo las puertas no se mueven. Nadie acude a abrir. Chillando de dolor mientras el fuego vaporiza la sangre de tus venas golpeas de nuevo y el áspero sonido desgarra el vestíbulo una vez más, como si el mismo Satanás estuviese golpeando un gong diabólico en las profundidades del Infierno. Pero la puerta permanece inmóvil. Nadie responde a tu llamada. Estás llevando el puño hacia atrás para golpear por tercera vez cuando tus rodillas se doblan. Tus piernas no pueden sostenerte por más tiempo y te desplomas en el suelo. La mente embotada por el dolor… por el calor… la luz…";
 					new_line;
-					return Utils.press_intro_to_continue(FinalEscena1);
+					FinalEscena1();
+					return Utils.press_intro_to_continue(FinalEscena1Creditos);
 				} else if (Dragon.is_awake) {
 					if (~~self.tried_to_call_for_help) {
 						self.tried_to_call_for_help = true;

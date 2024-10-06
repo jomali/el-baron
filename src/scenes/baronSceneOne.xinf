@@ -39,6 +39,11 @@
 !!------------------------------------------------------------------------------
 
 [ FinalEscena1;
+	StopDaemon(Armadura);
+	StopDaemon(Dragon);
+];
+
+[ FinalEscena1Creditos;
 	Utils.erase_window();
 	new_line;
 	print (strong) Story, " — Primera escena^";
@@ -57,8 +62,8 @@
 	Che strazio, ohimè, che smania!^
 	Che inferno, che terror!^";
 	new_line;
-	print (stressed) "«¿Quién es aquel que lacera mi alma?^
-	¿Quién aquel que tortura mi cuerpo?^
+	print (stressed) "«¿Quién lacera mi alma?^
+	¿Quién tortura mi cuerpo?^
 	¡Qué tormento! ¡Oh! ¡Qué agonía!^
 	¡Qué infierno! ¡Qué terror!»^";
 	new_line;
@@ -92,10 +97,37 @@ Item Armadura Limbo
 				if (~~Baron.is_burning) {
 					print "No puedes quitarte la [self](armadura:OTHER_OBJECT) sin ayuda; está asegurada con apretadas cintas de cuero a tu espalda.";
 				} else {
-					print "El metal fundido de la [self](armadura:OTHER_OBJECT) te perfora el cuerpo. Querrías quitártela. Arrancarte la piel. Pero no tienes cómo.";
+					if (self.is_melting) {
+						print "El metal fundido de la [self](armadura:OTHER_OBJECT) te perfora el cuerpo. Querrías quitártela. Arrancarte la piel. Pero no tienes cómo.";
+					} else {
+						print "Tratas arrancarte la [self](armadura:OTHER_OBJECT) pero parece pegada a tu cuerpo, como una segunda piel incandescente.";
+					}
 				}
 				new_line;
 				return true;
+		],
+		daemon [;
+			self.counter++;
+			switch (self.counter) {
+				3:
+					new_line;
+					print "El metal de tu [self](armadura) está cada vez más y más caliente a medida que las llamas crecen a tu alrededor.";
+					new_line;
+					return true;
+				4:
+					self.is_melting = true;
+					new_line;
+					print "Desquiciado golpeas las llamas intentando apagarlas. Pero es en vano. Aún peor: te das cuenta con horror de que la propia [self](armadura) está comenzando a fundirse lentamente.";
+					new_line;
+					return true;
+				6:
+					new_line;
+					print "El metal fundido de la armadura penetra en tu cuerpo y se mezcla con tu piel licuada en una alquimia terrible. No hay visión alguna. No hay sonido. No hay pensamientos. Sólo dolor saturando toda tu consciencia. Intentas emitir un último grito agónico mientras caes de rodillas pero tus cuerdas vocales se consumen en el fuego.^^
+					La oscuridad cae sobre ti como una fría manta.";
+					new_line;
+					FinalEscena1();
+					return Utils.press_intro_to_continue(FinalEscena1Creditos);
+			}
 		],
 		description [;
 			if (~~Baron.is_burning) {
@@ -106,11 +138,18 @@ Item Armadura Limbo
 				}
 				print " te enfrentarías a la bestia sin un conjunto completo de [self](armadura:OTHER_OBJECT). Gruesas placas de acero sobre cota de mallas —todo ello engrasado concienzudamente—, con lo que te aseguras la mayor protección posible ante cualquier tipo de ataque físico. El conjunto está ajustado por unas cintas de cuero a la espalda.";
 			} else {
-				print "Incluso el acero de la [self](armadura:OTHER_OBJECT) se está fundiendo con el calor del fuego. Sientas las gotas de metal líquido abriéndose paso a través de tu piel como cuchillos.";
+				if (self.is_melting) {
+					print "Incluso el acero de la [self](armadura:OTHER_OBJECT) se está fundiendo con el calor del fuego. Sientes las gotas de metal líquido abriéndose paso a través de tu piel como cuchillos.";
+				} else {
+					print "El mismo acero parece arder, adquiriendo un resplandor rojizo que se va a haciendo cada vez más brillante.";
+				}
 			}
 			new_line;
 			return true;
 		],
+	private
+		counter 0,
+		is_melting false,
 ;
 
 !! @GrutaBaronFuego
@@ -129,15 +168,6 @@ Atrezzo -> GrutaBaronFuego "fuego"
 				new_line;
 				return true;
 		],
-		daemon [;
-			!! Es posible interrumpir su ejecución durante un turno asignando el
-			!! atributo `on` al objeto:
-			if (self has on) {
-				give self ~on;
-				return true;
-			}
-			return self.acts();
-		],
 		description [;
 			SetPronoun('-las', self);
 			SetPronoun('ellas', self);
@@ -151,30 +181,6 @@ Atrezzo -> GrutaBaronFuego "fuego"
 				return true;
 			}
 		],
-	private
-		acts [;
-			self.counter++;
-			switch (self.counter) {
-				3:
-					new_line;
-					print "El metal de tu [Armadura](armadura) está cada vez más y más caliente a medida que las llamas crecen a tu alrededor.";
-					new_line;
-					return true;
-				4:
-					new_line;
-					print "El dolor es mayor por momentos. Golpeas las llamas angustiado, intentando apagarlas. Pero no funciona. Peor, te das cuenta con horror que la propia [Armadura](armadura) comienza a fundirse lentamente.";
-					new_line;
-					return true;
-				6:
-					!! TODO - traducir
-					new_line;
-					print "Melting metal penetrates your skin and commingles with your liquifying flesh. No visions, no sounds, no thoughts: only pain fills your consciousness as you fall to your knees, screaming your last scream while your vocal cords burn away.^^
-					La oscuridad cae sobre ti como una fría manta.";
-					new_line;
-					return Utils.press_intro_to_continue(FinalEscena1);
-			}
-		],
-		counter 0,
 ;
 
 !! @GrutaLuz
@@ -210,7 +216,8 @@ BlindingLight -> GrutaLuz "luz"
 					Te fundes en la luz.";
 				}
 				new_line;
-				Utils.press_intro_to_continue(FinalEscena1);
+				FinalEscena1();
+				return Utils.press_intro_to_continue(FinalEscena1Creditos);
 			} else {
 				<<Look>>;
 			}
@@ -330,15 +337,14 @@ Item Percunos Limbo
 			return true;
 		],
 		invent [;
-			if (inventory_stage == 1 && parent(self) ofclass Room) {
-				print "tu [self](hacha) a un lado";
+			if (inventory_stage == 1 && parent(self) ofclass Indoors) {
+				print "tu [self](hacha) apoyado contra una de las paredes";
 				return true;
 			}
 		],
 ;
 
 !! @Yelmo
-!! TODO - si el barón está ardiendo, llevar el yelmo al limbo
 Item Yelmo "yelmo" Limbo
 	class
 		Clothes,
@@ -373,10 +379,6 @@ Item Yelmo "yelmo" Limbo
 					new_line;
 					return true;
 				}
-			Open:
-				print "[El YelmoVisor] está atascado. No consigues abrirlo.";
-				new_line;
-				return true;
 			Wear:
 				if (TestScope(self, player) && self notin player) {
 					move self to player;
@@ -398,7 +400,7 @@ Item Yelmo "yelmo" Limbo
 		description [;
 			if (~~Baron.is_burning) {
 				if (self in player && self has worn) {
-					print "[El YelmoVisor] está cerrado, protegiéndote el rostro. Puedes ver";
+					print "El yelmo te protege el rostro por completo. Puedes ver";
 					switch (real_location) {
 						GrutaPasadizo:
 							print " el [real_location](corredor)";
@@ -407,9 +409,9 @@ Item Yelmo "yelmo" Limbo
 						GrutaVestibulo:
 							print " el [real_location](vestíbulo)";
 					}
-					print " a través de una estrecha abertura.";
+					print " a través de una estrecha abertura para los ojos.";
 				} else {
-					print "[Un self] de acero negro, sin adornos de ningún tipo. Tiene [el YelmoVisor] cerrad[o YelmoVisor].";
+					print "[Un self] de acero negro, sin adornos de ningún tipo.";
 				}
 			} else {
 				print "De algún modo antinatural, el metal [del self] permanece frío en mitad del infierno.";
@@ -423,35 +425,8 @@ Item Yelmo "yelmo" Limbo
 				return true;
 			}
 		],
-		react_before [;
-
-		],
 	private
 		tried_to_wear false,
-;
-
-!! @YelmoVisor
-Item -> -> YelmoVisor "visor"
-	has
-		male,
-	with
-		name_f 'visera',
-		name_m 'visor',
-		gender G_MASCULINO,
-		adjectives 'casco' 'yelmo',
-		!!
-		react_before [;
-			if (noun == self 
-				&& action ~= ##DefaultAction
-				&& action ~= ##Examine) {
-				noun = Yelmo;
-			}
-		],
-		before [;
-			DefaultAction,
-			Examine:
-				<<Open Yelmo>>;
-		],
 ;
 
 Include "scenes/scene1/1-1-abismo.inf";

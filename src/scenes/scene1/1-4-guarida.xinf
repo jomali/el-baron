@@ -243,8 +243,8 @@ Character -> Dragon "dragón"
 					}
 					new_line;
 					give LogroGuerreroObstinado on;
-					StopDaemon(self);
-					return Utils.press_intro_to_continue(FinalEscena1);
+					FinalEscena1();
+					return Utils.press_intro_to_continue(FinalEscena1Creditos);
 				} else {
 					give self on; !! detiene el daemon durante el prox. turno
 					self.spits_fire();
@@ -444,8 +444,8 @@ Character -> Dragon "dragón"
 				Baron.is_blind = true;
 				move GrutaLuz to GrutaVestibulo;
 			} else {
+				StartDaemon(Armadura);
 				move GrutaBaronFuego to Baron;
-				StartDaemon(GrutaBaronFuego);
 			}
 			Baron.is_burning = true;
 			
@@ -469,8 +469,8 @@ Character -> Dragon "dragón"
 				Después no hay nada más.";
 			}
 			new_line;
-			StopDaemon(self);
-			return Utils.press_intro_to_continue(FinalEscena1);
+			FinalEscena1();
+			return Utils.press_intro_to_continue(FinalEscena1Creditos);
 		],
 		spits_fire [;
 			move GrutaSalonFuego to Limbo;
@@ -513,7 +513,7 @@ Atrezzo -> GrutaBrechas "brechas"
 			}
 		],
 		fall_in [;
-			print ". Tropiezas en el suelo irregular y caes y te incorporas torpemente para continuar la carrera desquiciada mientras las llamas consumen tu cuerpo. Un pie detrás de otro. Luego otro. Y otro. El siguiente pie no encuentra suelo en el que apoyarse y caes de nuevo. Y en esta ocasión no te golpeas contra las rocas. Simplemente sigues cayendo.
+			print ". Tropiezas en el suelo irregular y caes y te incorporas torpemente para continuar la carrera demente mientras las llamas consumen tu cuerpo. Un pie detrás de otro. Luego otro. Y otro. El siguiente pie no encuentra suelo en el que apoyarse y caes de nuevo. Y en esta ocasión no te golpeas contra las rocas. Simplemente sigues cayendo.
 			^^
 			El mismo fuego que te consume alumbra la oscuridad de la hendidura por la que te precipitas";
 			if (Baron.is_blind) {
@@ -526,8 +526,8 @@ Atrezzo -> GrutaBrechas "brechas"
 			Todo tu cuerpo es abrasado y arde y tu alma se transforma en fuego, en llamas, en calor, en luz.";
 			give LogroExcavandoDemasiadoProfundo on;
 			new_line;
-			StopDaemon(Dragon);
-			return Utils.press_intro_to_continue(FinalEscena1);
+			FinalEscena1();
+			return Utils.press_intro_to_continue(FinalEscena1Creditos);
 		],
 		react_before [;
 			VagueGo:
