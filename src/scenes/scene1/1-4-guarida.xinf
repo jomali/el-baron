@@ -68,7 +68,7 @@ AdjacentRoom DirGrutaSalon
 				} else if (self.is_hesitating) {
 					self.is_hesitating = false;
 					Tutorial.hint_hesitations();
-					print "El extremo del pasillo parece la entrada misma a los avernos. Existen multitud de leyendas acerca de cómo el monstruo llegó a vivir aquí, pero lo cierto es que nadie lo sabe con certeza. Algunos sabios afirman que el dragón es tan antiguo como la propia Tierra y que ha habitado en las profundidades de la gruta desde el origen de los tiempos.
+					print "El extremo del pasillo parece la entrada misma a los avernos. Existen multitud de leyendas acerca de cómo el monstruo llegó a vivir aquí, pero lo cierto es que nadie lo sabe con certeza. Algunos sabios afirman que el dragón es tan antiguo como el propio mundo y que ha habitado en las profundidades de la gruta desde el origen de los tiempos.
 					^^
 					Por un momento dudas, preguntándote si tienes realmente el valor necesario para entrar en su [self](cubil).";
 					new_line;
@@ -160,7 +160,7 @@ Indoors GrutaSalon
 			} else if (Baron.is_burning) {
 				print "Entre la vorágine de llamas sólo aciertas a distinguir imágenes fragmentadas de lo que te rodea; [GrutaBrechas](fisuras) en la roca, la mancha carmesí [del Dragon], el pequeño punto de oscuridad que señala la boca [del DirGrutaPasadizo].";
 			} else {
-				print "El pasadizo desemboca en lo que parece una [self](gruta) natural. Es enorme, mucho mayor incluso que la sala del trono del Emperador. Violentas llamaradas emergen en intervalos irregulares desde infinidad de [GrutaBrechas](grietas) y [GrutaBrechas](fisuras) abiertas en la roca. La luz aquí es más brillante que el mediodía y el calor resulta asfixiante.";
+				print "El pasadizo desemboca en lo que parece una [self](gruta) natural. Es enorme, mayor incluso que la sala del trono del Emperador. Violentas llamaradas emergen en intervalos irregulares desde infinidad de [GrutaBrechas](grietas) y [GrutaBrechas](fisuras) abiertas en la roca. La luz aquí es más brillante que el mediodía y el calor resulta asfixiante.";
 			}
 			new_line;
 			return true;
@@ -445,6 +445,7 @@ Character -> Dragon "dragón"
 				move GrutaLuz to GrutaVestibulo;
 			} else {
 				move GrutaBaronFuego to Baron;
+				StartDaemon(GrutaBaronFuego);
 			}
 			Baron.is_burning = true;
 			

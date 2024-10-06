@@ -41,7 +41,7 @@
 [ FinalEscena1;
 	Utils.erase_window();
 	new_line;
-	print (strong) Story, "^";
+	print (strong) Story, " — Primera escena^";
 	new_line;
 	print "Una historia interactiva de Victor Gijsbers.^";
 	print "Versión en castellano por J. Francisco Martín.^";
@@ -125,14 +125,23 @@ Atrezzo -> GrutaBaronFuego "fuego"
 				new_line;
 				return true;
 			SwitchOff:
-				print "Tratas de golpear las llamas desesperado pero resulta inútil; cada vez crecen y arden con mayor ferocidad.";
+				print "Tratas de apagar las llamas desesperado pero resulta inútil; cada vez crecen y arden con mayor ferocidad.";
 				new_line;
 				return true;
+		],
+		daemon [;
+			!! Es posible interrumpir su ejecución durante un turno asignando el
+			!! atributo `on` al objeto:
+			if (self has on) {
+				give self ~on;
+				return true;
+			}
+			return self.acts();
 		],
 		description [;
 			SetPronoun('-las', self);
 			SetPronoun('ellas', self);
-			print "Estás envuelto en un turbulento mar de llamas.";
+			print "Un turbulento mar de llamas te envuelve por completo.";
 			new_line;
 			return true;
 		],
@@ -142,6 +151,30 @@ Atrezzo -> GrutaBaronFuego "fuego"
 				return true;
 			}
 		],
+	private
+		acts [;
+			self.counter++;
+			switch (self.counter) {
+				3:
+					new_line;
+					print "El metal de tu [Armadura](armadura) está cada vez más y más caliente a medida que las llamas crecen a tu alrededor.";
+					new_line;
+					return true;
+				4:
+					new_line;
+					print "El dolor es mayor por momentos. Golpeas las llamas angustiado, intentando apagarlas. Pero no funciona. Peor, te das cuenta con horror que la propia [Armadura](armadura) comienza a fundirse lentamente.";
+					new_line;
+					return true;
+				6:
+					!! TODO - traducir
+					new_line;
+					print "Melting metal penetrates your skin and commingles with your liquifying flesh. No visions, no sounds, no thoughts: only pain fills your consciousness as you fall to your knees, screaming your last scream while your vocal cords burn away.^^
+					La oscuridad cae sobre ti como una fría manta.";
+					new_line;
+					return Utils.press_intro_to_continue(FinalEscena1);
+			}
+		],
+		counter 0,
 ;
 
 !! @GrutaLuz
@@ -292,7 +325,7 @@ Item Percunos Limbo
 		article "tu",
 		!!
 		description [;
-			print "Para esta gesta te has traído el más pesado de tus hachas de guerra. Pocos pueden levantar su peso, y menos aún manejarlo con la misma velocidad y precisión mortíferas con las que tú lo haces.";
+			print "Para esta gesta te has traído el más pesado de tus hachas de guerra. Pocos pueden levantar su peso y, menos aún, manejarlo con tu misma velocidad y precisión letales.";
 			new_line;
 			return true;
 		],

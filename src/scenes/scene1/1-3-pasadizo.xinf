@@ -248,7 +248,7 @@ Atrezzo -> GrutaPasadizoFuego "fuego"
 		Fire,
 	with
 		description [;
-			print "Lenguas de fuego mayores que cualquier hombre iluminan el pasadizo desde la [DirGrutaSalon](guarida) del dragón.";
+			print "Lenguas de fuego más altas que cualquier hombre iluminan el pasadizo desde la [DirGrutaSalon](guarida) de la bestia.";
 			new_line;
 			return true;
 		],

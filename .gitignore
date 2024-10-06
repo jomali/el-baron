@@ -9,6 +9,7 @@
 *.z5
 *.z8
 *.zblorb
+*.zip
 
 # Dependencias
 **/interpreter
@@ -17,9 +18,11 @@
 **/.pnp.js
 
 # Recursos multimedia
+**/*.mp3
 **/*.mp4
 
 # Otros
+*.pdf
 .DS_Store
 .env.local
 .env.development.local
