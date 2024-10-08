@@ -33,7 +33,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -82,10 +82,14 @@ Object Storyteller "(Narrador)"
 					give Armadura worn;
 					return true;
 				2:
+					PlayerTo(DormitorioBaron);
 					return true;
 				default:
 					return true;
 			}
+		],
+		start_scene_2 [;
+			return PlayerTo(DormitorioBaron);
 		],
 	private
 		_resets [;

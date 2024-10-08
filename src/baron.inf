@@ -36,7 +36,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -82,7 +82,7 @@
 !!------------------------------------------------------------------------------
 
 Constant Story
-"El barón";
+"LA BESTIA";
 
 Constant Headline
 "Una historia interactiva. Escrita por Victor Gijsbers y publicada bajo la Licencia Pública General de GNU en su versión 3 (o cualquier versión posterior). La presente edición ha sido desarrollada por J. Francisco Martín.";
@@ -861,25 +861,6 @@ Include "vorple-screen-effects.h";
 	!! Inicializaciones para la VM Glulx ---------------------------------------
 	Utils.initialise_glulx();
 
-	!! Advertencia de contenidos -----------------------------------------------
-	#Ifndef DEBUG;
-	new_line;
-	print (strong) "ADVERTENCIA", "^";
-	new_line;
-	print "Los contenidos de esta obra no son apropiados para un público
-	infantil. La edad recomendada por el autor a partir de la que experimentar
-	la historia son los ", (strong) "quince", " años. Se advierte, además,
-	acerca de la naturaleza violenta y moralmente reprobable de ciertos temas y
-	situaciones que se abordan en la obra y que pueden herir la sensibilidad de
-	algunos usuarios.^";
-	new_line;
-	new_line;
-	print (parser) "Pulsa una tecla.";
-	new_line;
-	Utils.press_any_key();
-	Utils.erase_window();
-	#Endif; ! DEBUG;
-
 	!! Comprobación de los ficheros de configuración ---------------------------
 	#Ifdef TARGET_GLULX;
 	#Ifdef VERSION_DESKTOP;
@@ -965,8 +946,9 @@ Include "vorple-screen-effects.h";
 	lookmode = 2;
 
 	!! Menú principal:
-	location = Menu;
-	Storyteller.start_scene(1);
+	! location = Menu;
+	location = DormitorioBaron;
+	! Storyteller.start_scene(2);
 	print "^^";
 
 	!! Se evita la impresión inicial del banner
@@ -1126,7 +1108,7 @@ Include "baronUtils.inf";
 
 Include "scenes/baronSceneZero.inf";
 Include "scenes/baronSceneOne.inf";
-Include "scenes/baron_scene-two.inf";
+Include "scenes/baronSceneTwo.inf";
 Include "scenes/baron_scene-three.inf";
 Include "scenes/baron_scene-four.inf";
 Include "scenes/baronSceneFive.inf";

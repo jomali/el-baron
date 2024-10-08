@@ -32,7 +32,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -681,12 +681,12 @@ Object Utils
 		!!
 		!!	@returns {boolean} Verdadero
 		!!	@dependency arrays.h
-		!!	@version 1.0 - 2019/06/22
+		!!	@version 2024/10/07
 		!!----------------------------------------------------------------------
 		print_horizontal_rule [
 			length previous_style txt;
 			length = 0;
-			txt = "*";
+			txt = "____";
 			previous_style = self.set_text_style(TEXT_STYLE_MONOSPACED);
 			#Ifdef VERSION_DESKTOP;
 			PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, txt);
@@ -694,7 +694,15 @@ Object Utils
 			spaces (ScreenWidth()-1-length) / 2;
 			PrintCharacterArray(utility_array_a);
 			#Ifnot; ! VERSION_WEB_MOBILE;
+
+			#Ifdef USE_VORPLE;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.printHorizontalRule();
+			"));
+			#Ifnot;
 			print (string) txt;
+			new_line;
+			#Endif; ! USE_VORPLE;
 			#Endif; ! VERSION_
 			self.set_text_style(previous_style);
 			new_line;

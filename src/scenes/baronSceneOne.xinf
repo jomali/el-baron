@@ -33,7 +33,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -43,19 +43,32 @@
 	StopDaemon(Dragon);
 ];
 
-[ FinalEscena1Creditos;
-	Utils.erase_window();
+[ FinalEscena1Creditos;	
+	#Ifdef USE_VORPLE;
+	VorpleOpenHTMLTag("div", "center-aligned-text");
+	#Endif; ! USE_VORPLE;
+
 	new_line;
-	print (strong) Story, " — Primera escena^";
+	print (strong) Story, "^";
+	print (strong) "Escena primera de El Barón^";
 	new_line;
 	print "Una historia interactiva de Victor Gijsbers.^";
 	print "Versión en castellano por J. Francisco Martín.^";
 	new_line;
-	return Utils.press_intro_to_continue(FinalEscena1Citas);
+	
+	#Ifdef USE_VORPLE;
+	VorpleCloseHTMLTag();
+	#Endif; ! USE_VORPLE;
+	Storyteller.start_scene(2);
+	return true;
 ];
 
 [ FinalEscena1Citas;
-	Utils.erase_window();
+	Utils.print_horizontal_rule();
+	#Ifdef USE_VORPLE;
+	VorpleOpenHTMLTag("div", "right-aligned-text");
+	#Endif; ! USE_VORPLE;
+
 	new_line;
 	print (stressed) "Chi l'anima mi lacera?^
 	Chi m'agita le viscere?^
@@ -71,7 +84,19 @@
 	Texto: Lorenzo da Ponte^
 	Música: Wolfgang A. Mozart^";
 	new_line;
-	Utils.end_history();
+	
+	#Ifdef USE_VORPLE;
+	VorpleCloseHTMLTag();
+	#Endif; ! USE_VORPLE;
+
+	new_line;
+  print "Un tono estridente y discorde rompe dos veces el silencio de la noche, despertándote de un sueño intranquilo.
+  ^^
+  El segundo tañido de la campana de la iglesia resuena en el aire aún durante algunos instantes antes de que la quietud invernal se asiente de nuevo sobre el pueblo y el mundo entero parezca enmudecer. Para entonces, cualquier recuerdo del sueño se ha desvanecido también. Ojalá se pudiese uno deshacer de todas las pesadillas con esa misma facilidad…
+	^^
+	Supones que ahora puede ser tan buen momento como cualquiera. Te frotas la somnolencia de los párpados y sales de la cama teniendo mucho cuidado de no despertar a Matilde. Sin duda intentaría detenerte.";
+	new_line;
+	return Utils.press_intro_to_continue(Storyteller.start_scene_2);
 ];
 
 !! @Armadura
@@ -429,7 +454,7 @@ Item Yelmo "yelmo" Limbo
 		tried_to_wear false,
 ;
 
-Include "scenes/scene1/1-1-abismo.inf";
-Include "scenes/scene1/1-2-vestibulo.inf";
-Include "scenes/scene1/1-3-pasadizo.inf";
-Include "scenes/scene1/1-4-guarida.inf";
+Include "scenes/scene1/1_1.inf";
+Include "scenes/scene1/1_2.inf";
+Include "scenes/scene1/1_3.inf";
+Include "scenes/scene1/1_4.inf";

@@ -32,7 +32,21 @@ body {
 	max-width: 680px;  /* 680 + 16 (padding) */
 }
 
+.center-aligned-text {
+	text-align: center;
+}
+
+.right-aligned-text {
+	text-align: end;
+}
+
 hr.choice-set-divider {
+	opacity: 0.6;
+}
+
+hr.section-break {
+	margin-top: 24px;
+	max-width: 100px;
 	opacity: 0.6;
 }
 

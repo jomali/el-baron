@@ -1,0 +1,451 @@
+
+
+!!==============================================================================
+!!
+!!	EL BARÓN
+!!	Escena segunda - Frente a tu casa
+!!
+!!==============================================================================
+!!
+!!	Archivo:			2_4.xinf
+!!	Autor(es):		Victor Gijsbers
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
+!!
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
+!!
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2006, Victor Gijsbers
+!!	Copyright (c) 2024, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+
+!! @Jardin
+Outdoors	Jardin "Frente a tu casa"
+ has	male,
+ with	name_m 'jardin',
+		gender G_MASCULINO,
+		adjectives 'exterior',
+		!!------------------
+		description [;
+			print "Un manto de [JardinNieve] de al menos cuatro palmos ha enterrado casi por completo el jardín delantero, a excepción de algunos pocos [JardinArbustos]] raquíticos y sin hojas que sobresalen aquí y allá al lado [del JardinValla] que delimita tu propiedad. Más allá del jardín, [un JardinCamino] parte de la plaza mayor [del JardinPueblo] y serpentea por entre edificios, primero, y por entre los campos de labranza, después, en dirección";
+			if (Utils.is_compass_enabled()) {
+				print " [n_obj]. Hacia el castillo del barón";
+			} else {
+				print " al bosque. Y [al JardinDirCastillo] del barón";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+		e_to [;
+			if (Utils.is_compass_enabled()) <<Enter JardinPueblo>>;
+			else return self.cant_go();
+		],
+		in_to [;
+			<<Enter JardinDirCasa>>;
+		],
+		n_to [;
+			if (Utils.is_compass_enabled()) <<Enter JardinDirCastillo>>;
+			else return self.cant_go();
+		],
+		s_to [;
+			if (Utils.is_compass_enabled()) <<Enter JardinCerro>>;
+			else return self.cant_go();
+		],
+		w_to [;
+			if (Utils.is_compass_enabled()) <<Enter JardinDirCasa>>;
+			else return self.cant_go();
+		],
+;
+
+!! @Hacha
+Item	-> Hacha "hacha"
+ has	male,
+ with	name_m 'hacha',
+		gender G_MASCULINO,
+		adjectives 'afilado' 'lenador' 'mango',
+		!!------------------
+		before [;
+			Burn:
+				print "El mango [del self] es resistente y no arderá fácilmente.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Sin duda alguna tu herramienta principal. Está afilada, tiene un buen equilibrio, y los músculos de tus brazos están perfectamente acostumbrados a su peso";
+			!! TODO
+			if (true) {
+				print ". Probablemente podrías partir la cabeza del barón por la mitad con un sólo golpe";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+		invent [
+			i obj;
+			!! XXX - Es posible que el comportamiento no sea el esperado si en
+			!! la localidad actual hay un objeto con la propiedad 'describe',
+			!! pero que ésta retorne falso. En ese caso simplemente no se
+			!! imprimiría el apéndice ", apoyado contra la pared":
+			if (parent(self) == Jardin && inventory_stage == 1) {
+				objectloop(obj in location
+					&& obj hasnt scenery
+					&& obj hasnt concealed
+					&& ~~(obj provides describe)) {
+					i++;
+				}
+				if (i == 1) {
+					print "[un self], apoyado contra la pared";
+					return true;
+				}
+			}
+			return false;
+		],
+		size SIZE_M,
+;
+
+!! @JardinArbustos
+Atrezzo	-> JardinArbustos "arbustos"
+ has	male pluralname,
+ with	name_m 'arbusto',
+		name_mp 'arbustos',
+		gender G_MASCULINO + G_PLURAL,
+		adjectives 'seco' 'secos',
+		!!------------------
+		description [;
+			print "Hace semanas que han perdido todas sus hojas y, con ellas, el poco atractivo que pudieran tener. Ahora son sólo esqueletos enfermizos aguardando la primavera.";
+			new_line;
+			return true;
+		],
+;
+
+!! @JardinBuzon
+HeavyItem	-> JardinBuzon "buzón"
+ class	Receptacle,
+ has	male ~open openable,
+ with	name_m 'buzon',
+		gender G_MASCULINO,
+		adjectives 'abollado' 'roto',
+		!!------------------
+		before [;
+			Attack:
+				!! TODO
+				if (self.state == 2) {
+					print "Ya está[n self] destrozad[o self].";
+					new_line;
+					return true;
+				} else {
+					if (IndirectlyContains(player, Hacha)) {
+						self.state = 2;
+						print "Golpeas violentamente el buzón con la culata del hacha. Sale despedido de sus sujecciones y cae sobre la nieve, a varas varas de distancia, con la tapa completamente destrozada.";
+						new_line;
+						return true;
+					} else {
+						self.state = 1;
+						print "Lleno de ira, golpeas con un puñetazo el buzón.";
+						new_line;
+						return true;
+					}
+			}
+		],
+		describe [;
+			new_line;
+			switch (self.state) {
+				1:
+					print "Hay [un self] abollad[o self], colgad[o self] junto a la entrada de tu casa.";
+				2:
+					print "[El self] está[n self] destrozad[o self] sobre [la JardinNieve], a pocos pasos de la entrada de tu casa.";
+				default:
+					print "Junto a la entrada de tu casa hay colgado un sencillo [self] de hojalata.";
+			}
+			new_line;
+			return true;
+		],
+		description [;
+			!! TODO
+			print "A small letterbox hangs on the outside of the garden fence.";
+			new_line;
+			return true;
+		],
+		is_broken [;
+			return (self.state > 0);
+		],
+;
+
+!! @CartaBaron
+Item	-> -> CartaBaron
+ has	female remarkable,
+ with	short_name [;
+			print "[](carta:REMARKABLE_OBJECT)";
+			if (self has described) {
+				print " del barón";
+			}
+			return true;
+		],
+		name_f 'carta' 'misiva',
+		name_m 'correo',
+		gender G_FEMENINO,
+		adjectives 'baron',
+		!!------------------
+		before [;
+			Attack:
+				!! TODO
+				move self to Limbo;
+				print "In a fit of rage you tear the letter apart in dozens of shreds. How dare he! ~I love her,~ he writes. The heartless villain…";
+				new_line;
+				return true;
+			Burn:
+				return Baron.sets_fire(self);
+			Consult,
+			Read:
+				<<Examine self>>;
+		],
+		description [
+			previous_style;
+			if (self has described) {
+				print "Eres incapaz de leer de nuevo este insulto.";
+			} else {
+				print "El mensaje del pergamino está manuscrito con una letra legible y elegante:";
+				new_line;
+				previous_style = Utils.set_text_style(TEXT_STYLE_IMPORTANT);
+				new_line;
+				print "A los padres de María,
+				^^
+				Con la presente quiero comunicarles que su hija ha sido conducida hasta mi castillo, a orden mía. No tienen nada de qué preocuparse: se encuentra perfectamente a salvo y todas sus necesidades serán atendidas con la mayor diligencia. No intenten visitarla ni, mucho menos, pretendan llevársela de mi lado. El castillo está fuertemente custodiado y sólo conseguirían poner en peligro su propia integridad.
+				^^
+				Entiendo la contrariedad que sin duda supone tener que desprenderse así de una hija, y me disculpo sinceramente por provocarles semejante sufrimiento. ¿Qué motivos hay entonces detrás de tal acción? Amo a María. La amo y no puedo vivir sin tenerla a mi lado. Conmigo será feliz. Esto último lo prometo por mi honor. Confío en que algún día puedan entender que se trata de la situación más beneficiosa para ella.
+				^^
+				El Barón.";
+				new_line;
+				Utils.set_text_style(previous_style);
+				new_line;
+				print "Tus manos tiemblan inconteniblemente, arrugando la carta.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @JardinCamino
+Atrezzo	-> JardinCamino "camino"
+ class	Background,
+ has	male,
+ with	name_m 'camino',
+		gender G_MASCULINO,
+		!!------------------
+		description [;
+			print "El paso de la gente y de los carros de caballos han convertido el camino en un barrizal medio congelado. Discurre desde el centro [del JardinPueblo] en dirección [al JardinDirCastillo] del barón.";
+			new_line;
+			return true;
+		],
+;
+
+!! @JardinCasa
+Atrezzo	-> JardinCasa "casa"
+ has	female,
+ with	name_f 'casa' 'ventana',
+		name_fp 'ventanas',
+		name_m 'edificio',
+		gender G_FEMENINO,
+		adjectives 'tu' 'madera',
+		!!------------------
+		before [;
+			Enter:
+				<<Enter JardinDirCasa>>;
+		],
+		description [;
+			print "Hecha de madera y pintada en colores claros, al igual que prácticamente todas las demás construcciones del pueblo. Tiene una altura de dos plantas, con los dormitorios en la planta superior y el salón, la cocina y tu taller en la inferior";
+			if (self hasnt described) {
+				print ". Buscas con la mirada la silueta de Gilda recortada en la ventana de tu dormitorio, pero no está ahí. Parece que nadie se despedirá de ti esta noche";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+;
+
+!! @JardinCerro
+Atrezzo	-> JardinCerro
+ class	Background,
+ has	male,
+ with	short_name [;
+			print "[](cerro:OTHER_OBJECT) del campesino";
+			return true;
+		],
+		name_f 'colina' 'elevacion' 'loma' 'montana',
+		name_m 'cerro' 'otero',
+		gender G_MASCULINO,
+		adjectives 'blanco' 'campesino' 'del',
+		!!------------------
+		before [;
+			Enter:
+				!! TODO
+				!! That road would take you out of the valley, each step taking you farther away from Maartje and the baron.
+				print "it does not lie in the right direction if you wish to reach the baron.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "El cerro del campesino es la colina más alta de los alrededores. Se dibuja completamente blanco detrás [del JardinPueblo].";
+			new_line;
+			return true;
+		],
+;
+
+!! @JardinDirCasa
+AdjacentRoom	-> JardinDirCasa "entrada"
+ has	male,
+ with	name_f 'entrada',
+		gender G_FEMENINO,
+		adjectives 'casa',
+		!!------------------
+		adjacent_room Descansillo,
+		before [;
+			Enter:
+				!! TODO - volver a colgar el abrigo
+				self.AdjacentRoom::before();
+				return true;
+			Examine,
+			Search:
+				<<Examine JardinCasa>>;
+		],
+;
+
+!! @JardinDirCastillo
+Atrezzo	-> JardinDirCastillo "castillo"
+ class	Background,
+ has	male,
+ with	name_f 'fortaleza',
+		name_m 'castillo',
+		gender G_MASCULINO,
+		adjectives 'baron',
+		!!------------------
+		before [;
+			Enter:
+				if (self.state == 0) {
+					self.state++;
+					print "Te dispones a emprender el camino hacia [el self] del barón, pero vacilas antes siquiera de echar a andar";
+					if (~~JardinBuzon.is_broken()) {
+						print " al notar la ira que ha ido creciendo poco a poco en tu interior";
+					}
+					print ". ¿Cómo pueden tus vecinos descansar tan tranquilos? ¿Cómo es que ni uno sólo ha tenido las agallas de levantar la voz y salir en auxilio de María? Tan faltos de empatía… tan… tan asquerosamente egoístas. Todos saben lo que ha ocurrido pero nadie piensa mover un músculo para remediarlo porque nadie se siente responsable. Porque mientras algo no te afecte directamente es mucho más cómodo ignorarlo, aunque esté ocurriendo frente a tus propios ojos…";
+					new_line;
+					if (~~JardinBuzon.is_broken()) {
+						new_line;
+						<Attack JardinBuzon>;
+					}
+					return true;
+				}
+				print "Mascullas un insulto contra la humanidad en su conjunto y te abres paso a grandes zancadas por entre la capa de nieve.
+				^^";
+				new_line;
+				Utils.print_horizontal_rule();
+				new_line;
+				Utils.start_scene(3);
+				return true;
+		],
+;
+
+!! @JardinNieve
+Atrezzo	-> JardinNieve "nieve"
+ has	female,
+ with	name_f 'nieve',
+		gender G_FEMENINO,
+		!!------------------
+		before [;
+			Dig,
+			LookUnder:
+				if (second ~= nothing
+					&& second ~= player
+					&& IndirectlyContains(player, second)) {
+					print "Hurgas aquí y allá entre [la self] con [el second], sin encontrar nada.";
+					new_line;
+					return true;
+				}
+				print "Hurgas aquí y allá entre [la self], sin encontrar nada.";
+				new_line;
+				return true;
+			Search:
+				<<Dig self>>;
+		],
+		description [;
+			print "Una gruesa capa de nieve se ha asentado sobre el paisaje a lo largo de los últimos días. Todo está blanco salvo por [el JardinCamino], al final del jardín, convertido en un lodazal resbaladizo.";
+			new_line;
+			return true;
+		],
+		react_before [;
+			Dig:
+				if (noun == nothing || noun == location) {
+					<<Dig self second>>;
+				}
+		],
+;
+
+!! @JardinPueblo
+Atrezzo	-> JardinPueblo "pueblo"
+ class	Background,
+ has	male,
+ with	name_f 'iglesia' 'plaza' 'torre',
+		name_m 'campanario' 'pueblo' 'templo',
+		name_mp 'edificios' 'tejados',
+		gender G_MASCULINO,
+		adjectives 'mayor',
+		!!------------------
+		before [;
+			Enter:
+				!! TODO
+				print "That leads to the village square next to the church, far from Maartje.";
+				new_line;
+				return true;
+		],
+		description [;
+			!! TODO - pueblo
+			!! "Your house lies at the edge of the village, which in this cold December night is burdened with a thick layer of snow. At this time of the night, nobody walks the streets anymore. The village wraps itself in silence.";
+			!! TODO - iglesia
+			!! "The top of the church tower just peeks above the houses on the other side of the street, like a black finger against the star-filled sky.";
+
+			print "Aunque la plaza mayor queda oculta tras los edificios, desde aquí puedes ver la torre de la iglesia elevándose por encima del resto de los tejados, igual que esos [JardinArbustos]] lo hacen sobre [la JardinNieve]. Tras ella, a lo lejos, [el JardinCerro] se ve completamente blanco.";
+			new_line;
+			return true;
+		],
+;
+
+!! @JardinValla
+Atrezzo	-> JardinValla "valla"
+ has	female,
+ with	name_f 'cerca' 'valla',
+		gender G_FEMENINO,
+		adjectives 'madera',
+		!!------------------
+		before [;
+			Close,
+			Open:
+				print "No rodea al jardín por completo. Tiene una abertura lo suficientemente grande como para dejar el paso a un carro de caballos.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Una sencilla cerca de madera que delimita tu jardín. Viendo hasta dónde le llega, calculas que la capa de [JardinNieve] tiene unos cuatro palmos de espesor.";
+			new_line;
+			return true;
+		],
+;

@@ -7,7 +7,7 @@
 !!
 !!==============================================================================
 !!
-!!	Archivo:			1-4-guarida.xinf
+!!	Archivo:			1_4.xinf
 !!	Autor(es):		Victor Gijsbers
 !!								J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:				ES (Español)
@@ -33,7 +33,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ Character -> Dragon "dragón"
 					new_line;
 					give LogroGuerreroObstinado on;
 					FinalEscena1();
-					return Utils.press_intro_to_continue(FinalEscena1Creditos);
+					return Utils.press_intro_to_continue(FinalEscena1Citas);
 				} else {
 					give self on; !! detiene el daemon durante el prox. turno
 					self.spits_fire();
@@ -470,7 +470,7 @@ Character -> Dragon "dragón"
 			}
 			new_line;
 			FinalEscena1();
-			return Utils.press_intro_to_continue(FinalEscena1Creditos);
+			return Utils.press_intro_to_continue(FinalEscena1Citas);
 		],
 		spits_fire [;
 			move GrutaSalonFuego to Limbo;
@@ -527,7 +527,7 @@ Atrezzo -> GrutaBrechas "brechas"
 			give LogroExcavandoDemasiadoProfundo on;
 			new_line;
 			FinalEscena1();
-			return Utils.press_intro_to_continue(FinalEscena1Creditos);
+			return Utils.press_intro_to_continue(FinalEscena1Citas);
 		],
 		react_before [;
 			VagueGo:

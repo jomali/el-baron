@@ -35,7 +35,7 @@
 !!	General GNU junto a EL BARÓN. En caso contrario, consulte
 !!	<http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2021, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -74,7 +74,9 @@ Object Menu
 
 			print "**ADVERTENCIA**
 			^^
-			Los contenidos de esta obra no son apropiados para un público infantil. La edad recomendada por el autor a partir de la que experimentar el relato son los **quince años**.";
+			Los contenidos de esta obra no son apropiados para un público infantil. **La edad mínima recomendada para experimentar el relato son los quince años**.
+			^^
+			La versión actual de **LA BESTIA** incluye una única escena de una obra mayor, inconclusa. Se publica con motivo del evento ECTOcomp 2024 con la esperanza de que pueda resultar interesante a pesar de estar inacabada.";
 			new_line;
 			return Utils.press_intro_to_continue(self.start);
 		],

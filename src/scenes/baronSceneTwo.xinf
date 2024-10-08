@@ -1,0 +1,255 @@
+
+
+!!==============================================================================
+!!
+!!	EL BARÓN
+!!	Escena segunda
+!!
+!!==============================================================================
+!!
+!!	Archivo:			baronSceneTwo.xinf
+!!	Autor(es):		Victor Gijsbers
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
+!!
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
+!!
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2006, Victor Gijsbers
+!!	Copyright (c) 2024, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+
+
+!! FIXME
+!! Reorganizar distribución de las localidades de acuerdo a los puntos
+!! cardinales a fin de colocar el bosque y el castillo del barón al
+!! oeste(-suroeste) del pueblo. Es importante que el sentido de desplazamiento
+!! sea este -> oeste, a la contra del sentido natural de lectura, puesto que
+!! genera una tensión sutil.
+
+!! @Abrigo
+Item	Abrigo "abrigo" Limbo
+ class	Clothes,
+ has	male,
+ with	name_f 'pelliza',
+		name_m 'abrigo' 'gaban' 'sobretodo',
+		gender G_MASCULINO,
+		adjectives 'invernal' 'invierno',
+		!!------------------
+		before [;
+			Disrobe:
+			!! TODO
+				if (location ofclass Outdoors) {
+					print "Hace un frío helador. El abrigo te protege de acabar congelado.";
+					new_line;
+					return true;
+				} else {
+					return self.Clothes::before();
+				}
+		],
+		description [;
+			print "Compraste este abrigo hace poco, obligado por la insistencia de tu mujer. Es verdad que el viejo estaba ya agujereado en algunas partes y que no protegía tan bien frío, pero estabas acostumbrado a él. Era *tu* abrigo. Las mujeres no comprenden estas cosas.";
+			new_line;
+			return true;
+		],
+		layer 2,
+;
+
+!! @E2_Recapitulacion
+Object	E2_Recapitulacion "(Escena Dos Recap.)" Limbo;
+
+!! @E2_DiaEspecial
+Object	-> -> E2_DiaEspecial "Un día especial"
+ with	description
+			"Has recordado el día de tu boda con Gilda.",
+;
+
+!! @E2_InfanciaMaria
+Object	-> -> E2_InfanciaMaria "La infancia de María"
+ with	description
+			"Has repasado algunos momentos de la infancia de María, desde que nació, hasta que se cortó abruptamente.",
+;
+
+!! TODO - eliminar campanario de JardinPueblo
+!! @CasaCampanario
+Atrezzo	CasaCampanario "campanario"
+ class	Background,
+ has	male,
+ with	found_in DormitorioBaron DormitorioMaria Jardin,
+		name_f 'iglesia' 'torre',
+		name_m 'campanario' 'templo',
+		gender G_MASCULINO,
+		adjectives 'pueblo',
+		!!------------------
+		description [;
+			switch (location) {
+				DormitorioMaria:
+					print "Desde el cuarto de María no se alcanza a ver la iglesia.";
+				default:
+					print "La mitad superior de la torre de la iglesia se alza sobre los tejados cubiertos de [NieveCasa], como un dedo negro señalando [el CieloCasa] estrellado.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @CasaCerro
+Atrezzo	CasaCerro
+ class	Background,
+ has	male,
+ with	found_in DormitorioBaron DormitorioMaria,
+		short_name [;
+			print "[](cerro:OTHER_OBJECT) del campesino";
+			return true;
+		],
+		name_f 'colina' 'elevacion' 'loma' 'montana',
+		name_m 'cerro' 'otero',
+		gender G_MASCULINO,
+		adjectives 'blanco' 'campesino' 'del',
+		!!------------------
+		description [;
+			switch (location) {
+				!! TODO - domitorio
+				default:
+					print "A través de la ventana puedes ver el cerro del campesino, la colina completamente cubierta de [NieveCasa]] que se eleva detrás [del PuebloCasa].";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! TODO - rutina de parsing para: bóveda celeste
+!! @CieloCasa
+Atrezzo	CieloCasa "cielo"
+ class	Background,
+ has	male,
+ with	found_in DormitorioBaron DormitorioMaria Jardin,
+		name_f 'estrella',
+		name_fp 'estrellas',
+		name_m 'cielo' 'firmamento',
+		gender G_MASCULINO,
+		adjectives 'nocturno',
+		!!------------------
+		description [;
+			if (location == DormitorioBaron) {
+				print "Miras hacia el cielo a través [del DormitorioBaronVentana]. ";
+			}
+			if (location == DormitorioMaria) {
+				print "Miras hacia el cielo a través [del DormitorioMariaVentana]. ";
+			}
+			print "En la distancia cósmica, las almas de los mayores guerreros del pasado arden salvajemente mientras luchan en un combate eterno con fuerzas desconocidas del más allá. Aquí, en la tierra, su luz lejana adorna la cúpula celeste como hermosas velas contra terciopelo negro.";
+			new_line;
+			return true;
+		],
+;
+
+!! @LunaCasa
+Atrezzo	LunaCasa "luna"
+ class	Background,
+ has	female light,
+ with	found_in Descansillo DormitorioBaron DormitorioMaria Jardin,
+		name_f 'luna' 'luz',
+		gender G_FEMENINO,
+		adjectives 'llena',
+		!!------------------
+		description [;
+			switch (location) {
+				Descansillo:
+					print "La poca luz que consigue filtrarse en el descansillo sin ventanas lo hace a través de tu [DirDormitorioBaron](dormitorio).";
+				DormitorioMaria:
+					print "La luz de la luna sólo alcanza [la DormitorioMariaVentana] indirectamente, reflejada en [la NieveCasa] de fuera, creando un ambiente tétrico en el dormitorio.";
+				default:
+					print "Los contornos de los objetos se desdibujan y parecen fluir entre sí bajo la luz de la luna, intangibles, como elementos de un sueño.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @NieveCasa
+Atrezzo	NieveCasa "nieve"
+ class	Background,
+ has	female,
+ with	found_in DormitorioBaron DormitorioMaria,
+		name_f 'nieve',
+		gender G_FEMENINO,
+		!!------------------
+		before [;
+			Dig,
+			LookUnder:
+				print "Antes tienes que salir a la calle.";
+				new_line;
+				return true;
+		],
+		description [;
+			!! Exclusivo del dormitorio principal:
+			if (location == DormitorioBaron) {
+				print "Pones la mirada más allá";
+				if (DormitorioBaronVentana hasnt open) {
+					print " del panel de vidrio";
+				}
+				print " [del DormitorioBaronVentana]. ";
+			}
+			!! Exclusivo del cuarto de María:
+			if (location == DormitorioMaria) {
+				print "Pones la mirada más allá";
+				if (DormitorioMariaVentana hasnt open) {
+					print " del panel de vidrio";
+				}
+				print " [del DormitorioMariaVentana]. ";
+			}
+			!! General:
+			print "Una gruesa capa de nieve se ha ido asentando sobre el paisaje a lo largo de los últimos días. El mundo entero está cubierto de blanco";
+			!! Exclusivo del dormitorio principal y del jardín:
+			if (location == DormitorioBaron) {
+				print " salvo por las calles más transitadas [del JardinPueblo], convertidas en un lodazal resbaladizo";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+;
+
+!! @PuebloCasa
+Atrezzo	PuebloCasa "pueblo"
+ class	Background,
+ has	male,
+ with	found_in DormitorioBaron DormitorioMaria,
+ with	name_m 'pueblo',
+		gender G_MASCULINO,
+		!!------------------
+		description [;
+			switch (location) {
+				DormitorioBaron:
+					print "Tienes una buena vista de gran parte del pueblo. Todo está en silencio y a oscuras, salvo por unas pocas luces sueltas que arden sin mucha convicción en mitad de la noche invernal.";
+				DormitorioMaria:
+					!! TODO
+			}
+			new_line;
+			return true;
+		],
+;
+
+Include "scenes/scene2/2_1.inf";
+Include "scenes/scene2/2_2.inf";
+Include "scenes/scene2/2_3.inf";
+Include "scenes/scene2/2_4.inf";

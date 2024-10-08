@@ -125,6 +125,10 @@ var ifjs = (function (controller) {
     keyDown,
     keyUp,
     pressIntroToContinuePrompt,
+    printHorizontalRule: () => {
+      vorple.layout.openTag("hr", "section-break");
+      vorple.layout.closeTag();
+    },
     resetHighlights,
     saveHistoryLength: () => {
       historyLength = haven.prompt.history.get().length;

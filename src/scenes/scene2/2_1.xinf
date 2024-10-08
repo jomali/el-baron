@@ -1,0 +1,1095 @@
+
+
+!!==============================================================================
+!!
+!!	EL BARÓN
+!!	Escena segunda - Tu dormitorio
+!!
+!!==============================================================================
+!!
+!!	Archivo:			2_1.xinf
+!!	Autor(es):		Victor Gijsbers
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
+!!
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
+!!
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2006, Victor Gijsbers
+!!	Copyright (c) 2024, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+
+!! @DirDormitorioBaron
+AdjacentRoom	DirDormitorioBaron "dormitorio"
+  has
+    male,
+  with
+    found_in Descansillo,
+		short_name [;
+			print "[](dormitorio:DIRECTION_OBJECT) principal";
+			return true;
+		],
+		name_f 'habitacion',
+		name_m 'cuarto' 'dormitorio',
+		gender G_MASCULINO,
+		adjectives 'principal',
+    !!
+		adjacent_room DormitorioBaron,
+		before [;
+			Enter:
+				print "Regresas al dormitorio en completo silencio.";
+				new_line;
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @DormitorioBaron
+Indoors DormitorioBaron
+	has
+		male,
+	with
+		short_name [;
+			print "En tu [](dormitorio)";
+			return true;
+		],
+		name_f	'estancia' 'habitacion',
+		name_m	'cuarto' 'dormitorio',
+		gender	G_MASCULINO,
+		!!
+		description [;
+			if (player in DormitorioBaronSilla) {
+				print "Sentado en [la DormitorioBaronSilla] observas cómo la";
+			} else {
+				print "La";
+			}
+			print " luz de [LunaCasa] se cuela a través de [la DormitorioBaronVentana] y arroja sobre [los DormitorioBaronMuebles] una pátina de una belleza sobrenatural. No se escucha nada aparte de la suave respiración de tu [Matilde](esposa), dormida";
+			if (Matilde.has_been_unmasked()) {
+				print " —o simulando hacerlo—";
+ 			}
+			print " en la gran [DormitorioBaronCama] que domina la habitación. [Una DormitorioBaronPuerta] [if:Utils.is_compass_enabled()]conduce hasta [el DirDescansillo] [al e_obj][else]separa el dormitorio y [el DirDescansillo][fi].";
+			new_line;
+			return true;
+		],
+		exits [;
+			print "La única [DormitorioBaronPuerta] de la habitación conduce [al DirDescansillo].";
+			new_line;
+			return true;
+		],
+		n_to [;
+			if (Utils.is_compass_enabled()) <<Enter DirDescansillo>>;
+			else return self.cant_go();
+		],
+		out_to [;
+			<<Enter DirDescansillo>>;
+		],
+;
+
+!! @DormitorioBaronCama
+HeavyItem	-> DormitorioBaronCama
+	has
+		concealed female supporter,
+	with
+		short_name [;
+			print "[](cama) de matrimonio";
+			return true;
+		],
+		name_f 'cama' 'piltra',
+		name_m 'camastro' 'catre' 'colchon' 'jergon' 'lecho' 'somier',
+		gender G_FEMENINO,
+		adjectives 'matrimonio',
+		!!
+		before [;
+			Enter:
+				print "Si pudieses simplemente echarte en la cama y volverte a dormir. No hacer nada más, no preocuparte por nada, sólo encogerte bajo [la DormitorioBaronManta] y soñar con el cuerpo menudo y esbelto de María… pero no puedes.";
+				if (~~self.tried_to_sleep) {
+					self.tried_to_sleep = true;
+					print " No sin antes intentar liberarla. Incluso si fueses capaz de engañar a tu mente por una noche y fingir que ella descansa feliz en casa, la cruda realidad te golpeará de nuevo al despertar mañana, y de nuevo pasado mañana. Cuanto antes te enfrentes a ello, mejor.";
+				}
+				new_line;
+				return true;
+			Sit:
+				print "Prefieres seguir de pie por miedo a  [if:Matilde.has_been_unmasked()]molestar[else]despertar[fi] a [Matilde].";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Hecha con tus propias manos, ocupa la mitad de la habitación. Bajo la luz de [la LunaCasa] puedes ver cómo [la DormitorioBaronManta] sube[n DormitorioBaronManta] y baja[n DormitorioBaronManta] acompasadamente con la respiración de [Matilde].";
+			new_line;
+			return true;
+		],
+		react_before [;
+			Sleep:
+				<<Enter self>>;
+		],
+		reset [;
+			self.tried_to_sleep = false;
+		],
+ private
+		tried_to_sleep false,
+;
+
+Atrezzo -> -> "almohada"
+	has
+		female,
+	with
+		name_f 'almohada',
+		name_fp 'almohadas',
+		name_m 'almohadon' 'cojin',
+		name_mp 'almohadones' 'cojines',
+		gender G_FEMENINO,
+		adjectives 'pluma' 'plumas' 'plumon',
+		!!
+		before [;
+			Pull,
+			Push,
+			PushDir,
+			Take,
+			Touch,
+			Turn,
+			Wave:
+				<<Take DormitorioBaronManta>>;
+		],
+		description [;
+			print "Una larga almohada rellena de plumas.";
+			new_line;
+			return true;
+		],
+;
+
+!! @Matilde
+Character	-> -> Matilde "Matilde"
+	has
+		female proper,
+	with
+		name_f 'conyuge' 'esposa' 'matilde' 'mujer' 'persona',
+		gender G_FEMENINO,
+		!!
+		before [;
+			Attack:
+				if (~~self.tried_to_attack) {
+					self.tried_to_attack = true;
+					if (IndirectlyContains(player, Hacha)) {
+						print "Agarras el mango [del Hacha] con fuerza";
+					} else {
+						print "Cierras los puños con fuerza";
+					}
+					print " en un arrebato de furia. —¡Sería para toda la eternidad! —las palabras se forman repentinamente en tu mente, sin saber qué significan en realidad… pero se esfuman con la misma rapidez, dejándote inquieto y confundido. La sola idea de poder hacer daño a [Matilde] te aterra. ";
+				}
+				print "Nunca pondrías una mano encima a tu [Matilde](mujer).";
+				new_line;
+				return true;
+			Kiss:
+				if (~~self.has_been_unmasked()) {
+					return self.description(true);
+				} else if (~~self.tried_to_kiss) {
+					self.tried_to_kiss = true;
+					print "Tus labios rozan con ternura la pálida mejilla de [self] en un sencillo gesto de despedida. Parece estremecerse ante el contacto y entierra disimuladamente el rostro en la almohada.";
+				} else {
+					print "Sea fingido o no decides no molestar más su sueño.";
+				}
+				new_line;
+				return true;
+			Listen:
+				if (~~self.has_been_unmasked()) {
+					print "La noche encierra peligros; figurados y muy literales también, algunos. Pero el sonido rítmico de la respiración de [self] resulta de algún modo tranquilizador ante esas amenazas.";
+				} else {
+					print "El compás constante de la respiración de [self] no enmascara que está despierta en realidad.";
+				}
+				new_line;
+				return true;
+			Pull,
+			Push,
+			PushDir,
+			Squeeze,
+			Take,
+			TalkTo,
+			WakeOther:
+				if (~~self.has_been_unmasked()) {
+					print "No, no quieres despertarla. [self] se opone frontalmente a que pongas en peligro tu vida para intentar liberar a vuestra hija. Cada vez que has mencionado la intención de ir a salvar a María de las garras del barón estos últimos días, ella ha exclamado angustiada que no podía soportar la idea de perderte también a ti. Lo mejor es irse en silencio y dejarla dormir.";
+				} else {
+					print "Mejor no romper la farsa. Deja que finja dormir. Será más fácil para ella aceptar lo que estás a punto de hacer si no tiene que enfrentarse a ello explícitamente. Y tampoco tú crees tener fuerzas suficientes para oponerte a ella si te ruega que te quedes en casa.";
+				}
+				new_line;
+				return true;
+			Smell:
+				print "Reconocerías su olor entre miles; cálido y confortable.";
+				new_line;
+				return true;
+			!! TODO - ##Hug
+			Touch:
+				if (~~self.has_been_unmasked()) {
+					print "Temes despertarla si haces algo así.";
+				} else if (~~self.tried_to_touch) {
+					self.tried_to_touch = true;
+					print "Acarias su mejilla y por un momento dejas que tus dedos jugueteen delicadamente entre sus cabellos rubios, mientras ella finge seguir durmiendo.";
+				} else {
+					print "Es hora de marcharte.";
+				}
+				new_line;
+				return true;
+		],
+		description [ kiss;
+			if (~~self.has_been_unmasked()) {
+				self.unmasked = true;
+				print "Te inclinas con delicadeza sobre [la DormitorioBaronCama] para";
+				if (kiss) {
+					print " besar la frente";
+				} else {
+					print " contemplar el rostro";
+				}
+				print " de [self]. Su aliento se entrecorta por un momento y percibes cómo se tensan los músculos de su mandíbula. ¡Está despierta! Finge dormir, pero está despierta… sabe adónde te diriges";
+			} else {
+				print "Su respiración constante y pausada y su rostro aparentemente relajado no bastan para ocultar su engaño. Está despierta y sabe adónde te diriges";
+			}
+			print ". ¿Una forma de aprobación silenciosa que nunca sería capaz de expresar con palabras? ¿O simplemente es que está demasiado asustada como para enfrentarse a ti?";
+			new_line;
+			return true;
+		],
+		has_been_unmasked [;
+			return self.unmasked;
+		],
+		reset [;
+			self.tried_to_attack = false;
+			self.tried_to_kiss = false;
+			self.tried_to_touch = false;
+			self.unmasked = false;
+		],
+ private
+		tried_to_attack false,
+		tried_to_kiss false,
+		tried_to_touch false,
+		unmasked false,
+;
+
+!! @DormitorioBaronManta
+Atrezzo -> -> DormitorioBaronManta "manta"
+	has
+		female,
+	with
+		name_f 'manta' 'sabana',
+		name_fp 'mantas' 'sabanas',
+		gender G_FEMENINO,
+		!!
+		before [;
+			Pull,
+			Push,
+			PushDir,
+			Take,
+			Turn,
+			Wave:
+				print "No quieres molestar a [Matilde].";
+				new_line;
+				return true;
+			Touch:
+				print "Acaricias la manta suavemente, pensando en tiempos más felices.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "En la penumbra apenas puedes distinguir los patrones de tonos carmesí y azul marino.";
+			if (self hasnt described) {
+				print " [Matilde] tejió esta manta al mismo tiempo que tú construías la [DormitorioBaronCama](cama). De acuerdo con lo que dictaminan las tradiciones, sólo consumasteis vuestro matrimonio una vez las dos estuvieron acabadas.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @DormitorioBaronArmario
+HeavyItem -> DormitorioBaronArmario "armario"
+	has
+		concealed male ~open openable transparent,
+	with
+		name_m 'armario' 'guardaropa',
+		gender G_MASCULINO,
+		adjectives 'madera' 'roble',
+		!!
+		before [
+			previous_style;
+			Open:
+				print "Al abrir [el self] puedes ver las pilas de ropa perfectamente doblada y los vestidos de tu mujer que cuelgan de sus perchas de madera";
+				if (~~self.tried_to_open) {
+					self.tried_to_open = true;
+					print ". Te llama la atención uno de ellos, de un color blanco impoluto, colgado al fondo y casi invisible entre los demás. Sólo al apartar un par de faldas a rayas descubres que se trata del vestido de novia de Matilde. Dejas que tu mano palpe el suave paño y cierras los ojos un momento mientras los recuerdos de la boda desfilan claramente por tu mente como si todo hubiera ocurrido el día anterior…";
+					new_line;
+					previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
+					Utils.press_any_key();
+					new_line;
+					print "Entras andando en la plaza mayor con el corazón palpitándote fuertemente en el pecho, incómodo en el traje gris que has comprado exclusivamente para el día de hoy —te sientes como un impostor que llevara el uniforme de otra persona—. Prácticamente el pueblo entero se ha reunido ya ante la puerta de la iglesia, hasta el punto que te cuesta un instante alcanzar a distinguir a tus padres y a los padres de Matilde entre la multitud.";
+					new_line;
+					Utils.press_any_key();
+					new_line;
+					print "Antes de continuar te detienes para enderezar la flor roja en el ojal del bolsillo de la chaqueta y, entonces, alguien mira en tu dirección y grita tu nombre. Todo el mundo se da la vuelta y comienza a aplaudir y a vociferar con alegría. De inmediato sientes cómo la sangre te sube a la cara hasta que tus mejillas se tornan del mismo color bermellón que el adorno del bolsillo.";
+					new_line;
+					Utils.press_any_key();
+					new_line;
+					print "Odias ser el centro de atención. Odias las muchedumbres y pasar por el trance de las obligaciones sociales, y por eso prefieres estar la mayor parte del tiempo solo, vagando por el bosque o encerrado en tu taller tallando madera. Pero pasar tanto tiempo solo presenta sus propios inconvenientes; ya has estado cerca de ser consumido por el negro vacío de la soledad en varias ocasiones. Es preferible encontrar una persona a la que poder amar, junto a la que sentirte seguro e inmune ante las amarguras de la vida. Y ese sueño está a punto de hacerse realidad.";
+					new_line;
+					Utils.press_any_key();
+					new_line;
+					print "¡Por fin! Resplandeciente como el sol de primavera, Matilde camina hacia ti con su largo cabello pajizo agitándose rebelde tras ella a pesar del esmerado peinado, y con su sonrisa fácil iluminándole el rostro. Parece una princesa en su vestido de novia blanco; una joven más bella, más pura y más inocente de lo que este mundo merece albergar en su interior. Y camina hacia ti. Con ojos llenos de amor y de ternura.";
+					new_line;
+					Utils.press_any_key();
+					new_line;
+					!! TODO - estilo diálogos
+					print "—Sí, quiero —dice sin mirar ya al capellán, con sus ojos almendrados clavados en los tuyos. Tomas su suave mano entre tus manos ásperas y callosas y, con toda la delicadeza de la que eres capaz, le colocas el anillo en el dedo. Ella hace lo propio, y después inclináis las cabezas la una hacia la otra hasta que vuestros labios se unen para sellar el pacto de amor eterno con más fuerza de la que ninguna palabra podría hacerlo jamás. La gente irrumpe en vítores y aplausos para ya no escuchas nada más, embriagado por la emoción pura tras haber unido tu destino al de Matilde.";
+					new_line;
+					Utils.press_any_key();
+					Utils.set_text_style(previous_style);
+					new_line;
+					print "Abres los ojos y tu mente regresa frente a los vestidos y los montones ordenados de ropa";
+				}
+				print ". Nada de lo que hay aquí resulta más adecuado que tu [Ropa] de trabajo, así que cierras [el self] de nuevo.";
+				new_line;
+				return true;
+		],
+		description [;
+			print "Tardaste semanas en construirlo. No sólo te encargaste de talar el roble del que sacaste la madera; también laminaste su tronco para convertirlo en tablas, lo lijaste, lo diste forma, tallando [los DormitorioBaronArmarioAdornos] intrincados que recorren el borde de su armazón, y lo barnizaste entero.";
+			if (self hasnt described) {
+				print ". Sonríes al recordar aquellos primeros meses tras la boda, cuando [Matilde] y tú amueblasteis juntos vuestra pequeña casa y la convertisteis en un hogar, compensando el poco dinero que teníais a base de ilusión y entusiasmo";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+		reset [;
+			self.tried_to_open = false;
+		],
+ private
+		tried_to_open false,
+;
+
+!! @DormitorioBaronArmarioAdornos
+Atrezzo -> -> DormitorioBaronArmarioAdornos "adornos"
+	has
+		male pluralname,
+	with
+		name_f 'figura' 'flor' 'golondrina' 'talla' 'tortola',
+		name_fp 'figuras' 'flores' 'golondrinas' 'tallas' 'tortolas',
+		name_m 'adorno' 'corazon' 'grabado' 'pajaro',
+		name_mp 'adornos' 'corazones' 'grabados' 'pajaros',
+		gender G_MASCULINO + G_PLURAL,
+		adjectives
+			'armario' 'intrincada' 'intrincadas' 'intrincado' 'intrincados'
+			'madera',
+		!!
+		description [;
+			print "Tórtolas arrullando sobre las ramas de frondosos árboles y golondrinas al vuelo, cada una de ellas plasmada en una postura única, se engarzan con una compleja maraña de diminutos corazones, de flores silvestres sacadas de los campos y bosques cercanos y de otras flores más exóticas sacadas de tu imaginación…";
+			if (self hasnt described) {
+				print " un diseño ideado por un artesano enamorado perdidamente.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! TODO - para la ECTOcomp, al abrir el cajón mostrar únicamente artículos de
+!! costura y retales de tela y cuero
+!! @DormitorioBaronMesita
+HeavyItem -> DormitorioBaronMesita
+	has
+		female supporter transparent,
+	with
+		short_name [;
+			print "[](mesita:REMARKABLE_OBJECT) de noche";
+			return true;
+		],
+		name_f 'mesita',
+		gender G_FEMENINO,
+		adjectives 'noche',
+		!!
+		before [;
+			Close:
+				<<Close DormitorioBaronMesitaCajon>>;
+			Open:
+				<<Open DormitorioBaronMesitaCajon>>;
+			Pull,
+			Push,
+			PushDir,
+			Take,
+			Turn:
+				print "Ya está bien donde está.";
+				new_line;
+				return true;
+		],
+		description [
+			i obj;
+			i = 0;
+			objectloop(obj in self
+				&& obj hasnt concealed or scenery or static) {
+				i++;
+			}
+			print "El primer mueble que construiste con tus propias manos: una mesita de noche de un cajón, muy sencilla, hecha con madera de pino";
+			if (i >= 1) {
+				print ". Puedes ver ";
+				WriteListFrom(child(self), ENGLISH_BIT + CONCEAL_BIT);
+				print " sobre ";
+				Utils.print_spanish_nominative_pronoun(self);
+			}
+			print ".";
+			new_line;
+			if (DormitorioBaronMesitaCajon has open) {
+				i = 0;
+				objectloop(obj in DormitorioBaronMesitaCajon
+					&& obj hasnt concealed or scenery or static) {
+					i++;
+				}
+				new_line;
+				print "[El DormitorioBaronMesitaCajon] está abierto";
+				if (i >= 1) {
+					print ". Dentro hay ";
+					WriteListFrom(child(DormitorioBaronMesitaCajon),
+						ENGLISH_BIT + CONCEAL_BIT);
+				} else {
+					print ", pero dentro no hay nada";
+				}
+				print ".";
+				new_line;
+			} else {
+				new_line;
+				print "[El DormitorioBaronMesitaCajon] está cerrado.";
+				new_line;
+			}
+			return true;
+		],
+		invent [;
+			!! XXX - Siempre se imprime la última en el listado de objetos
+			!! presentes en la localidad, puesto que no puede moverse e,
+			!! inicialmente, es la única presente que aparece listado. Debido a
+			!! cómo la librería gestiona el árbol de objetos, si el usuario
+			!! deja alguno otro en la localidad, éstos siempre se imprimirán
+			!! primero en el listado y, de esta manera, el apéndice ", al lado
+			!! de la cama" estará seguido siempre de un punto:
+			if (inventory_stage == 1) {
+				print "[un self], al lado de la [DormitorioBaronCama](cama:OTHER_OBJECT)";
+				return true;
+			}
+		],
+;
+
+!! @RetratoFamiliar
+Item -> -> RetratoFamiliar
+	has
+		male remarkable,
+	with
+		short_name [;
+			print "[](fotografia:REMARKABLE_OBJECT) enmarcada";
+			return true;
+		],
+		name_f 'foto' 'fotografia',
+		name_m 'marco' 'retrato',
+		gender G_MASCULINO,
+		adjectives 'enmarcada' 'familia' 'familiar',
+		!!
+		before [;
+			Burn:
+				return Baron.sets_fire(self);
+		],
+		description [;
+			print "La fotografía tiene algunos años. Es del décimo aniversario de vuestro matrimonio. ";
+			if (TestScope(Matilde, player)) {
+				print " [Matilde]";
+			} else {
+				print " Matilde";
+			}
+			print " y tú aparecéis posando con solemnidad el uno junto al otro, como dos estatuas en blanco y negro, vestidos una vez más con vuestros trajes de boda.";
+			!! TODO
+			if (true) { ! verhaaltracker.status < 6
+				print " Una jovencísima María de sonrisa radiante ocupa el primer plano, preciosa en un vestido blanco. En la foto tu brazo descansa sobre su hombro en un gesto protector";
+				if (self hasnt described) {
+					print "… en una mentira. El barón la ha secuestrado y tú no la has protegido… tienes que hacer todo lo posible por recuperarla.";
+				} else {
+					print ".";
+				}
+			} else {
+				print " Una jovencísima María de expresión grave ocupa el primer plano, preciosa en un vestido blanco. En la foto tu brazo descansa sobre su hombro en un gesto protector, pero ella parece visiblemente incómoda ante su contacto.";
+			}
+			new_line;
+			return true;
+		],
+		size SIZE_S,
+;
+
+!! @DormitorioBaronMesitaCajon
+Item -> -> DormitorioBaronMesitaCajon "cajón"
+	class
+		Receptacle,
+	has
+		concealed container male ~open openable static,
+	with
+		name_m 'cajon',
+		gender G_MASCULINO,
+		adjectives 'mesita',
+		!!
+		before [;
+			!! TODO - default para abrir/cerrar el cajón
+			Pull:
+				<<Open self>>;
+			Push:
+				<<Close self>>;
+			PushDir,
+			Turn:
+				<<Turn DormitorioBaronMesita>>;
+			Take:
+				print "Forma parte [del DormitorioBaronMesita].";
+				new_line;
+				return true;
+		],
+		capacity_size SIZE_S,
+		description [;
+			if (self has open) {
+				<<Search self>>;
+			} else {
+				print "Está cerrado.";
+				new_line;
+				return true;
+			}
+		],
+;
+
+!! @DormitorioBaronPuerta
+Item -> DormitorioBaronPuerta "puerta"
+	has
+		female ~open openable scenery,
+	with
+		name_f 'entrada' 'puerta' 'salida',
+		gender G_FEMENINO,
+		adjectives 'estrecha',
+		!!
+		after [;
+			Close:
+				print "Cierras la puerta con delicadeza.";
+				new_line;
+				return true;
+			Open:
+				print "Abres la puerta procurando no hacer ruido.";
+				new_line;
+				return true;
+		],
+		before [;
+			Enter:
+				<<Enter DirDescansillo>>;
+		],
+		description [;
+			print "La estrecha puerta separa tu dormitorio del [DirDescansillo](rellano). Está";
+			if (self has open) {
+				print "abierta";
+			} else {
+				print "cerrada";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+;
+
+!! @DormitorioBaronSilla
+Item -> DormitorioBaronSilla
+	class
+		SmartEnterable,
+	has
+		female static supporter,
+	with
+		short_name [;
+			print "[](silla:OTHER_OBJECT)";
+			return true;
+		],
+		name_f 'silla',
+		gender G_FEMENINO,
+		!!
+		after [
+			i obj;
+			Enter:
+				print "Te sientas en [el self].";
+				new_line;
+				return true;
+			Exit:
+				print "Vuelves a ponerte de pie.";
+				new_line;
+				return true;
+			LetGo,
+			Receive:
+				objectloop(obj in self && obj hasnt scenery
+					&& obj hasnt concealed) {
+					i++;
+				}
+				if (i > 0) {
+					give self ~concealed;
+				} else {
+					give self concealed;
+				}
+		],
+		before [
+			i obj temp;
+			Enter:
+				objectloop(obj in self && obj hasnt scenery
+					&& obj hasnt static && obj hasnt concealed) {
+					i++;
+					temp = obj;
+				}
+				if (i == 1) {
+					print "Tienes que quitar [el temp] [del self] antes.";
+					new_line;
+					return true;
+				} else if (i > 1) {
+					print "[El self] está[n self] ocupad[o self] con demasiadas cosas como para sentarte en ";
+					Utils.print_spanish_nominative_pronoun(self);
+					print ".";
+					new_line;
+					return true;
+				}
+			Pull,
+			Push,
+			PushDir,
+			Take,
+			Turn:
+				print "Ya está bien donde está.";
+				new_line;
+				return true;
+			Sit:
+				<<Enter self>>;
+		],
+		describe [
+			i obj temp;
+			objectloop(obj in self && obj hasnt scenery
+				&& obj hasnt static && obj hasnt concealed) {
+				i++;
+				temp = obj;
+			}
+			if (i == 1 && temp has clothing) {
+				new_line;
+				print "[Un temp] descansa[n temp] sobre [una self].";
+				new_line;
+				return true;
+			} else if (i > 0) {
+				print "Sobre [el self] puedes ver ";
+				WriteListFrom(child(self), ENGLISH_BIT + CONCEAL_BIT);
+				print ".";
+				new_line;
+				return true;
+			} else {
+				return false;
+			}
+		],
+		description [
+			i obj temp;
+			print "Una sencilla silla de madera";
+			!! Comprueba si hay objetos sobre la silla:
+			objectloop(obj in self && obj hasnt scenery
+				&& obj hasnt static && obj hasnt concealed) {
+				i++;
+				temp = obj;
+			}
+			if (i == 1 && temp has clothing) {
+				print ". Tienes [un temp] colocad[o temp] sobre el respaldo";
+			} else if (i > 0) {
+				print " sobre la que puedes ver ";
+				WriteListFrom(child(self), ENGLISH_BIT + CONCEAL_BIT);
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+		drop_on_object [;
+			return parent(self);
+		],
+		react_before [;
+			Attack,
+			Blow,
+			Climb,
+			Close,
+			Disrobe,
+			Eat,
+			Empty,
+			EmptyT,
+			Go,
+			GoDown,
+			Insert:
+				if (parent(player) == self) {
+					return self.SmartEnterable::react_before();
+				}
+			Jump,
+			Lock,
+			LookUnder,
+			Open,
+			Pull,
+			Push,
+			PushDir,
+			PutOn,
+			Remove,
+			Search,
+			Smell:
+				if (parent(player) == self) {
+					return self.SmartEnterable::react_before();
+				}
+			Squeeze,
+			StandUp,
+			Swing,
+			SwitchOff,
+			SwitchOn,
+			Take,
+			Taste,
+			Touch,
+			Turn,
+			Unlock,
+			Wear:
+				if (parent(player) == self) {
+					return self.SmartEnterable::react_before();
+				}
+			Drop:
+				if ((parent(player) ~= self)
+					&& (IndirectlyContains(player, noun))
+					&& (noun has clothing)
+					&& (noun hasnt worn)
+					&& (second == nothing)) {
+					<<PutOn noun self>>;
+				} else {
+					return self.SmartEnterable::react_before();
+				}
+			Examine,
+			Kiss:
+				if (parent(player) == self && noun == Matilde) {
+					<Exit self>;
+					new_line;
+				}
+			Sit:
+				if (parent(player) == self) {
+					if (noun == self or nothing) {
+						print "Ya estás sentado.";
+						new_line;
+						return true;
+					} else {
+						<Exit self>;
+						new_line;
+					}
+				}
+				if (parent(player) ~= self && noun == nothing) {
+					<<Enter self>>;
+				}
+		],
+;
+
+!! TODO - ponte la ropa (cuando no está en manos del PC)
+!! TODO - desvistete
+!! TODO - deja la ropa (cuando la llevas puesta)
+!! @Ropa
+Item -> -> Ropa "ropa"
+	class
+		Clothes
+	has
+		female transparent,
+	with
+		name_f 'indumentaria' 'prenda' 'ropa' 'vestimenta',
+		name_fp 'prendas' 'vestimentas',
+		name_m 'vestuario',
+		name_mp 'atavios' 'atuendos',
+		gender G_FEMENINO,
+		adjectives 'diario' 'lenador' 'trabajo',
+		article "tu",
+		!!
+		after [
+			wear_it;
+			Take:
+				if (self.previous_parent ~= nothing) {
+					wear_it = false;
+					return self.when_taken(wear_it);
+				}
+				return false;
+			Wear:
+				if (real_location == DormitorioBaron) {
+					print "Te vistes en silencio.";
+					new_line;
+					return true;
+				}
+		],
+		before [
+			temp wear_it;
+			GetDressed:
+				temp = parent(self);
+				if (temp ~= player
+					! && TestScope(self, player) ! (redundante)
+					&& (temp == parent(player) || temp has supporter)) {
+					self.previous_parent = temp;
+					move self to player;
+					give self worn;
+					wear_it = true;
+					return self.when_taken(wear_it);
+				}
+			Take:
+				self.previous_parent = parent(self);
+				return false;
+			Smell:
+				<<Smell RopaCamisa>>;
+		],
+		description [;
+			print "Es la ropa que llevas cuando sales a talar árboles en el bosque: [una RopaCamisa] de cuadros rojos y azules, recios [RopaPantalones] vaqueros y dos pesadas [RopaBotas] de cuero. Puedes notar un ligero olor a sudor que se desprende [del RopaCamisa].";
+			new_line;
+			return true;
+		],
+		layer 1,
+		react_after [;
+			if (self.previous_parent ~= 0) {
+				self.previous_parent = 0;
+			}
+		],
+ private
+		!! Atributo temporal que se establece y es borrado a lo largo de un
+		!! mismo turno para conocer al antecesor del objeto:
+		previous_parent 0,
+		when_taken [
+			wear_it;
+			print "Recoges [el self]";
+			!! Considera dónde estaba colocado el objeto:
+			if (self.previous_parent has container) {
+				print " de dentro [del self.previous_parent]";
+			} else if (self.previous_parent has supporter) {
+				print " de encima [del self.previous_parent]";
+			}
+			!! Apéndice si el PC además se viste con el objeto:
+			if (wear_it) {
+				if (location == DormitorioBaron) {
+					print " y te vistes en silencio";
+				} else {
+					print " y te l[o self] pones";
+				}
+			}
+			!! Final:
+			print ".";
+			new_line;
+			return true;
+		],
+;
+
+!! @RopaBotas
+Item	-> -> -> RopaBotas "botas"
+	has
+		female pluralname,
+	with
+		name_f 'bota',
+		name_fp 'botas',
+		name_m 'calzado',
+		gender G_FEMENINO + G_PLURAL,
+		adjectives 'cuero' 'reforzada' 'reforzadas' 'reforzado',
+		!!
+		before [;
+			Smell:
+				return false;
+			default:
+				return Ropa.before();
+		],
+		description [;
+			print "Un par de botas de cuero con refuerzo de acero en la puntera.";
+			new_line;
+			return true;
+		],
+;
+
+!! @RopaCamisa
+Item	-> -> -> RopaCamisa "camisa"
+	has
+		female,
+	with
+		name_f 'camisa' 'camiseta' 'camisola',
+		gender G_FEMENINO,
+		adjectives 'cuadros' 'lana' 'lenador',
+		!!
+		before [;
+			Smell:
+				print "Huele ligeramente a sudor, sin llegar a apestar. Lo cuál tiene un punto erótico de acuerdo con";
+				if (TestScope(Matilde, player)) {
+					print " [Matilde]";
+				} else {
+					print " Matilde";
+				}
+				print ".";
+				new_line;
+				return true;
+			default:
+				return Ropa.before();
+		],
+		description [;
+			print "Una camisa de lana a cuadros rojos y azules. Tejida y teñida a mano por";
+			if (TestScope(Matilde, player)) {
+				print " [Matilde]";
+			} else {
+				print " Matilde";
+			}
+			print ". Desprende un ligero olor a sudor —fruto del trabajo duro y honesto—.";
+			new_line;
+			return true;
+		],
+;
+
+!! @RopaPantalones
+Item -> -> -> RopaPantalones "pantalones"
+	has
+		male pluralname,
+	with
+		name_m 'pantalon' 'tejano' 'vaquero',
+		name_mp 'pantalones' 'tejanos' 'vaqueros',
+		gender G_MASCULINO + G_PLURAL,
+		adjectives 'duro' 'duros' 'recio' 'recios',
+		!!
+		before [;
+			Smell:
+				return false;
+			default:
+				return Ropa.before();
+		],
+		description [;
+			print "Unos viejos vaqueros azules. Cómodos y resistentes; perfectos para el trabajo de un leñador.";
+			new_line;
+			return true;
+		],
+;
+
+!! @DormitorioBaronMuebles
+Atrezzo	-> DormitorioBaronMuebles "muebles"
+	has
+		male pluralname,
+	with
+		name_m 'mobilario' 'mueble',
+		name_mp 'muebles',
+		gender G_MASCULINO + G_PLURAL,
+		!!
+		description [
+			i obj;
+			objectloop(obj in DormitorioBaronSilla && obj hasnt scenery
+				&& obj hasnt static && obj hasnt concealed) {
+				i++;
+			}
+			print "Barnizados en plata por [la LunaCasa]. Son todos obra tuya; desde [la DormitorioBaronMesita] y la sencilla [DormitorioBaronSilla]";
+			if (i > 0) {
+				print " sobre la que tienes ";
+				WriteListFrom(child(DormitorioBaronSilla), ENGLISH_BIT + CONCEAL_BIT);
+			}
+			print ", hasta [la DormitorioBaronCama] que ocupa el centro del dormitorio y el gran [DormitorioBaronArmario] que hay en el fondo.";
+			new_line;
+			return true;
+		],
+;
+
+!! @DormitorioBaronVentana
+Atrezzo	-> DormitorioBaronVentana "ventana"
+  has
+    female ~open openable transparent,
+  with
+  	name_f 'ventana',
+		gender G_FEMENINO,
+    !!
+		after [;
+			Close:
+				print "Cierras la ventana aislando la habitación del frío exterior.";
+				new_line;
+				return true;
+			Open:
+				print "La ventana se abre de golpe y una corriente helada entra en la habitación";
+				if (~~self.tried_to_open) {
+					self.tried_to_open = true;
+					print ". De pie bajo la luz de la luna dejas que tu mirada recorra metódicamente el paisaje invernal. En algún lugar a lo lejos, más allá del bosque, se encuentra el castillo del barón… donde tu hija está padeciendo un terror inconcebible en este mismo momento.";
+				}
+				print ".";
+				new_line;
+				return true;
+		],
+		before [;
+			Climb:
+				if (self has open) {
+					print "Desde luego sería una forma de salir de casa y emprender el camino hacia el castillo, pero resulta mucho más sencillo utilizar las escaleras.";
+					new_line;
+					return true;
+				} else {
+					print "Tendrías que abrirl[o self] primero.";
+					new_line;
+					return true;
+				}
+			Search:
+				<<Examine self>>;
+		],
+		description [;
+			print "La espectral luz [de la LunaCasa] se cuela a través de la ventana. Fuera puedes ver el pueblo, cubierto por una gruesa capa de nieve que hace que la torre de la iglesia parezca levantarse como un negro dedo acusador sobre un mar de blanco.";
+			if (self hasnt described) {
+				print " ¿Cómo es posible que un paisaje de tal belleza sea a la vez tan frío y hostil?";
+			}
+			new_line;
+			return true;
+		],
+		reset [;
+			self.tried_to_open = false;
+		],
+ private
+		tried_to_open false,
+;
+
+!! TODO - ¿modo brújula si el usuario suelta la brújula?
+!! @Brujula
+! Item -> -> -> Brujula "brújula"
+! 	has
+! 		female openable ~open,
+! 	with
+! 		name_f 'brujula',
+! 		gender G_FEMENINO,
+! 		!!
+! 		after [;
+! 			Close:
+! 				Utils.set_compass_mode(false);
+! 				print "Cierras la tapa [del self] con un suave «click».";
+! 				new_line;
+! 				return true;
+! 			Open:
+! 				Utils.set_compass_mode(true);
+! 				print "Presionas con delicadeza el cierre y abres la tapa [del self], dejando la aguja al descubierto.";
+! 				new_line;
+! 				return true;
+! 		],
+! 		before [;
+! 			!! TODO - hacer que default abra/cierre la brújula contextualmente
+! 		],
+! 		description [;
+! 			print "Una pequeña brújula con carcasa de latón, simple y práctica";
+! 			if (self has open) {
+! 				print ". Tiene la tapa abierta, dejando al descubierto la aguja inmantada bajo el cristal";
+! 			} else {
+! 				print ". Tiene la tapa cerrada";
+! 			}
+! 			print ".";
+! 			new_line;
+! 			return true;
+! 		],
+! ;
+
+!! @Pedernal
+! Item -> -> -> Pedernal "pedernal"
+! 	has
+! 		male,
+! 	with
+! 		name_m 'encendedor' 'pedernal' 'silex',
+! 		gender G_MASCULINO,
+! 		!!
+! 		description [;
+! 			print "Una pieza de pedernal. Pertenecía a un juego de encendedor, pero perdiste el eslabón de acero con el que sacarle chispas hace meses, en el bosque. De todos modos, cualquier otro trozo de acero podría cumplir igual el papel del eslabón.";
+! 			new_line;
+! 			return true;
+! 		],
+! 		size SIZE_S,
+! ;
