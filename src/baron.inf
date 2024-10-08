@@ -3,11 +3,6 @@
 !% -S
 !% -s
 !% +language_name=Spanish
-!% $MAX_OBJ_PROP_COUNT=100
-!% $MAX_PROP_TABLE_SIZE=100000
-!% $MAX_STATIC_DATA=25000
-!% $MAX_VERBS=160
-!% $MAX_VERBSPACE=4800
 
 !!==============================================================================
 !!
@@ -41,7 +36,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -87,7 +82,7 @@
 !!------------------------------------------------------------------------------
 
 Constant Story
-"El barón";
+"LA BESTIA";
 
 Constant Headline
 "Una historia interactiva. Escrita por Victor Gijsbers y publicada bajo la Licencia Pública General de GNU en su versión 3 (o cualquier versión posterior). La presente edición ha sido desarrollada por J. Francisco Martín.";
@@ -373,6 +368,8 @@ Include "gwindefs.h";
 #Ifdef USE_VORPLE;
 !! Funcionalidades básicas de Vorple UI:
 Include "vorple.h";
+!! Manipulación del inductor y del historial de comandos:
+Include "vorple-command-prompt-control.h";
 #Endif; ! USE_VORPLE;
 #Endif; ! TARGET_GLULX;
 
@@ -732,16 +729,6 @@ Include "vorple-screen-effects.h";
 !!	6)	Puntos de entrada de la librería Inform y del resto de extensiones
 !!
 !!------------------------------------------------------------------------------
-!!	<>	AfterPrompt()
-!!	<>	BeforeParsing()
-!!	<>	BeforeSettingTextStyle()
-!!	<>	GamePostRoutine()
-!!	<>	Initialise()
-!!	<>	InScope()
-!!	<>	MyVorplePrompt()
-!!	<>	PrintVerb()
-!!	<>	UnknownVerb()
-!!------------------------------------------------------------------------------
 
 !!------------------------------------------------------------------------------
 !! Punto de entrada invocado justo tras la impresión del inductor (prompt); es
@@ -762,11 +749,16 @@ Include "vorple-screen-effects.h";
 !! puede manipular estas tablas libremente mientras permanezcan consistentes la
 !! una con la otra, y puede dejar el contador de palabras en cualquier punto.
 !!
-!!	@version 2023/03/04
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
-	if (PulsaIntroParaContinuar.fixed) {
-		parse-->1 = 'temp';
+	!! cuando la aplicación queda a la espera de una pulsación de INTRO para
+	!! continuar, transforma la entrada del usuario por el comando de apoyo
+	!! `pressAnyKey.verb` de manera que se fuerce la interrupción del flujo
+	!! ordinario de ejecución (de otro modo, comandos conocidos funcionarían con
+	!! normalidad)
+	if (Utils.on_press_intro ~= 0) {
+		parse-->1 = 'pressAnyKey.verb';
 		num_words = 1;
 	}
 
@@ -869,25 +861,6 @@ Include "vorple-screen-effects.h";
 	!! Inicializaciones para la VM Glulx ---------------------------------------
 	Utils.initialise_glulx();
 
-	!! Advertencia de contenidos -----------------------------------------------
-	#Ifndef DEBUG;
-	new_line;
-	print (strong) "ADVERTENCIA", "^";
-	new_line;
-	print "Los contenidos de esta obra no son apropiados para un público
-	infantil. La edad recomendada por el autor a partir de la que experimentar
-	la historia son los ", (strong) "quince", " años. Se advierte, además,
-	acerca de la naturaleza violenta y moralmente reprobable de ciertos temas y
-	situaciones que se abordan en la obra y que pueden herir la sensibilidad de
-	algunos usuarios.^";
-	new_line;
-	new_line;
-	print (parser) "Pulsa una tecla.";
-	new_line;
-	Utils.press_any_key();
-	Utils.erase_window();
-	#Endif; ! DEBUG;
-
 	!! Comprobación de los ficheros de configuración ---------------------------
 	#Ifdef TARGET_GLULX;
 	#Ifdef VERSION_DESKTOP;
@@ -974,8 +947,8 @@ Include "vorple-screen-effects.h";
 
 	!! Menú principal:
 	! location = Menu;
-	location = GrutaSalon; ! Abismo
-	Storyteller.start_scene(1);
+	location = DormitorioBaron;
+	! Storyteller.start_scene(2);
 	print "^^";
 
 	!! Se evita la impresión inicial del banner
@@ -1016,12 +989,12 @@ Include "vorple-screen-effects.h";
 !!	@returns {boolean} Verdadero si se imprime el inductor definido en la
 !!		constante PS1 (si es que existe y está bien definido). Falso en caso
 !!		contrario
-!!	@version 2023/03/26
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 #Ifdef TARGET_GLULX;
 #Ifdef USE_VORPLE;
 [ MyVorplePrompt;
-	if (PulsaIntroParaContinuar.fixed) {
+	if (Utils.on_press_intro ~= 0) {
 		VorpleExecuteJavaScriptCommand(BuildCommand("
 			ifjs.pressIntroToContinuePrompt();
 		"));
@@ -1067,10 +1040,14 @@ Include "vorple-screen-effects.h";
 !!	@returns {boolean} Falso para permitir que el sistema continúe con la
 !!		ejecución normal e imprima un mensaje de error, o un valor de
 !!		diccionario del verbo a utilizar en lugar del verbo desconocido
-!!	@version 2019/06/18
+!!	@version 2024/03/30
 !!------------------------------------------------------------------------------
 [ UnknownVerb
 	obj;
+	if (Utils.on_press_intro ~= 0) {
+		return 'pressAnyKey.verb';
+	}
+
 	obj = ParsingPreprocessor.get_selected_object();
 	if (TestScope(obj, player)) {
 		verb_wordnum = 0;
@@ -1096,12 +1073,25 @@ Include "SpanishEG.h";
 !! Gramática propia de la obra:
 Include "baronGrammar.inf";
 
-Verb meta 'temp'
-	*								-> Temp
-;
 
-[ TempSub;
-	return Utils.press_intro_to_continue_lock();
+Verb meta 'pressAnyKey.verb' * -> PressIntro;
+
+[ PressIntroSub
+	callback;
+	if (Utils.on_press_intro ~= 0) {
+		#Ifdef USE_VORPLE;
+		VorpleExecuteJavaScriptCommand(BuildCommand("
+			ifjs.clearLastInput();
+		"));
+		#Endif; ! USE_VORPLE
+
+		callback = Utils.on_press_intro;
+		Utils.on_press_intro = 0;
+		callback();
+		return true;
+	} else {
+		return false;
+	}
 ];
 
 
@@ -1118,7 +1108,7 @@ Include "baronUtils.inf";
 
 Include "scenes/baronSceneZero.inf";
 Include "scenes/baronSceneOne.inf";
-Include "scenes/baron_scene-two.inf";
+Include "scenes/baronSceneTwo.inf";
 Include "scenes/baron_scene-three.inf";
 Include "scenes/baron_scene-four.inf";
 Include "scenes/baronSceneFive.inf";

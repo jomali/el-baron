@@ -33,7 +33,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -642,7 +642,7 @@ Class	Atrezzo
 !!
 !!	@dependency arrays.h
 !!	@dependency textStyles.h
-!!	@version 2023/03/25
+!!	@version 2024/10/03
 !!------------------------------------------------------------------------------
 Class	AdjacentRoom
  class	Atrezzo
@@ -659,7 +659,6 @@ Class	AdjacentRoom
 					if (metaclass(self.adjacent_room) == Object) {
 						obj = self.adjacent_room;
 					}
-					new_line;
 					PlayerTo(obj);
 				} else {
 					switch (Utils.get_grammatical_inflection()) {
@@ -720,8 +719,10 @@ Class	AdjacentRoom
 !!	@version 2019/09/19
 !!------------------------------------------------------------------------------
 Class	Background
- class	Atrezzo
- with	before [
+	class
+		Atrezzo
+	with
+		before [
 			previous_style;
 			DefaultAction,
 			Examine:

@@ -1,0 +1,303 @@
+
+
+!!==============================================================================
+!!
+!!	EL BARÓN
+!!	Escena segunda - Habitación de María
+!!
+!!==============================================================================
+!!
+!!	Archivo:			2_3.xinf
+!!	Autor(es):		Victor Gijsbers
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
+!!
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
+!!
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2006, Victor Gijsbers
+!!	Copyright (c) 2024, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+
+!! @DirDormitorioMaria
+AdjacentRoom	DirDormitorioMaria
+ has	female,
+ with	found_in Descansillo,
+		short_name [;
+			print "[](puerta:DIRECTION_OBJECT) roja";
+			return true;
+		],
+		name_f 'entrada' 'puerta',
+		gender G_FEMENINO,
+		adjectives 'de' 'maria' 'roja',
+		!!------------------
+		adjacent_room DormitorioMaria,
+		before [;
+			Enter:
+				if (DormitorioMariaPuerta hasnt open) {
+					!! TODO - saltos de línea
+					give DormitorioMariaPuerta open;
+					print "Empujas la puerta rojo brillante hasta abrirla por compelto y entras en la habitación.";
+				}
+				self.AdjacentRoom::before();
+				return true;
+		],
+;
+
+!! @DormitorioMaria
+Indoors	DormitorioMaria "Habitación de Maria"
+ has	female,
+ with	name_f 'estancia' 'habitacion',
+		name_m 'cuarto' 'dormitorio',
+		gender G_FEMENINO,
+		adjectives 'maria',
+		!!------------------
+		description [;
+			print "Sin la presencia radiante de María, su cuarto se ve vacío y muerto: [la DormitorioMariaCama] en la que no descansa nadie, [el DormitorioMariaEscritorio] tras el que nadie se sienta a estudiar y garabatear dibujos, el armario que guarda ropa que nadie reclama, [la DormitorioMariaCasaMunecas] con la que no hay nadie que juegue ya. Incluso los vivos colores con los que pintaste el techo, los muebles o la puerta [al DirDescansillo], se muestran como una paleta de grises en la luz pálida de las estrellas. Es un espectáculo deprimente.";
+			new_line;
+			return true;
+		],
+		out_to [;
+			<<Enter DirDescansillo>>;
+		],
+		s_to [;
+			if (Utils.is_compass_enabled()) <<Enter DirDescansillo>>;
+			else return self.cant_go();
+		],
+;
+
+!! @DormitorioMariaCama
+HeavyItem	-> DormitorioMariaCama "cama"
+ has	female supporter,
+ with	name_f 'cama',
+		gender G_FEMENINO,
+		adjectives 'maria',
+		!!------------------
+		before [;
+			Enter,
+			Sleep:
+				if (self.tried_to_sleep) {
+					print "No puedes quedarte aquí. No sin antes intentar liberar a María.";
+				} else {
+					print "Si pudieses simplemente echarte en la cama y volverte a dormir. No hacer nada más. No preocuparte por nada. Sólo encogerte bajo la manta y soñar con la figura pequeña y esbelta de María… pero no puedes. No sin antes intentar liberarla…";
+				}
+				new_line;
+				return true;
+		],
+		description [;
+			print "Una cama de generosas proporciones para una niña. Construida por tus propias manos, como prácticamente el resto de muebles de la casa";
+			switch (self.state) {
+				0:
+					print ". Tiene las sábanas estiradas perfectamente, la almohada colocada con extrema pulcritud. Todo casi demasiado impoluto, virginal, como si nunca hubiera estado destinado a ser utilizado por ningún ser humano";
+				1:
+					print ". Tiene las sábanas perfectamente estiradas, pero le falta la almohada";
+				2:
+					print ". Tienes las sábanas hechas un rebujo";
+					!! TODO
+					if (true) {
+						print " y la almohada apartada a un lado";
+					}
+					print ", como si alguien hubiese dormido recientemente en ella, lo que ayuda en parte a aliviar el aspecto sepulcral de la habitación";
+			}
+			print ".
+			^^
+			Se encuentra[n self] justo debajo [del DormitorioMariaVentana].";
+			new_line;
+			return true;
+		],
+		reset [;
+			self.tried_to_sleep = false;
+		],
+ private
+		tried_to_sleep false,
+;
+
+!! @DormitorioMariaCasaMunecas
+HeavyItem	-> DormitorioMariaCasaMunecas
+ has	female remarkable transparent,
+ with	short_name [;
+			print "[](casa:REMARKABLE_OBJECT) de muñecas";
+			return true;
+		],
+		name_f 'casa',
+		gender G_FEMENINO,
+		adjectives 'munecas',
+		!!------------------
+		description [;
+			!! TODO - variaciones si el PC ha recordado el cumpleaños de María
+			print "Otra de tus obras; una gran casa de muñecas de tres plantas, llena de muebles en miniatura. Las muñecas de madera están vestidas con ropas coloridas tejidas por Gilda y repartidas por sus diferentes habitaciones.";
+			new_line;
+			return true;
+		],
+;
+
+!! @DormitorioMariaMunecas
+HeavyItem	-> DormitorioMariaMunecas "muñecas"
+ has	female pluralname,
+ with	name_f 'familia' 'muneca',
+		name_fp 'munecas',
+		name_m 'muneco',
+		name_mp 'munecos',
+		gender G_FEMENINO + G_PLURAL,
+		!!------------------
+		description [;
+			print "Es una familia de cuatro pequeñas figuras de madera que vive en la casa de muñecas: padre, madre, hijo e hija";
+			!! TODO
+			if (true) {
+				print ". El padre está sentado en el sofá del comedor, leyendo el periódico, mientras que la madre anda por la cocina ocupada tal vez en preparar la cena. El niño mira pensativo por una ventana de la segunda planta. La niña, por su parte, lleva un delicado vestido rojo y está tumbada sobre la cama en su dormitorio de la tercera planta";
+			} else {
+				print ". El padre y la madre están ahora sentados cuidadosamente en sillas en miniatura alrededor de la mesa del comedor. El hijo sigue mirando pensativo por una ventana y la hija yace caída en el suelo de la cocina. Su delicado vestido rojo ahora torcido y arrugado";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+;
+
+!! @DormitorioMariaEscritorio
+HeavyItem	-> DormitorioMariaEscritorio "escritorio"
+ has	male supporter,
+ with	name_f 'mesa',
+		name_m 'escritorio',
+		gender G_MASCULINO,
+		!!------------------
+		description [
+			i obj;
+			print "Está cubiert[o self] con hojas de papel y lápices de colores";
+			objectloop(obj in self
+				&& obj hasnt scenery
+				&& obj hasnt concealed) {
+				i++;
+			}
+			if (i > 0) {
+				print ". Puedes ver ";
+				WriteListFrom(child(self), ENGLISH_BIT + CONCEAL_BIT);
+				print " entre los papeles";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+;
+
+!! @DiarioMaria
+Item	-> -> DiarioMaria "diario"
+ has	male remarkable,
+ with	name_m 'diario',
+		gender G_MASCULINO,
+		adjectives 'maria',
+		!!------------------
+		description [;
+			print "El libro, encuadernado en cuero falso de color rojo, parece tratarse de un diario. O eso supones, ya que está cerrado con un pequeño candado de cobre. Por más curiosidad que te despierte, nunca vulnerarías la intimidad de María.";
+			new_line;
+			return true;
+		],
+		is_destroyed [;
+			return self.destroyed;
+		],
+		reset [;
+			self.destroyed = false;
+		],
+		size SIZE_S
+ private
+		destroyed false,
+;
+
+!! @DormitorioMariaPuerta
+Item	-> DormitorioMariaPuerta "puerta"
+ has	female open openable scenery,
+ with	name_f 'entrada' 'puerta' 'salida',
+		gender G_FEMENINO,
+		adjectives 'roja',
+		!!------------------
+		before [;
+			Enter:
+				<<Enter DirDescansillo>>;
+		],
+		description [;
+			if (location == DormitorioMaria) {
+				print "La puerta conduce de vuelta al rellano.";
+			} else {
+				print "Pintada en un alegre color rojo, esta puerta conduce a la habitación de tu hija raptada.";
+			}
+			new_line;
+			return true;
+		],
+;
+
+!! @Peluche
+Item	-> Peluche
+ has	male remarkable,
+ with	short_name [;
+			print "muñeco de [](peluche:REMARKABLE_OBJECT)";
+			return true;
+		],
+		name_m 'muneco' 'osito' 'oso' 'pardo' 'peluche',
+		gender G_MASCULINO,
+		adjectives 'maria',
+		!!------------------
+		describe [;
+			!! TODO - personalizar si está sobre la nieve
+			if (self has described) {
+				new_line;
+				print "[self](Pardo) descansa en el suelo.";
+			} else {
+				new_line;
+				print "Hay un [self](osito) de felpa en el suelo.";
+			}
+			new_line;
+			return true;
+		],
+		description [;
+			print "*Pardo* ha sido el peluche favorito de María y su compañero más leal durante años";
+			!! TODO
+			if (true) {
+				print ". La sonrisa tejida en su rostro resulta tranquilizadora de algún modo. Y aún tratándose de simples botones negros, en sus ojos casi parece atisbarse una chispa de inteligencia";
+			} else {
+				print ". La sonrisa tejida en su rostro resulta melancólica de algún modo. Y aún tratándose de simples botones negros, sus ojos parecen a punto de echarse a llorar desconsoladamente";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+		is_destroyed [;
+			return self.destroyed;
+		],
+		reset [;
+			self.destroyed = false;
+		],
+		size SIZE_M,
+ private
+		destroyed false,
+;
+
+!! @DormitorioMariaVentana
+Atrezzo	-> DormitorioMariaVentana "ventana"
+ has	female ~open openable transparent,
+ with	name_f 'ventana',
+		gender G_FEMENINO,
+		!!------------------
+		description [;
+			!! TODO
+			return false;
+		],
+;

@@ -1,0 +1,255 @@
+
+
+!!==============================================================================
+!!
+!!	EL BARÓN
+!!	Escena primera - Un pequeño pasadizo
+!!
+!!==============================================================================
+!!
+!!	Archivo:			1_3.xinf
+!!	Autor(es):		Victor Gijsbers
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:			0.0
+!!	Fecha:				2024/XX/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva EL BARÓN.
+!!
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
+!!
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2006, Victor Gijsbers
+!!	Copyright (c) 2024, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+
+!! @DirGrutaPasadizo
+AdjacentRoom DirGrutaPasadizo "pasadizo"
+	has
+		male,
+	with
+		found_in GrutaSalon GrutaVestibulo,
+		name_m 'corredor' 'pasadizo' 'pasillo',
+		gender G_MASCULINO,
+		adjectives 'bajo' 'estrecho' 'pequeno',
+		!!
+		adjacent_room GrutaPasadizo,
+		before [;
+			Enter:
+				switch (location) {
+					GrutaSalon:
+						GrutaPasadizo.is_leading_inwards = false;
+						if (Baron.is_blind) {
+							return GrutaSalon.cant_go();
+						} else if (Baron.is_burning) {
+							print "Corres envuelto en llamas en busca de la salida.";
+						} else {
+							Dragon.counter = 1;
+							if (Dragon has described) {
+								print "Ese fuego es demasiado terrible";
+							} else {
+								print "Hay algo… algo innatural en la mirada del monstruo… algo que resulta demasiado terrible";
+							}
+							print ". Huyes incapaz de enfrentarte a él.";
+						}
+						new_line;
+						new_line;
+					GrutaVestibulo:
+						if (ChoiceSetManager.is_running(ConversacionHombreArdiendo)) {
+							ChoiceSetManager.stop();	
+						}
+						if (Dragon.is_awake) {
+							if (Baron.is_blind) {
+								return GrutaVestibulo.cant_go(); !! TODO - revisar
+							} else if (Baron.is_burning) {
+								print "Avanzas dando tumbos y tropezando con los huesos del suelo.";
+								new_line;
+								new_line;
+							} else {
+								return Dragon.awaits_baron();
+							}
+						} else {
+							print "Los huesos del suelo crujen destrozados a tu paso.";
+							new_line;
+							new_line;
+						}
+						GrutaPasadizo.is_leading_inwards = true;
+				}
+				return self.AdjacentRoom::before();
+		]
+;
+
+!! @GrutaPasadizo
+Indoors GrutaPasadizo
+	has
+		male,
+	with
+		short_name [;
+			print "Un pequeño [](pasadizo)";
+			return true;
+		],
+		name_f 'caverna' 'cueva' 'gruta',
+		name_m 'corredor' 'pasadizo' 'pasillo',
+		gender G_MASCULINO,
+		adjectives 'bajo' 'estrecho' 'pequeno',
+		!!
+		b_to [;
+			<<Enter DirGrutaVestibulo>>;
+		],
+		before [;
+			Listen:
+				if (noun == 0 or self) {
+					print "Puedes escuchar una especie de murmullo ronco que llega desde [el DirGrutaSalon].";
+					new_line;
+					return true;
+				} else if (TestScope(noun, player) && ~~noun.before()) {
+					print "Prestas atención [al noun] pero no escuchas nada extraño. Nada aparte del crepitar del fuego y el murmullo ronco que llegan desde [el DirGrutaSalon].";
+					new_line;
+					return true;
+				}
+			Smell:
+				if (noun == 0 or self) {
+					print "El penetrante olor del azufre llena la [self](cueva).";
+				} else {
+					print "El olor del azufre lo impregna todo.";
+				}
+				new_line;
+				return true;
+		],
+		description [;
+			Tutorial.hint_keywords_b();
+			if (~~Baron.is_burning) {
+				print "[if:self has visited]El corredor es[else]Entras en un corredor[fi] largo y estrecho, con[if:self has visited] un[fi] suelo de [Cenizas](ceniza) compactada y un techo tan bajo que te obliga a inclinarte. Desde la [DirGrutaSalon](guarida) del dragón, en el extremo del pasillo, llegan oleadas de un calor infernal que";
+				if (self.is_leading_inwards && Yelmo has worn) {
+					print " se cuelan entre las rendijas [del Yelmo], abrasándote los ojos. [El DirGrutaVestibulo] se antoja ahora fresco en comparación.";
+					new_line;
+					return true;
+				} else if (self.is_leading_inwards) {
+					print " te golpean en plena cara";
+				} else {
+					print " te abrasan la espalda";
+				}
+				print " y provocan que estés empapado en sudor dentro de la [Armadura](armadura). [El DirGrutaVestibulo] se antoja ahora fresco en comparación.";
+			} else {
+				print "El mundo que te rodea es sólo un bosquejo agónico bajo [el GrutaBaronFuego]. [in_obj](Adentro): el dragón. [out_obj](Afuera): la salida.";
+			}
+			new_line;
+			return true;
+		],
+		exits [;
+			if (self.is_leading_inwards) {
+				print "Tienes [el DirGrutaVestibulo] a tu espalda y [el DirGrutaSalon] frente a ti.";
+			} else {
+				print "Tienes [el DirGrutaVestibulo] frente a ti y [el DirGrutaSalon] a tu espalda.";
+			}
+			new_line;
+			return true;
+		],
+		f_to [;
+			<<Enter DirGrutaSalon>>;
+		],
+		in_to [;
+			<<Enter DirGrutaSalon>>;
+		],
+		is_leading_inwards true,
+		list_visible_objects [;
+			if (Baron.is_burning) {
+				return true;
+			}
+		],
+		out_to [;
+			<<Enter DirGrutaVestibulo>>;
+		],
+;
+
+!! @Cenizas
+Atrezzo -> Cenizas "cenizas"
+	has
+		female pluralname transparent,
+	with
+		name_f 'ceniza',
+		name_fp 'cenizas',
+		gender G_FEMENINO + G_PLURAL,
+		adjectives 'capa' 'de' 'del' 'suelo',
+		!!
+		before [;
+			Take:
+				!! TODO ardiendo
+				if (~~self.tried_to_take) {
+					self.tried_to_take = true;
+					print "Te agachas para coger un puñado de cenizas del suelo, pero están tan comprimidas que sólo consigues manchar ligeramente el guantelete con el fino polvo.";
+				} else {
+					print "Están tan comprimidas que resulta imposible.";
+				}
+				new_line;
+				return true;
+		],
+		description [;
+				!! TODO ardiendo
+			print "Una gruesa capa de cenizas amortigua en parte tus pisadas. Están compactadas hasta tal punto que tus pies apenas dejan huella.";
+			new_line;
+			return true;
+		],
+		react_before [;
+			if (noun == d_obj) {
+				noun = self;
+			}
+		],
+	private
+		tried_to_take false,
+;
+
+Atrezzo	-> -> "huellas"
+	has
+		female pluralname,
+	with
+		name_f 'huella',
+		name_fp 'huellas',
+		name_m 'rastro',
+		gender G_FEMENINO + G_PLURAL,
+		!!
+		description [;
+			print "Prácticamente invisibles en la compacta capa de [Cenizas].";
+			new_line;
+			return true;
+		],
+;
+
+!! @GrutaPasadizoDragon
+Atrezzo -> GrutaPasadizoDragon "dragón"
+	has
+		male,
+	with
+		name_f 'bestia' 'criatura',
+		name_m 'dragon' 'engendro' 'monstruo',
+		gender G_MASCULINO,
+		!!
+		!! TODO - descripción
+;
+
+!! @GrutaPasadizoFuego
+Atrezzo -> GrutaPasadizoFuego "fuego"
+	class
+		Fire,
+	with
+		description [;
+			print "Lenguas de fuego más altas que cualquier hombre iluminan el pasadizo desde la [DirGrutaSalon](guarida) de la bestia.";
+			new_line;
+			return true;
+		],
+;

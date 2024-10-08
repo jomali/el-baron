@@ -33,7 +33,7 @@
 !!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
-!!	Copyright (c) 2004, Victor Gijsbers
+!!	Copyright (c) 2006, Victor Gijsbers
 !!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
@@ -396,7 +396,7 @@ CompassDirection f_obj "adelante" compass
 !!	@dependency arrays.h
 !!	@dependency baronClasses.inf
 !!	@dependency vorple.h
-!!	@version 2024/03/30
+!!	@version 2024/10/05
 !!------------------------------------------------------------------------------
 Global _last_location = 0;
 Global _blinding_object = 0;
@@ -476,6 +476,13 @@ Global _blinding_object = 0;
 	}
 
 	!! Otros objetos visibles en la localidad:
+	if (location provides list_visible_objects &&
+		metaclass(location.list_visible_objects) == Routine) {
+		if (PrintOrRun(location, list_visible_objects)) {
+			return true;
+		}
+	}
+
 	_blinding_object = 0;
 	LoopOverScope(_IsBlindingObject);
 	if (_blinding_object == 0) {

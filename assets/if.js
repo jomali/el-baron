@@ -7,6 +7,8 @@ var ifjs = (function (controller) {
     highlightStyleId: "highlights"
   };
 
+  let historyLength = undefined;
+
   const _waitForElm = (selector) => {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
@@ -44,10 +46,17 @@ var ifjs = (function (controller) {
 
   const clearLastInput = async () => {
     clearHyperlinks();
+
+    if (typeof historyLength === "number" && 
+      historyLength !== haven.prompt.history.get().length) {
+      haven.prompt.history.remove()
+    }
+    historyLength = undefined;
+
     const elements = Array.from(
       document.getElementsByClassName("lineinput last")
     );
-    elements.forEach((element) => element.remove());    
+    elements.forEach((element) => element.remove());
     const containerNode = await _waitForElm(
       "#press-intro-to-continue-container"
     );
@@ -55,7 +64,11 @@ var ifjs = (function (controller) {
   };
 
   const clearScreen = () => {
-    // TODO
+    const elements = Array.from(
+      document.getElementsByClassName("turn")
+    );
+    elements.pop(); // we remove the last element (ie: the current turn)
+    elements.forEach((element) => element.remove());    
   };
 
   const keyDown = (event) => {
@@ -112,7 +125,14 @@ var ifjs = (function (controller) {
     keyDown,
     keyUp,
     pressIntroToContinuePrompt,
+    printHorizontalRule: () => {
+      vorple.layout.openTag("hr", "section-break");
+      vorple.layout.closeTag();
+    },
     resetHighlights,
+    saveHistoryLength: () => {
+      historyLength = haven.prompt.history.get().length;
+    },
   };
 }(ifjs || {}));
 
