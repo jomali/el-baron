@@ -40,9 +40,39 @@
 !!
 !!------------------------------------------------------------------------------
 
+!! @MenuInicial
+Object MenuInicial
+	has
+		light male,
+	with
+		short_name [;
+			print "";
+			return true;
+		],
+		gender G_MASCULINO,
+		!!
+		description [;
+			print "**ADVERTENCIA**
+			^^
+			Los contenidos de esta obra no son apropiados para un público infantil. **La edad mínima recomendada para experimentar el relato son los quince años**.
+			^^
+			La versión actual de *LA BESTIA* incluye una única escena de una obra mayor, inconclusa. Se publica con motivo del evento *ECTOCOMP 2024* con la esperanza de que pueda ser de algún interés a pesar de estar inacabada.";
+			new_line;
+			return Utils.press_intro_to_continue(self.start);
+		],
+		start [;
+			!! ECTOCOMP 2024
+			utils.erase_window();
+			new_line;
+			new_line;
+			new_line;
+			PlayerTo(Abismo);
+			return true;
+		],
+;
 
-!! @Menu
-Object Menu
+!! @MenuFinal
+Object MenuFinal
 	has
 		light male,
 	with
@@ -55,38 +85,40 @@ Object Menu
 		description [
 			avoid_choice_set_inventory;
 			avoid_choice_set_inventory = true;
-			! ChoiceSetManager.start(MenuRaiz, avoid_choice_set_inventory);
-			! print (strong) "EL BARÓN — Escena 1";
-			! new_line;
-			! print "De Victor Gijsbers
-			! ^Adapatación de J. Francisco Martín";
-			! new_line;
-			! new_line;
-			! print "
-			! ^Revisar elecciones tomadas.
-			! ^
-			! ^Leer prefacio del autor.
-			! ^Leer nota sobre la adaptación.
-			! ^Cargar una partida guardada.
-			! ^Salir de la aplicación.
-			! ^
-			! ^Empezar la historia.";
+			ChoiceSetManager.start(MenuRaiz, avoid_choice_set_inventory);
+			Utils.print_horizontal_rule();
 
-			print "**ADVERTENCIA**
-			^^
-			Los contenidos de esta obra no son apropiados para un público infantil. **La edad mínima recomendada para experimentar el relato son los quince años**.
-			^^
-			La versión actual de **LA BESTIA** incluye una única escena de una obra mayor, inconclusa. Se publica con motivo del evento ECTOcomp 2024 con la esperanza de que pueda resultar interesante a pesar de estar inacabada.";
+			#Ifdef USE_VORPLE;
+			VorpleOpenHTMLTag("div", "center-aligned-text");
+			#Endif; ! USE_VORPLE;
+
 			new_line;
-			return Utils.press_intro_to_continue(self.start);
-		],
-		start [;
-			!! XXX - Inicio preparado para la ECTO comp 2024.
-			utils.erase_window();
+			print (strong) Story, "^";
+			print (strong) "Escena primera de El Barón^";
 			new_line;
+			print "Una historia interactiva de Victor Gijsbers^";
+			print "Versión en castellano por J. Francisco Martín^";
 			new_line;
+
+			#Ifdef USE_VORPLE;
+			VorpleCloseHTMLTag();
+			#Endif; ! USE_VORPLE;
+
 			new_line;
-			PlayerTo(Abismo);
+			PRT__("Epílogo", 0, REMARKABLE_OBJECT);
+			print " del autor.";
+			new_line;
+
+			print "Nota sobre la ";
+			PRT__("adaptación", 0, REMARKABLE_OBJECT);
+			print ".";
+			new_line;
+
+			new_line;
+			print "Revisar ";
+			PRT__("elecciones", 0, REMARKABLE_OBJECT);
+			print " tomadas.";
+			new_line;
 			return true;
 		],
 ;
@@ -95,129 +127,163 @@ ChoiceSet	MenuRaiz "(Opciones del menú)"
 	with
 		fixed true,
 		initial_action [;
+			self.add_choice(MenuAdaptacion);
 			self.add_choice(MenuElecciones);
-			self.add_choice(MenuPrefacio);
-			self.add_choice(MenuEmpezar);
-			self.add_choice(MenuRecuperar);
-			self.add_choice(MenuSalir);
+			self.add_choice(MenuEpilogo);
+			! self.add_choice(MenuEmpezar);
+			! self.add_choice(MenuRecuperar);
+			! self.add_choice(MenuSalir);
+		],
+		goBack [;
+			<<Look>>;
 		],
 ;
 
 ChoiceSetItem MenuElecciones
  with	entry [;
-			print "Leer nota sobre la ";
-			PRT__("adaptación", 0, OTHER_OBJECT);
+			print "Revisar ";
+			PRT__("elecciones", 0, REMARKABLE_OBJECT);
 			return true;
 		],
-		keys 'adaptacion',
+		keys 'elecciones',
 		!!------------------
 		append_choice_set false,
 		final_choice false,
-		reaction [;
-			!! utils.erase_window();
-			print (strong) "NOTA DE LA ADAPTACIÓN", "^";
-			new_line;
-			print "La presente adaptación se toma algunas licencias sobre el material original. Además de llevar a cabo una traducción libre de los textos desde el inglés al castellano, se han introducido diversas modificaciones sobre la obra de Victor Gijsbers —como la adición de hipervínculos, cambios en el modo en que se llevan a cabo las conversaciones, la redistribución de algunas localidades o la reinterpretación de ciertas escenas y descripciones, entre otros—.^";
-			new_line;
-			print "Todas estas modificaciones se han añadido intentando enriquecer la experiencia final del usuario al tiempo que se procuraba ser respetuoso con el material de partida. A pesar de ello, es inevitable que el nuevo punto de vista arrojado sobre la obra difiera en algunos aspectos con la visión del autor original. Cualquier posible error de implementación o incongruencia en el tratamiento de símbolos y temas de la historia son, sin duda, responsabilidad del adaptador.^";
+		persistent true,
+		reaction [
+			previous_style obj;
+			print "A continuación se listan las distintas decisiones y eventos que has experimentado a lo largo de la partida:";
 			new_line;
 			new_line;
-			return true;
+			objectloop(obj ofclass Achievement && obj hasnt on) {
+				previous_style = Utils.set_text_style(TEXT_STYLE_IMPORTANT);
+				PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, obj);
+				PrintCharacterArray(utility_array_a, 1); ! uppercase
+				Utils.set_text_style(previous_style);
+				Utils.set_text_style(TEXT_STYLE_STRESSED);
+				print " — ";
+				PrintOrRun(obj, description);
+				Utils.set_text_style(previous_style);
+				new_line;
+			}
+			print "Las siguientes, en cambio, son distintas posibilidades que se han quedado sin explorar:";
+			new_line;
+			new_line;
+			objectloop(obj ofclass Achievement && obj hasnt on) {
+				previous_style = Utils.set_text_style(TEXT_STYLE_IMPORTANT);
+				PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, obj);
+				PrintCharacterArray(utility_array_a, 1); ! uppercase
+				Utils.set_text_style(previous_style);
+				Utils.set_text_style(TEXT_STYLE_PARSER);
+				print " — ";
+				PrintOrRun(obj, description);
+				Utils.set_text_style(previous_style);
+				new_line;
+			}
+			return Utils.press_intro_to_continue(MenuRaiz.goBack);
 		],
 ;
 
 ChoiceSetItem MenuAdaptacion
  with	entry [;
-			print "Revisar ";
-			PRT__("elecciones", 0, REMARKABLE_OBJECT);
+			print "Leer notas sobre la ";
+			PRT__("adaptación", 0, REMARKABLE_OBJECT);
 			return true;
 		],
-		keys 'elecciones' 'revisar',
-		!!------------------
-		append_choice_set false,
-		final_choice true,
-		reaction [;
-			print "Revisión de elecciones.";
-			new_line;
-			return true;
-		],
-;
-
-ChoiceSetItem	MenuPrefacio
- with	entry [;
-			PRT__("Prefacio", 0, REMARKABLE_OBJECT);
-			return true;
-		],
-		keys 'prefacio',
+		keys 'adaptacion' 'notas',
 		!!------------------
 		append_choice_set false,
 		final_choice false,
+		persistent true,
 		reaction [;
-			!! utils.erase_window();
-			print (strong) "PREFACIO", "^";
-			print (strong) "Elecciones temáticas en lugar de desafíos lógicos", "^";
+			print "**NOTA DE LA ADAPTACIÓN**
+			^^
+			La presente adaptación se toma algunas licencias sobre el material original. Además de llevar a cabo una traducción libre de los textos desde el inglés al castellano, se han introducido diversas modificaciones sobre la obra de Victor Gijsbers —como la adición de hipervínculos, cambios en el modo en que se llevan a cabo las conversaciones, la redistribución de algunas localidades o la reinterpretación de ciertas escenas y descripciones, entre otros—.
+			^^
+			Todas estas modificaciones se han añadido intentando enriquecer la experiencia final del usuario al tiempo que se procuraba ser respetuoso con el material de partida. A pesar de ello, es inevitable que el nuevo punto de vista arrojado sobre la obra difiera en algunos aspectos con la visión del autor original. Cualquier posible error o incongruencia en el tratamiento de símbolos y temas de la historia son, sin duda, responsabilidad del adaptador.
+			^^
+			Se continúa trabajando en la adaptación, sin embargo el desarrollo se lleva a cabo de forma interrumpida y el avance es lento. Esto hace imposible dar un estimación sobre su fecha de finalización. Si se desea experimentar la obra al completo la mejor opción es acudir al original de Victor Gijsbers en inglés: ";
+			VorpleLinkWebsite("https://ifdb.org/viewgame?id=weac28l51hiqfzxz", false);
 			new_line;
-			print (strong) "El Barón", " no es un videojuego en el sentido tradicional de la palabra; no cuenta con puzzles o desafíos lógicos que resolver, no hay sistema de puntuación, no se puede ganar ni perder. Es, de forma literal, una ", (stressed) "ficción interactiva", " antes que un juego de texto. El objetivo de la obra es que el usuario explore su universo ficticio y los temas que se le plantean del modo más inmersivo posible.^";
-			new_line;
-			print "Hay varias cuestiones de las que el usuario debe ser consciente mientras experimenta la narración. En primer lugar, no es posible llevar la historia a un estado en el que resulte imposible completarla. Tampoco es posible llegar a un final repentino antes de que la historia haya alcanzado su final real. Además, la narración ha sido diseñada de tal modo que casi todas las acciones con sentido en el contexto de la ficción la hacen avanzar; no hay ningún obstáculo real en el camino hasta el final. Lo que se plantea no es si el usuario alcanzará el final de la historia, sino cómo lo hará.^";
-			new_line;
-			print "La cuestión que aquella persona que experimente la obra debe estar planteándose no es; ¿esta acción me ayudará a finalizar la historia? sino, ¿creo que esta acción es apropiada, bella, perturbardora o de algún modo interesante desde un punto de vista temático? Si en el transcurso de la historia el protagonista se encuentra con un hacha, por ejemplo, puede cogerlo o no cogerlo; en cualquier caso la historia avanzará hasta alcanzar su final. La elección es temática: ¿quieres experimentar una historia en la que el personaje protagonista se enfrenta a sus conflictos con un arma en la mano, o más bien una en el que el protagonista obtiene lo que busca desarmado?^";
-			new_line;
-			print "La narración cuenta con varios encuentros clave que pueden ser resueltos de muchas maneras diferentes. Las decisiones que tome el usuario durante estos encuentros tendrán un impacto importante en el significado de la historia. De esto último es de lo que se trata ", (strong) "El Barón", ": el usuario entra en escena como un agente creativo que interactúa con los temas planteados, seleccionando símbolos y acciones a través de los que puede expresarse y reflejar sus propias preferencias y experiencia personal.^";
-			new_line;
-			return true;
+			return Utils.press_intro_to_continue(MenuRaiz.goBack);
 		],
 ;
 
-ChoiceSetItem	MenuEmpezar
-	with
-		entry [;
-			PRT__("Empezar", 0, REMARKABLE_OBJECT);
-			print " la historia";
-			return true;
-		],
-		keys 'empezar',
-		!!------------------
-		append_choice_set false,
-		final_choice true,
-		reaction [;
-			!! utils.erase_window();
-			PlayerTo(Abismo);
-			new_line;
-			return true;
-		],
-;
-
-ChoiceSetItem	MenuRecuperar
+ChoiceSetItem	MenuEpilogo
  with	entry [;
-			PRT__("Recuperar", 0, REMARKABLE_OBJECT);
-			print " partida guardada";
+			PRT__("Epílogo", 0, REMARKABLE_OBJECT);
 			return true;
 		],
-		keys 'cargar' 'recuperar',
+		keys 'epilogo',
 		!!------------------
 		append_choice_set false,
-		final_choice true,
+		final_choice false,
+		persistent true,
 		reaction [;
-			print "Cargar partida.";
+			print "**EPÍLOGO**^
+			**Elecciones temáticas en lugar de desafíos lógicos**
+			^^
+			**El Barón** no es un videojuego en el sentido tradicional de la palabra; no cuenta con puzzles o desafíos lógicos que resolver, no hay sistema de puntuación, no se puede ganar ni perder. Es, de forma literal, una *ficción interactiva* antes que un juego de texto. El objetivo de la obra es que el usuario explore su universo ficticio y los temas que se le plantean del modo más inmersivo posible.
+			^^
+			Hay varias cuestiones de las que el usuario debe ser consciente mientras experimenta la narración. En primer lugar, no es posible llevar la historia a un estado en el que resulte imposible completarla. Tampoco es posible llegar a un final repentino antes de que la historia haya alcanzado su final real. Además, la narración ha sido diseñada de tal modo que casi todas las acciones con sentido en el contexto de la ficción la hacen avanzar; no hay ningún obstáculo real en el camino hasta el final. Lo que se plantea no es si el usuario alcanzará el final de la historia, sino cómo lo hará.
+			^^
+			La cuestión que aquella persona que experimente la obra debe estar planteándose no es; ¿esta acción me ayudará a finalizar la historia? sino, ¿creo que esta acción es apropiada, bella, perturbardora o de algún modo interesante desde un punto de vista temático? Si en el transcurso de la historia el protagonista se encuentra con un hacha, por ejemplo, puede cogerlo o no cogerlo; en cualquier caso la historia avanzará hasta alcanzar su final. La elección es temática: ¿quieres experimentar una historia en la que el personaje protagonista se enfrenta a sus conflictos con un arma en la mano, o más bien una en el que el protagonista obtiene lo que busca desarmado?
+			^^
+			La narración cuenta con varios encuentros clave que pueden ser resueltos de muchas maneras diferentes. Las decisiones que tome el usuario durante estos encuentros tendrán un impacto importante en el significado de la historia. De esto último es de lo que se trata **El Barón**: el usuario entra en escena como un agente creativo que interactúa con los temas planteados, seleccionando símbolos y acciones a través de los que puede expresarse y reflejar sus propias preferencias y experiencia personal.";
 			new_line;
-			return true;
+			return Utils.press_intro_to_continue(MenuRaiz.goBack);
 		],
 ;
 
-ChoiceSetItem	MenuSalir
- with	entry [;
-			PRT__("Salir", 0, REMARKABLE_OBJECT);
-			print " de la aplicación";
-			return true;
-		],
-		keys 'salir' 'quitar' 'fin',
-		!!------------------
-		append_choice_set false,
-		final_choice true,
-		reaction [;
-			print "Salir de la aplicación.";
-			new_line;
-			return true;
-		],
-;
+! ChoiceSetItem	MenuEmpezar
+! 	with
+! 		entry [;
+! 			PRT__("Empezar", 0, REMARKABLE_OBJECT);
+! 			print " la historia";
+! 			return true;
+! 		],
+! 		keys 'empezar',
+! 		!!------------------
+! 		append_choice_set false,
+! 		final_choice true,
+! 		reaction [;
+! 			!! utils.erase_window();
+! 			PlayerTo(Abismo);
+! 			new_line;
+! 			return true;
+! 		],
+! ;
+
+! ChoiceSetItem	MenuRecuperar
+!  with	entry [;
+! 			PRT__("Recuperar", 0, REMARKABLE_OBJECT);
+! 			print " partida guardada";
+! 			return true;
+! 		],
+! 		keys 'cargar' 'recuperar',
+! 		!!------------------
+! 		append_choice_set false,
+! 		final_choice true,
+! 		reaction [;
+! 			print "Cargar partida.";
+! 			new_line;
+! 			return true;
+! 		],
+! ;
+
+! ChoiceSetItem	MenuSalir
+!  with	entry [;
+! 			PRT__("Salir", 0, REMARKABLE_OBJECT);
+! 			print " de la aplicación";
+! 			return true;
+! 		],
+! 		keys 'salir' 'quitar' 'fin',
+! 		!!------------------
+! 		append_choice_set false,
+! 		final_choice true,
+! 		reaction [;
+! 			print "Salir de la aplicación.";
+! 			new_line;
+! 			return true;
+! 		],
+! ;

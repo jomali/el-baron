@@ -39,16 +39,47 @@
 !!------------------------------------------------------------------------------
 
 !! @DirDescansillo
-AdjacentRoom	DirDescansillo "descansillo"
- has	male,
- with	found_in DormitorioBaron DormitorioMaria,
+AdjacentRoom DirDescansillo "descansillo"
+	has
+		male,
+	with
+		found_in DormitorioBaron DormitorioMaria,
 		name_m 'descansillo' 'rellano',
 		gender G_MASCULINO,
-		!!------------------
+		!!
 		adjacent_room Descansillo,
 		before [;
 			Enter:
 				Descansillo.set_previous_location(location);
+				if (location == DormitorioBaron) {
+					if (DormitorioMariaPuerta hasnt open) {
+						<Open DormitorioMariaPuerta>;
+						new_line;
+					}
+					if (~~self.tried_to_go) {
+						!! XXX - ECTOcomp
+						self.tried_to_go = true;
+						print "Estás a punto de partir pero vacilas antes de atravesar el umbral que da paso [al self].
+						^^
+						¿Cómo es posible que el barón se haya salido con la suya y haya podido llevarse a María de vuestro lado? ¿Cómo puede descansar tan tranquila la gente del pueblo? Ni uno sólo de tus vecinos ha tenido las agallas de levantar la voz y salir en vuestro auxilio. Tan faltos de empatía… tan… tan asquerosamente egoístas. Todos saben lo que ha ocurrido pero nadie va a mover un músculo para remediarlo porque nadie se siente responsable. Porque mientras algo no les afecte directamente es mucho más cómodo ignorarlo, aunque esté ocurriendo frente a sus propios ojos…";
+						new_line;
+						return true;
+					} else if (DormitorioBaronPuerta hasnt open) {
+						give DormitorioBaronPuerta open;
+						print "Mascullas una maldición. Contra el pueblo entero y contra el resto de la humanidad en su conjunto. Y sales del domitorio preparado para hacer lo que se tenía que haber hecho hace demasiado tiempo.
+						^^
+						Plantar cara al barón.";
+						new_line;
+						return Utils.press_intro_to_continue(FinalEscena1Creditos);
+					}
+				} else if (location == DormitorioMaria) {
+					if (DormitorioMariaPuerta hasnt open) {
+						<Open DormitorioMariaPuerta>;
+					}
+				}
+				self.AdjacentRoom::before();
+				return true;
+
 				if (location == DormitorioBaron
 					&& DormitorioBaronPuerta hasnt open) {
 					give DormitorioBaronPuerta open;
@@ -59,9 +90,9 @@ AdjacentRoom	DirDescansillo "descansillo"
 					&& DormitorioMariaPuerta hasnt open) {
 					<Open DormitorioMariaPuerta>;
 				}
-				self.AdjacentRoom::before();
-				return true;
 		],
+	private
+		tried_to_go false,
 ;
 
 !! TODO - objeto Gilda

@@ -44,23 +44,10 @@
 ];
 
 [ FinalEscena1Creditos;	
-	#Ifdef USE_VORPLE;
-	VorpleOpenHTMLTag("div", "center-aligned-text");
-	#Endif; ! USE_VORPLE;
+	return PlayerTo(MenuFinal);
 
-	new_line;
-	print (strong) Story, "^";
-	print (strong) "Escena primera de El Barón^";
-	new_line;
-	print "Una historia interactiva de Victor Gijsbers.^";
-	print "Versión en castellano por J. Francisco Martín.^";
-	new_line;
-	
-	#Ifdef USE_VORPLE;
-	VorpleCloseHTMLTag();
-	#Endif; ! USE_VORPLE;
-	Storyteller.start_scene(2);
-	return true;
+	! quit;
+	! Utils.end_history();
 ];
 
 [ FinalEscena1Citas;
@@ -151,7 +138,7 @@ Item Armadura Limbo
 					La oscuridad cae sobre ti como una fría manta.";
 					new_line;
 					FinalEscena1();
-					return Utils.press_intro_to_continue(FinalEscena1Creditos);
+					return Utils.press_intro_to_continue(FinalEscena1Citas);
 			}
 		],
 		description [;
@@ -242,7 +229,7 @@ BlindingLight -> GrutaLuz "luz"
 				}
 				new_line;
 				FinalEscena1();
-				return Utils.press_intro_to_continue(FinalEscena1Creditos);
+				return Utils.press_intro_to_continue(FinalEscena1Citas);
 			} else {
 				<<Look>>;
 			}
@@ -263,7 +250,7 @@ BlindingLight -> GrutaLuz "luz"
 ;
 
 !! @LogroBerserker
-Object LogroBerserker "Berserker"
+Achievement LogroBerserker "Berserker"
 	with
 		description [;
 			print "Te has enfrentado al dragón con el rostro descubierto y completamente desarmado.";
@@ -273,7 +260,7 @@ Object LogroBerserker "Berserker"
 ;
 
 !! @LogroCodigoCaballeria
-Object LogroCodigoCaballeria "Código de caballería"
+Achievement LogroCodigoCaballeria "Código de caballería"
 	with
 		description [;
 			print "Te has enfrentado al dragón respetando el código de honor de la orden de caballería; equipado con arma y armadura, pero con el rostro descubierto para que la bestia pueda mirarte a los ojos en el momento de acabar con su vida.";
@@ -283,60 +270,60 @@ Object LogroCodigoCaballeria "Código de caballería"
 ;
 
 !! @LogroExcavandoDemasiadoProfundo
-Object LogroExcavandoDemasiadoProfundo "Excavando demasiado profundo"
+Achievement LogroExcavandoDemasiadoProfundo "Excavando demasiado profundo"
 	with
 		description [;
-			print "Has muerto al caer en un lago de magma en lo más profundo de la gruta.";
+			print "Has muerto en un lago de magma en lo más profundo de la gruta.";
 			new_line;
 			return true;
 		],
 ;
 
 !! @LogroGongInfernal
-Object LogroGongInfernal "Un gong infernal"
+Achievement LogroGongInfernal "Un gong infernal"
 	with
 		description [;
-			print "Has aporreado las puertas de bronce intentando huir del dragón pero nadie ha respondido a tu llamada.";
+			print "Has aporreado las puertas de bronce intentando huir del fuego y del dragón.";
 			new_line;
 			return true;
 		],
 ;
 
 !! @LogroGuerreroObstinado
-Object LogroGuerreroObstinado "Guerrero obstinado"
+Achievement LogroGuerreroObstinado "Guerrero obstinado"
 	with
 		description [;
-			print "Has cargado contra el dragón incluso a pesar de estar envuelto en llamas, después de que éste lanzase su aliento de fuego sobre ti.";
+			print "Has cargado contra el dragón incluso a pesar de estar envuelto en llamas.";
 			new_line;
 			return true;
 		],
 ;
 
 !! @LogroHombreArdiente
-Object LogroHombreArdiente "El hombre ardiente"
+Achievement LogroHombreArdiente "El hombre ardiente"
 	with
 		description [;
-			print "Has ardido durante varios turnos después de que el dragón haya escupido un chorro de fuego sobre ti, hasta llegar a ver cómo tu armadura empezaba a fundirse por el calor.";
+			print "Has llegado a ver cómo tu armadura empezaba a fundirse por el calor.";
 			new_line;
 			return true;
 		],
 ;
 
 !! @LogroMasValePrevenir
-Object LogroMasValePrevenir "Más vale prevenir"
+Achievement LogroMasValePrevenir "Más vale prevenir"
 	with
 		description [;
-			print "Te has enfrentado al dragón asumiendo de antemano todas las precauciones posibles: equipado con arma y armadura, y tomando prestado el casco de uno de los héroes que lo intentaron antes que tú.";
+			print "Te has enfrentado al dragón asumiendo de antemano todas las precauciones posibles: equipado con arma y armadura, y tomando prestado un viejo yelmo.";
 			new_line;
 			return true;
 		],
 ;
 
 !! @LogroYEseRuido
-Object LogroYEseRuido "¿Y ese ruido?"
+Achievement LogroYEseRuido "¿Y ese ruido?"
 	with
 		description [;
-			print "Lo último que has escuchado es un terrible crujido mientras el dragón se te comía vivo.";
+			print "Lo último que has escuchado es un terrible crujido antes de que tu mente te llevase a otro lugar.";
 			new_line;
 			return true;
 		],

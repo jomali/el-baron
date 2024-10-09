@@ -946,9 +946,9 @@ Include "vorple-screen-effects.h";
 	lookmode = 2;
 
 	!! Menú principal:
-	! location = Menu;
+	! location = MenuInicial;
 	location = DormitorioBaron;
-	! Storyteller.start_scene(2);
+	! Storyteller.start_scene(1);
 	print "^^";
 
 	!! Se evita la impresión inicial del banner
