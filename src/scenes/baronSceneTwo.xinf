@@ -74,32 +74,35 @@ Item	Abrigo "abrigo" Limbo
 		layer 2,
 ;
 
-!! @E2_Recapitulacion
-Object	E2_Recapitulacion "(Escena Dos Recap.)" Limbo;
+! !! @E2_Recapitulacion
+! Object	E2_Recapitulacion "(Escena Dos Recap.)" Limbo;
 
-!! @E2_DiaEspecial
-Object	-> -> E2_DiaEspecial "Un día especial"
- with	description
-			"Has recordado el día de tu boda con Gilda.",
-;
+! !! @E2_DiaEspecial
+! Object	-> -> E2_DiaEspecial "Un día especial"
+!  with	description
+! 			"Has recordado el día de tu boda con Gilda.",
+! ;
 
-!! @E2_InfanciaMaria
-Object	-> -> E2_InfanciaMaria "La infancia de María"
- with	description
-			"Has repasado algunos momentos de la infancia de María, desde que nació, hasta que se cortó abruptamente.",
-;
+! !! @E2_InfanciaMaria
+! Object	-> -> E2_InfanciaMaria "La infancia de María"
+!  with	description
+! 			"Has repasado algunos momentos de la infancia de María, desde que nació, hasta que se cortó abruptamente.",
+! ;
 
 !! TODO - eliminar campanario de JardinPueblo
 !! @CasaCampanario
-Atrezzo	CasaCampanario "campanario"
- class	Background,
- has	male,
- with	found_in DormitorioBaron DormitorioMaria Jardin,
+Atrezzo CasaCampanario "campanario"
+	class
+		Background,
+	has
+		male,
+	with
+		found_in DormitorioBaron DormitorioMaria Jardin,
 		name_f 'iglesia' 'torre',
 		name_m 'campanario' 'templo',
 		gender G_MASCULINO,
 		adjectives 'pueblo',
-		!!------------------
+		!!
 		description [;
 			switch (location) {
 				DormitorioMaria:
@@ -113,10 +116,13 @@ Atrezzo	CasaCampanario "campanario"
 ;
 
 !! @CasaCerro
-Atrezzo	CasaCerro
- class	Background,
- has	male,
- with	found_in DormitorioBaron DormitorioMaria,
+Atrezzo CasaCerro
+	class
+		Background,
+	has
+		male,
+	with
+		found_in DormitorioBaron DormitorioMaria,
 		short_name [;
 			print "[](cerro:OTHER_OBJECT) del campesino";
 			return true;
@@ -125,7 +131,7 @@ Atrezzo	CasaCerro
 		name_m 'cerro' 'otero',
 		gender G_MASCULINO,
 		adjectives 'blanco' 'campesino' 'del',
-		!!------------------
+		!!
 		description [;
 			switch (location) {
 				!! TODO - domitorio
@@ -139,16 +145,19 @@ Atrezzo	CasaCerro
 
 !! TODO - rutina de parsing para: bóveda celeste
 !! @CieloCasa
-Atrezzo	CieloCasa "cielo"
- class	Background,
- has	male,
- with	found_in DormitorioBaron DormitorioMaria Jardin,
+Atrezzo CieloCasa "cielo"
+	class
+		Background,
+	has
+		male,
+	with
+		found_in DormitorioBaron DormitorioMaria Jardin,
 		name_f 'estrella',
 		name_fp 'estrellas',
 		name_m 'cielo' 'firmamento',
 		gender G_MASCULINO,
 		adjectives 'nocturno',
-		!!------------------
+		!!
 		description [;
 			if (location == DormitorioBaron) {
 				print "Miras hacia el cielo a través [del DormitorioBaronVentana]. ";
@@ -163,14 +172,17 @@ Atrezzo	CieloCasa "cielo"
 ;
 
 !! @LunaCasa
-Atrezzo	LunaCasa "luna"
- class	Background,
- has	female light,
- with	found_in Descansillo DormitorioBaron DormitorioMaria Jardin,
+Atrezzo LunaCasa "luna"
+	class
+		Background,
+	has
+		female light,
+	with
+		found_in Descansillo DormitorioBaron DormitorioMaria Jardin,
 		name_f 'luna' 'luz',
 		gender G_FEMENINO,
 		adjectives 'llena',
-		!!------------------
+		!!
 		description [;
 			switch (location) {
 				Descansillo:
@@ -178,7 +190,7 @@ Atrezzo	LunaCasa "luna"
 				DormitorioMaria:
 					print "La luz de la luna sólo alcanza [la DormitorioMariaVentana] indirectamente, reflejada en [la NieveCasa] de fuera, creando un ambiente tétrico en el dormitorio.";
 				default:
-					print "Los contornos de los objetos se desdibujan y parecen fluir entre sí bajo la luz de la luna, intangibles, como elementos de un sueño.";
+					print "Los contornos de los objetos se desdibujan y parecen fluir entre sí bajo la luz de la luna. Intangibles, como elementos de un sueño.";
 			}
 			new_line;
 			return true;
@@ -186,13 +198,16 @@ Atrezzo	LunaCasa "luna"
 ;
 
 !! @NieveCasa
-Atrezzo	NieveCasa "nieve"
- class	Background,
- has	female,
- with	found_in DormitorioBaron DormitorioMaria,
+Atrezzo NieveCasa "nieve"
+	class
+		Background,
+	has
+		female,
+	with
+		found_in DormitorioBaron DormitorioMaria,
 		name_f 'nieve',
 		gender G_FEMENINO,
-		!!------------------
+		!!
 		before [;
 			Dig,
 			LookUnder:
@@ -230,20 +245,43 @@ Atrezzo	NieveCasa "nieve"
 ;
 
 !! @PuebloCasa
-Atrezzo	PuebloCasa "pueblo"
- class	Background,
- has	male,
- with	found_in DormitorioBaron DormitorioMaria,
- with	name_m 'pueblo',
+Atrezzo PuebloCasa "pueblo"
+	class
+		Background,
+	has
+		male,
+	with
+		found_in DormitorioBaron DormitorioMaria,
+		name_m 'pueblo',
 		gender G_MASCULINO,
-		!!------------------
+		!!
 		description [;
 			switch (location) {
 				DormitorioBaron:
-					print "Tienes una buena vista de gran parte del pueblo. Todo está en silencio y a oscuras, salvo por unas pocas luces sueltas que arden sin mucha convicción en mitad de la noche invernal.";
+					print "A través [de la DormitorioBaronVentana] tienes una buena vista de gran parte del pueblo. Todo está en silencio y a oscuras, salvo por unas pocas luces sueltas que arden sin mucha convicción en mitad de la noche invernal.";
 				DormitorioMaria:
 					!! TODO
 			}
+			new_line;
+			return true;
+		],
+;
+
+!! @LogroInquisidor
+Achievement LogroInquisidor "Inquisidor"
+	with
+		description [;
+			print "Has descubierto la metira de alguien.";
+			new_line;
+			return true;
+		],
+;
+
+!! @LogroSiQuiero
+Achievement LogroSiQuiero "«Sí, quiero»"
+	with
+		description [;
+			print "Has rememorado un momento de tu pasado en el que fuiste realmente feliz.";
 			new_line;
 			return true;
 		],

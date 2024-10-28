@@ -112,6 +112,10 @@ Indoors GrutaPasadizo
 			<<Enter DirGrutaVestibulo>>;
 		],
 		before [;
+			Jump:
+				print "No hay espacio suficiente para saltar.";
+				new_line;
+				return true;
 			Listen:
 				if (noun == 0 or self) {
 					print "Puedes escuchar una especie de murmullo ronco que llega desde [el DirGrutaSalon].";

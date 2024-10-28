@@ -249,9 +249,9 @@ Character -> Dragon "dragón"
 					give self on; !! detiene el daemon durante el prox. turno
 					self.spits_fire();
 					self.burns_baron();
-					print "[if:IndirectlyContains(player, Percunos)]Alzas el hacha con ambas manos[else]Te preparas para atacar[fi] del mismo modo que haría un auténtico caballero sacado de un cuento de hadas.
+					print "[if:IndirectlyContains(player, Percunos)]Alzas el hacha con ambas manos[else]Te preparas para atacar[fi], tal y como haría un auténtico caballero sacado de un cuento de hadas. Con esa imagen en la mente, sin permitirte una oportunidad para dudar, cargas.
 					^^
-					El [self](monstruo) te observa impasible mientras cargas contra él. A pesar de sus dientes largos como una vara, te lanzas a la carrera sin pensártelo, espoleado por una rabia suicida. En ese momento, veloz y repentino como un relámpago, un surtidor de fuego estalla desde el interior de su boca y te envuelve por completo.";
+					El [self](monstruo) te observa impasible mientras corres hacia él. A pesar de sus dientes largos como una vara corres, corres sin pensártelo, espoleado por una rabia suicida. Y en ese momento, veloz y repentino como un relámpago, un surtidor de fuego estalla desde el interior de su boca y te envuelve por completo.";
 					if (Baron.is_blind) {
 						print " Tu rostro desprotegido se calcina en la llamarada. Ardes entre una luz deslumbrante y el dolor más intenso que nunca has conocido.";
 						new_line;
@@ -459,6 +459,7 @@ Character -> Dragon "dragón"
 		],
 		eats_baron [ skip_new_line;
 			self.conditional_new_line(skip_new_line);
+			give LogroYEseRuido on;
 			if (Baron.is_blind) {
 				print "No llegas a verlo acercarte a ti ni a sentirlo a tu lado. No ves ni sientes más que blanco y dolor. Un desgarro blanco mientras sus dientes atraviesan tu armadura con la misma facilidad con la que atravesarían la piel de una manzana. Algo cruje de manera repugnante y un torrente de sangre te inunda la boca.
 				^^

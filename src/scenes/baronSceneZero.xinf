@@ -68,34 +68,24 @@ Room Limbo "En algún lugar…"
 !! @Storyteller
 Object Storyteller "(Narrador)"
 	with
-		end_scene [ scene;
-			switch (scene) {
-				1:
-			}
-		],
-		start_scene [ scene;
-			self._resets();
-			switch (scene) {
-				1:
-					move Armadura to Baron;
-					move Percunos to Baron;
-					give Armadura worn;
-					return true;
-				2:
-					PlayerTo(DormitorioBaron);
-					return true;
-				default:
-					return true;
-			}
+		current_scene 1,
+		start_scene_1 [;
+			Storyteller.current_scene = 1;
+			move Armadura to Baron;
+			move Percunos to Baron;
+			give Armadura worn;
+			utils.erase_window();
+			new_line;
+			new_line;
+			new_line;
+			PlayerTo(Abismo);
+			return true;
 		],
 		start_scene_2 [;
-			return PlayerTo(DormitorioBaron);
-		],
-	private
-		_resets [;
+			Storyteller.current_scene = 2;
 			move Armadura to Limbo;
 			move Percunos to Limbo;
-			move Yelmo to Limbo;
+			PlayerTo(DormitorioBaron);
 			return true;
 		],
 ;

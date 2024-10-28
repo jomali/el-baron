@@ -1,5 +1,5 @@
 !% -Cu
-!% -D
+!% -~D
 !% -S
 !% -s
 !% +language_name=Spanish
@@ -85,7 +85,7 @@ Constant Story
 "LA BESTIA";
 
 Constant Headline
-"Una historia interactiva. Escrita por Victor Gijsbers y publicada bajo la Licencia Pública General de GNU en su versión 3 (o cualquier versión posterior). La presente edición ha sido desarrollada por J. Francisco Martín.";
+"Una historia interactiva publicada bajo la Licencia Pública General de GNU en su versión 3 (o cualquier versión posterior).";
 
 Constant Checking 1;
 Release 0;
@@ -946,10 +946,7 @@ Include "vorple-screen-effects.h";
 	lookmode = 2;
 
 	!! Menú principal:
-	! location = MenuInicial;
-	location = DormitorioBaron;
-	! Storyteller.start_scene(1);
-	print "^^";
+	location = MenuInicial;
 
 	!! Se evita la impresión inicial del banner
 	return 2;

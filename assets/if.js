@@ -64,6 +64,10 @@ var ifjs = (function (controller) {
   };
 
   const clearScreen = () => {
+    Array
+    .from(document.getElementsByClassName("lineinput last"))
+    .forEach((element) => element.remove());
+
     const elements = Array.from(
       document.getElementsByClassName("turn")
     );

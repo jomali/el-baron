@@ -124,6 +124,16 @@ Object	LibraryMessages
 
 !!	FullScore: ! TODO - Mensaje del parser
 
+	Dance,
+	Jump:
+		if (Storyteller.current_scene == 1) {
+			print "La [Armadura](armadura) limita significativamente tus movimientos.";
+		} else {
+			print "Intentas que tus músculos entren en calor, pero la noche es demasiado fría.";
+		}
+		new_line;
+		return true;
+
 	ListMiscellany:
 		!! Los siguientes mensajes se muestran como aclaraciones cuando se está
 		!! listando el inventario del usuario, o los objetos que hay en una
@@ -373,6 +383,15 @@ Object	LibraryMessages
 	NotifyOff:
 		print_ret (parser) "Notificación de puntuación desactivada.";
 
+	Pray:
+		if (Storyteller.current_scene == 1) {
+			print "Confías en que los dioses estén hoy de tu parte.";
+		} else {
+			print "Mejor no hacerlo. Todo cuanto se te ocurre elevar al cielo en estos momentos sería blasfemia.";
+		}
+		new_line;
+		return true;
+
 	Pronouns:
 		!! Esta acción (generada por el verbo PRONOMBRES) muestra una lista
 		!! de qué significa en ese momento para el parser cada pronombre:
@@ -541,6 +560,13 @@ Object	LibraryMessages
 			3:
 				print_ret (parser) "Error al intentar iniciar la
 				transcripción.";
+		}
+
+	Shout:
+		if (Storyteller.current_scene == 1 && ~~Baron.is_burning) {
+			print "Prefieres guardar silencio y no desvelar tu presencia hasta el último momento.";
+			new_line;
+			return true;
 		}
 
 	Smell: !! XXX

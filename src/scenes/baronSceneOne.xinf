@@ -133,6 +133,7 @@ Item Armadura Limbo
 					new_line;
 					return true;
 				6:
+					give LogroHombreArdiente on;
 					new_line;
 					print "El metal fundido de la armadura penetra en tu cuerpo y se mezcla con tu piel licuada en una alquimia terrible. No hay visión alguna. No hay sonido. No hay pensamientos. Sólo dolor saturando toda tu consciencia. Intentas emitir un último grito agónico mientras caes de rodillas pero tus cuerdas vocales se consumen en el fuego.^^
 					La oscuridad cae sobre ti como una fría manta.";
