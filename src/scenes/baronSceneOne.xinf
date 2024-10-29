@@ -270,6 +270,16 @@ Achievement LogroCodigoCaballeria "Código de caballería"
 		],
 ;
 
+!! @LogroMasValePrevenir
+Achievement LogroMasValePrevenir "Más vale prevenir"
+	with
+		description [;
+			print "Te has enfrentado al dragón asumiendo de antemano todas las precauciones posibles: equipado con arma y armadura, y tomando prestado un viejo yelmo.";
+			new_line;
+			return true;
+		],
+;
+
 !! @LogroExcavandoDemasiadoProfundo
 Achievement LogroExcavandoDemasiadoProfundo "Excavando demasiado profundo"
 	with
@@ -305,16 +315,6 @@ Achievement LogroHombreArdiente "El hombre ardiente"
 	with
 		description [;
 			print "Has llegado a ver cómo tu armadura empezaba a fundirse por el calor.";
-			new_line;
-			return true;
-		],
-;
-
-!! @LogroMasValePrevenir
-Achievement LogroMasValePrevenir "Más vale prevenir"
-	with
-		description [;
-			print "Te has enfrentado al dragón asumiendo de antemano todas las precauciones posibles: equipado con arma y armadura, y tomando prestado un viejo yelmo.";
 			new_line;
 			return true;
 		],

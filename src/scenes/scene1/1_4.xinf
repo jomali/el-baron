@@ -88,9 +88,15 @@ AdjacentRoom DirGrutaSalon
 					}
 					print ", apartas los temores a un lado y te dispones a encarar a la bestia.";
 					!! Se registran las elecciones del jugador:
-					if (IndirectlyContains(player, Percunos)
+					if (~~IndirectlyContains(player, Percunos)
+						&& Yelmo hasnt worn) {
+						give LogroBerserker on;
+					} else if (IndirectlyContains(player, Percunos)
 						&& Yelmo hasnt worn) {
 						give LogroCodigoCaballeria on;
+					} else if (IndirectlyContains(player, Percunos)
+						&& Yelmo has worn) {
+						give LogroMasValePrevenir on;
 					}
 				}
 				new_line;
