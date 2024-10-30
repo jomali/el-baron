@@ -13,8 +13,8 @@
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:			0.0
-!!	Fecha:				2024/XX/XX
+!!	Versión:			0.1
+!!	Fecha:				2024/10/30
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -511,7 +511,7 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 			self.add_choice(AQueHeVenido);
 			print "Al observarla bajo la luz cambiante de la gruta, la [self](figura) parece contorsionarse lentamente, como si estuviera viva. El efecto es tan sugestivo que por un momento tu mente te traiciona y cree escuchar una vocecilla metálica.
 			^^
-			—¡Un compañero nuevo! ¡Vaya sorpresa! —Hace una breve pausa mientras sus inmóviles ojos parecen recorrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Vas a tener que buscar muy bien si quieres tu propio sitio.";
+			—¡Un compañero nuevo! ¡Vaya sorpresa! —Sus inmóviles ojos parecen recorrer los [GrutaVestibuloHuesos](esqueletos) esparcidos por el suelo—. Vas a tener que buscar muy bien si quieres tu propio sitio.";
 			new_line;
 			return true;
 		],
@@ -540,7 +540,7 @@ ChoiceSet ConversacionHombreArdiendo "(Conversación: hombre ardiendo)"
 				self.remove_choice(EstasVivo);
 				self.remove_choice(AQueHeVenido);
 				self.remove_choice(EnfrentadoBestia);
-				print "—Dime, ¿quién se acerca al fuego si tiene miedo a quemarse las pestañas? —Escupe con desprecio un pequeño rodamiento de bronce que se pierde en las sombras.
+				print "—Si, si, si… dime, ¿quién se acerca al fuego si tiene miedo a quemarse las pestañas? —Escupe con desprecio un pequeño rodamiento de bronce que se pierde en las sombras.
 				^^
 				Le pides que te hable sobre la bestia. Que te cuente cómo es, qué aspecto tiene.
 				^^

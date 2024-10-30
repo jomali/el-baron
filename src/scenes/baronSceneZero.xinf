@@ -13,8 +13,8 @@
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:			0.0
-!!	Fecha:				2024/XX/XX
+!!	Versión:			0.1
+!!	Fecha:				2024/10/30
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -97,10 +97,16 @@ Character Baron "protagonista" Limbo
 	with
 		name_m 'personaje' 'protagonista',
 		gender G_MASCULINO,
-		!!
+		!! `Verdadero` si el Barón ha perdido la visión
 		is_blind false,
-		!!
+		!! `Verdadero` si el Barón está ardiendo en llamas
 		is_burning false,
+		!!
+		react_after [;
+			Take:
+				Tutorial.hint_inventory();
+				return false;
+		],
 		
 		!! TODO - revisar
 		become_a_wolf [;

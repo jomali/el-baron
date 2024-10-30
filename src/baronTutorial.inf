@@ -3,44 +3,40 @@
 !!==============================================================================
 !!
 !!	EL BARÓN
-!!	Tutorial con ayudas al usuario
+!!	Sistema de ayudas para el usuario
 !!
 !!==============================================================================
 !!
-!!	Archivo:		baronTutorial.inf
+!!	Archivo:			baronTutorial.inf
 !!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
-!!	Idioma:			ES (Español)
-!!	Sistema:		Inform-INFSP 6
+!!								J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:				ES (Español)
+!!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:		0.0
-!!	Fecha:			2023/XX/XX
+!!	Versión:			0.1
+!!	Fecha:				2024/10/30
 !!
 !!------------------------------------------------------------------------------
 !!
 !!	Este archivo forma parte de la ficción interactiva EL BARÓN.
 !!
-!!	EL BARÓN es software libre: usted puede redistribuirlo y/o
-!!	modificarlo bajo los términos de la Licencia Pública General
-!!	GNU publicada por la Fundación para el Software Libre, ya
-!!	sea la versión 3 de la Licencia, o (a su elección) cualquier
-!!	versión posterior.
+!!	EL BARÓN es software libre: usted puede redistribuirlo y/o modificarlo bajo 
+!!	los términos de la Licencia Pública General GNU publicada por la Fundación 
+!!	para el Software Libre, ya sea la versión 3 de la Licencia, o (a su 
+!!	elección) cualquier versión posterior.
 !!
-!!	EL BARÓN se distribuye con la esperanza de que sea útil,
-!!	pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
-!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
-!!	Consulte los detalles de la Licencia Pública General GNU
-!!	para más información.
+!!	EL BARÓN se distribuye con la esperanza de que sea útil, pero SIN GARANTÍA 
+!!	ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD PARA UN 
+!!	PROPÓSITO DETERMINADO. Consulte los detalles de la Licencia Pública General 
+!!	GNU para más información.
 !!
-!!	Debería haber recibido una copia de la Licencia Pública
-!!	General GNU junto a EL BARÓN. En caso contrario, consulte
-!!	<http://www.gnu.org/licenses/>.
+!!	Debería haber recibido una copia de la Licencia Pública General GNU junto a 
+!!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2006, Victor Gijsbers
-!!	Copyright (c) 2023, J. Francisco Martín
+!!	Copyright (c) 2024, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
-
 
 !! @Tutorial
 Object	Tutorial "(Tutorial)"
@@ -65,6 +61,12 @@ Object	Tutorial "(Tutorial)"
 				give self on;
 			}
 		],
+		hint_inventory [;
+			if (~~self.hint_inventory_printed) {
+				self.hint_inventory_on = true;
+				give self on;
+			}
+		],
 		hint_keywords_a [;
 			if (~~self.hint_keywords_a_printed) {
 				self.hint_keywords_a_on = true;
@@ -77,9 +79,15 @@ Object	Tutorial "(Tutorial)"
 				give self on;
 			}
 		],
-		hint_look_a [;
-			if (~~self.hint_look_a_printed) {
-				self.hint_look_a_on = true;
+		hint_look [;
+			if (~~self.hint_look_printed) {
+				self.hint_look_on = true;
+				give self on;
+			}
+		],
+		hint_other_actions [;
+			if (~~self.hint_other_actions_printed) {
+				self.hint_other_actions_on = true;
 				give self on;
 			}
 		],
@@ -111,6 +119,10 @@ Object	Tutorial "(Tutorial)"
 					self.hint_highlight_key_b_text();
 					jump hint_printed;
 				}
+				if (self.hint_inventory_on) {
+					self.hint_inventory_text();
+					jump hint_printed;
+				}
 				if (self.hint_keywords_a_on) {
 					self.hint_keywords_a_text();
 					jump hint_printed;
@@ -119,8 +131,12 @@ Object	Tutorial "(Tutorial)"
 					self.hint_keywords_b_text();
 					jump hint_printed;
 				}
-				if (self.hint_look_a_on) {
-					self.hint_look_a_text();
+				if (self.hint_look_on) {
+					self.hint_look_text();
+					jump hint_printed;
+				}
+				if (self.hint_other_actions_on) {
+					self.hint_other_actions_text();
 					jump hint_printed;
 				}
 				.hint_printed;
@@ -168,13 +184,21 @@ Object	Tutorial "(Tutorial)"
 			print "Recuerda, la tecla «Shift/Mayús.» te permite ver los objetos con los que puedes interactuar.";
 			return true;
 		],
+		hint_inventory_on false,
+		hint_inventory_printed false,
+		hint_inventory_text [;
+			self.hint_inventory_on = false;
+			self.hint_inventory_printed = true;
+			print "Puedes ver todas las cosas que llevas encima tecleando «inventario» o, simplemente, «i».";
+			return true;
+		],
 		hint_keywords_a_on false,
 		hint_keywords_a_printed false,
 		hint_keywords_a_text [;
 			self.hint_keywords_a_on = false;
 			self.hint_keywords_a_printed = true;
 			print "Al mantener pulsado «Shift/Mayús.» pueden aparecer dos tipos de palabra destacada diferente. El primero de ellos, con un estilo blanco brillante, lo utilizan aquellos objetos que puedes investigar o manipular con mayor detalle, como por ejemplo «mármol» o «puertas».";
-			self.hint_look_a();
+			self.hint_look();
 			return true;
 		],
 		hint_keywords_b_on false,
@@ -185,14 +209,22 @@ Object	Tutorial "(Tutorial)"
 			print "Las salidas sobre las que puedes hacer clic para desplazarte desde una localidad a otra diferente se muestran con el segundo estilo de texto, en rojo brillante.";
 			return true;
 		],
-		hint_look_a_on false,
-		hint_look_a_printed false,
-		hint_look_a_text [;
-			self.hint_look_a_on = false;
-			self.hint_look_a_printed = true;
+		hint_look_on false,
+		hint_look_printed false,
+		hint_look_text [;
+			self.hint_look_on = false;
+			self.hint_look_printed = true;
 			print "Puedes volver a consultar la descripción del lugar en el que te encuentras, junto con todos los objetos que hay presentes, pulsando la tecla «Intro».";
 			return true;
-		],		
+		],
+		hint_other_actions_on false,
+		hint_other_actions_printed false,
+		hint_other_actions_text [;
+			self.hint_other_actions_on = false;
+			self.hint_other_actions_printed = true;
+			print "Al hacer clic sobre el nombre de un objeto interactúas con él, generalmente examinándolo con mayor detalle. Pero hay objetos sobre los que resultaría natural intentar otras acciones diferentes (como «coger», «abrir» u «oler», entre algunas otras). Puedes utilizar el teclado para escribir cualquiera de estas acciones que creas que puedan tener sentido para algún objeto. Por ejemplo: «coger ropa».";
+			return true;
+		],
 		hint_repeated_actions_on false,
 		hint_repeated_actions_printed false,
 		hint_repeated_actions_text [;

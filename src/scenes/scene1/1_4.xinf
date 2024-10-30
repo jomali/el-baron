@@ -13,8 +13,8 @@
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:			0.0
-!!	Fecha:				2024/XX/XX
+!!	Versión:			0.1
+!!	Fecha:				2024/10/30
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -88,7 +88,7 @@ AdjacentRoom DirGrutaSalon
 					}
 					print ", apartas los temores a un lado y te dispones a encarar a la bestia.";
 					!! Se registran las elecciones del jugador:
-					if (~~IndirectlyContains(player, Percunos)
+					if (IndirectlyContains(player, Percunos) == false
 						&& Yelmo hasnt worn) {
 						give LogroBerserker on;
 					} else if (IndirectlyContains(player, Percunos)
@@ -223,6 +223,7 @@ Character -> Dragon "dragón"
 		before [;
 			Attack:
 				if (Baron.is_blind) {
+					give LogroGuerreroObstinado on;
 					print "Enloquecido por el dolor, echas a correr";
 					if (IndirectlyContains(player, Percunos)) {
 						print " lanzando tajos con el hacha";
@@ -609,7 +610,7 @@ ChoiceSetItem DragonAmenazar
 		reaction [;
 			print "—¡Escucha bien, [Dragon](bestia)! —gritas[if:IndirectlyContains(player, Percunos)], alzando el hacha con ambas manos[else], sorprendido de la seguridad de tus propias palabras[fi]. —¡Ha llegado tu hora! —y, por un instante, la estampa es la de un auténtico caballero sacado de un cuento de hadas; la del enfrentamiento del héroe contra el mal.
 			^^
-			Un instante después";
+			Un momento después";
 			return Dragon.interrupts_conversation();
 		],
 		relatives DragonRazonar,

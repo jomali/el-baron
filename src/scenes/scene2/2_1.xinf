@@ -13,8 +13,8 @@
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:			0.0
-!!	Fecha:				2024/XX/XX
+!!	Versión:			0.1
+!!	Fecha:				2024/10/30
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -115,6 +115,7 @@ Indoors DormitorioBaron
 				return true;
 		],
 		description [;
+			Tutorial.hint_other_actions();
 			if (player in DormitorioBaronSilla) {
 				print "Sentado en [la DormitorioBaronSilla] observas cómo la";
 			} else {
@@ -891,11 +892,15 @@ Item -> -> Ropa "ropa"
 				}
 				return false;
 			Wear:
+				self.previous_parent = nothing;
 				if (real_location == DormitorioBaron) {
 					print "Te vistes en silencio.";
 					new_line;
 					return true;
 				}
+			default:
+				self.previous_parent = nothing;
+				return false;
 		],
 		before [
 			temp wear_it;
@@ -947,11 +952,6 @@ Item -> -> Ropa "ropa"
 			return true;
 		],
 		layer 1,
-		react_after [;
-			if (self.previous_parent ~= 0) {
-				self.previous_parent = 0;
-			}
-		],
  private
 		boots_flag false,
 		shirt_flag false,
@@ -974,7 +974,7 @@ Item -> -> Ropa "ropa"
 			!! Apéndice si el PC además se viste con el objeto:
 			if (wear_it) {
 				if (location == DormitorioBaron) {
-					print " y te vistes en silencio";
+					print " y te vistes en silencio. Estremeciéndote al pensar en la gélida noche que te aguarda [out_obj](afuera)";
 				} else {
 					print " y te l[o self] pones";
 				}
@@ -982,6 +982,7 @@ Item -> -> Ropa "ropa"
 			!! Final:
 			print ".";
 			new_line;
+			self.previous_parent = nothing;
 			return true;
 		],
 ;

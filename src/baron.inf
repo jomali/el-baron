@@ -1,5 +1,5 @@
 !% -Cu
-!% -~D
+!% -D
 !% -S
 !% -s
 !% +language_name=Spanish
@@ -16,8 +16,8 @@
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:			0.0
-!!	Fecha:				2022/XX/XX
+!!	Versión:			0.1
+!!	Fecha:				2024/10/30
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -44,6 +44,7 @@
 !!	HISTORIAL DE VERSIONES
 !!
 !!	0.0: 2019/02/04	Inicio del desarrollo.
+!!	0.1: 2024/10/30	Publicación de demostración para ECTOCOMP 2024
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -82,13 +83,15 @@
 !!------------------------------------------------------------------------------
 
 Constant Story
-"LA BESTIA";
+"EL BARÓN";
 
 Constant Headline
-"Una historia interactiva publicada bajo la Licencia Pública General de GNU en su versión 3 (o cualquier versión posterior).";
+"Una historia interactiva de Victor Gijsbers.^
+Adaptación de J. Francisco Martín.^
+Publicada bajo la Licencia Pública General de GNU en su versión 3 (o cualquier versión posterior).";
 
-Constant Checking 1;
-Release 0;
+Constant Checking 0;
+Release 1;
 
 !!------------------------------------------------------------------------------
 !!	Control de las extensiones utilizadas por la obra
@@ -450,6 +453,10 @@ Include "gwincls.h";
 ];
 #Endif; ! USE_GWINDOWS;
 [ HandleGlkEventExe ev context abortres;
+	#Ifdef USE_VORPLE;
+	VorplePlaySoundEffect("input.mp3");
+	#Endif; ! USE_VORPLE;
+
 	!! Gestión de efecto de 'fade' en Damusix en tiempo real:
 	#Ifdef USE_DAMUSIX;
 	Damusix.NotificarFade(ev);
