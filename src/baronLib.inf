@@ -97,7 +97,7 @@ Attribute remarkable;
 !! castellano.
 !!
 !!	@override verblibm.h
-!!	@version 2019/06/17
+!!	@version 2025/05/18
 !!------------------------------------------------------------------------------
 [ Banner
 	previous_style;
@@ -114,17 +114,9 @@ Attribute remarkable;
 	#Ifdef DEBUG;
 	print "BETA ";
 	#Ifnot;
-	#Ifdef VERSION_DESKTOP;
-	print "Versión ";
-	#Ifnot; ! VERSION_WEB_MOBILE;
 	print "v.";
-	#Endif; ! VERSION_
 	#Endif; ! DEBUG;
 	PrintVersionNumber();
-	#Ifdef VERSION_WEB_MOBILE;
-	if (isVorpleSupported()) print " WEB";
-	else print " LITE";
-	#Endif; ! VERSION_WEB_MOBILE;
 	print " / Núm. de serie ";
 	PrintSerialNumber();
 	print " / Creado con Inform ";
@@ -144,11 +136,7 @@ Attribute remarkable;
 !! Imprime el número de serie
 [ PrintSerialNumber
 	i;
-	#Ifdef	TARGET_ZCODE;
-	for (i=0 : i<6 : i++) print (char) HDR_GAMESERIAL->i;
-	#Ifnot;	! TARGET_GLULX;
 	for (i=0 : i<6 : i++) print (char) ROM_GAMESERIAL->i;
-	#Endif;	! TARGET_
 ];
 
 !! Imprime el número de versión
@@ -156,12 +144,8 @@ Attribute remarkable;
 	i;
 	i = 0;  ! shut up compiler warning
 	print Checking, ".";
-	#Ifdef	TARGET_ZCODE;
-	print (HDR_GAMERELEASE-->0) & $03ff;
-	#Ifnot;	! TARGET_GLULX;
 	@aloads ROM_GAMERELEASE 0 i;
 	print i;
-	#Endif;	! TARGET_
 ];
 
 !!------------------------------------------------------------------------------
@@ -396,7 +380,7 @@ CompassDirection f_obj "adelante" compass
 !!	@dependency arrays.h
 !!	@dependency baronClasses.inf
 !!	@dependency vorple.h
-!!	@version 2024/10/05
+!!	@version 2025/05/18
 !!------------------------------------------------------------------------------
 Global _last_location = 0;
 Global _blinding_object = 0;
@@ -430,14 +414,8 @@ Global _blinding_object = 0;
 	! 	new_line;
 	! 	if (real_location hasnt concealed) {
 	! 		!! Establece los estilos de texto:
-	! 		#Ifdef TARGET_ZCODE;
-	! 		style bold;
-	! 		#Ifnot; ! TARGET_GLULX;
-	! 		#Ifdef VERSION_WEB_MOBILE;
 	! 		VorpleStyle(STYLE_DARK_GRAY_BACKGROUND);
-	! 		#Endif; ! VERSION_WEB_MOBILE;
 	! 		previous_style = Utils.set_text_style(TEXT_STYLE_IMPORTANT);
-	! 		#Endif; ! TARGET_
 	! 		!! Imprime el nombre de la localidad actual:
 	! 		if (visibility_levels == 0) {
 	! 			PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, thedark);
@@ -452,14 +430,8 @@ Global _blinding_object = 0;
 	! 		}
 	! 		new_line;
 	! 		!! Reestablece los estilos de texto anteriores:
-	! 		#Ifdef TARGET_ZCODE;
-	! 		style roman;
-	! 		#Ifnot; ! TARGET_GLULX;
 	! 		Utils.set_text_style(previous_style);
-	! 		#Ifdef VERSION_WEB_MOBILE;
 	! 		VorpleEndStyle();
-	! 		#Endif; ! VERSION_WEB_MOBILE;
-	! 		#Endif; ! TARGET_
 	! 	}
 	! }
 
@@ -735,9 +707,8 @@ Global _blinding_object = 0;
 !!	@returns {boolean} Verdadero
 !!	@dependency baron.inf
 !!	@dependency baron_utils.inf
-!!	@dependency hyperlinks.h
 !!	@dependency textStyles.h
-!!	@version 2019/09/14
+!!	@version 2025/05/18
 !!------------------------------------------------------------------------------
 [ PRT__ rtxt alternative object_type
 	style_code previous_style hyperlinks_status;
@@ -764,26 +735,12 @@ Global _blinding_object = 0;
 	!! Determina estado de los hipervínculos y crea uno si están activados:
 	hyperlinks_status = Utils.get_hyperlinks_status(object_type);
 	if (metaclass(alternative) == String) rtxt = alternative;
-	#Ifdef USE_HYPERLINKS;
-	if (hyperlinks_status) {
-		Hyperlink(rtxt);
-	} else {
-		if (metaclass(rtxt) == String) print (string) rtxt;
-		else print (object) rtxt;
-	}
-	#Ifnot;
-	#Ifdef USE_VORPLE;
 	if (hyperlinks_status) {
 		Utils.create_vorple_hyperlink(rtxt);
 	} else {
 		if (metaclass(rtxt) == String) print (string) rtxt;
 		else print (object) rtxt;
 	}
-	#Ifnot;
-	if (metaclass(rtxt) == String) print (string) rtxt;
-	else print (object) rtxt;
-	#Endif; ! USE_VORPLE;
-	#Endif; ! USE_HYPERLINKS;
 
 	!! Reestablece el estilo utilizado anteriormente y retorna:
 	Utils.set_text_style(previous_style);
@@ -794,7 +751,7 @@ Global _blinding_object = 0;
 !! Créditos detallados de la aplicación.
 !!
 !!	@override verblibm.h
-!!	@version 1.0
+!!	@version 2025/05/18
 !!------------------------------------------------------------------------------
 [ VersionSub
 	ix;
@@ -806,42 +763,21 @@ Global _blinding_object = 0;
 	#Ifdef LanguageVersion;
 	print (string) LanguageVersion, "^";
 	#Endif; ! LanguageVersion
-	#Ifdef TARGET_ZCODE;
-	ix = 0; ! shut up compiler warning
-	if (standard_interpreter > 0) {
-		print "Estándar del intérprete ", standard_interpreter/256, ".",
-			standard_interpreter%256, " (", HDR_TERPNUMBER->0;
-		#Iftrue (#version_number == 6);
-		print (char) '.', HDR_TERPVERSION->0;
-		#Ifnot;
-		print (char) HDR_TERPVERSION->0;
-		#Endif;
-		print ") / ";
-	} else {
-		print "Intérprete ", HDR_TERPNUMBER->0, " Versión ";
-		#Iftrue (#version_number == 6);
-		print HDR_TERPVERSION->0;
-		#Ifnot;
-		print (char) HDR_TERPVERSION->0;
-		#Endif;
-		print " / ";
-	}
-	#Ifnot; ! TARGET_GLULX;
+
 	@gestalt 1 0 ix;
 	print "Versión del intérprete ", ix / $10000, ".", (ix & $FF00) / $100,
 	".", ix & $FF, " / ";
 	@gestalt 0 0 ix;
 	print "VM ", ix / $10000, ".", (ix & $FF00) / $100, ".", ix & $FF;
-	#Endif; ! TARGET_;
 	new_line;
-	#Ifndef VERSION_DESKTOP;
-    if (isVorpleSupported()) {
-        VorpleExecuteJavaScriptCommand("vorple.version");
+
+	if (isVorpleSupported()) {
+		VorpleExecuteJavaScriptCommand("vorple.version");
 		print "Versión de la librería Vorple ";
  		PrintStringOrArray(VorpleWhatTextWasReturned());
 		new_line;
-    }
-	#Endif; ! VERSION_DESKTOP
+	}
 	new_line;
+
 	return true;
 ];

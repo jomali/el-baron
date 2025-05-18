@@ -65,7 +65,6 @@
 
 Default PS1 ">";
 
-#Ifdef USE_VORPLE;
 Array _prefill_array buffer 100;
 [ PrefillWithCommand;
     bp_output_stream(3, _prefill_array, 100);
@@ -74,7 +73,6 @@ Array _prefill_array buffer 100;
     bp_output_stream(-3);
     VorplePrefillPrompt(_prefill_array);
 ];
-#Endif; ! USE_VORPLE;
 
 
 !!==============================================================================
@@ -311,9 +309,7 @@ Object	LibraryMessages
 				!! El usuario ha escrito una frase u orden a NPC incompleta,
 				!! como BESA (verbo aplicado sobre NPCs normalmente). El parser
 				!! le pregunta para que complete la frase.
-				#Ifdef USE_VORPLE;
 				PrefillWithCommand();
-				#Endif; ! USE_VORPLE;
 				previous_style = Utils.set_text_style(TEXT_STYLE_PARSER);
 				print (string) TEXT_STYLE_PARSER_PREFIX;
 				PreguntaCualExactamente = 1;
@@ -331,9 +327,7 @@ Object	LibraryMessages
 				!! El usuario ha escrito una frase u orden incompleta, como
 				!! COGE (verbo aplicado sobre objetos normalmente). El parser
 				!! le pregunta para que complete la frase.
-				#Ifdef USE_VORPLE;
 				PrefillWithCommand();
-				#Endif; ! USE_VORPLE;
 				previous_style = Utils.set_text_style(TEXT_STYLE_PARSER);
 				print (string) TEXT_STYLE_PARSER_PREFIX;
 				PreguntaCualExactamente = 1;
@@ -417,9 +411,7 @@ Object	LibraryMessages
 		!! aleatoria en cada turno, por ejemplo.
 		Tutorial.hints();
 		new_line;
-		#Ifdef USE_VORPLE;
 		if (VorpleAppendToLM(##Prompt, lm_n)) return true;
-		#Endif; ! USE_VORPLE;
 		print (string) PS1, " ";
 		return true;
 

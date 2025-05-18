@@ -233,10 +233,7 @@ Object MenuFinal
 			ChoiceSetManager.start(MenuRaiz, avoid_choice_set_inventory);
 			Utils.print_horizontal_rule();
 
-			#Ifdef USE_VORPLE;
 			VorpleOpenHTMLTag("div", "center-aligned-text");
-			#Endif; ! USE_VORPLE;
-
 			new_line;
 			print (strong) Story, "^";
 			print (strong) "Escena primera de El Barón^";
@@ -244,10 +241,7 @@ Object MenuFinal
 			print "Una historia interactiva de Victor Gijsbers^";
 			print "Adaptación de J. Francisco Martín^";
 			new_line;
-
-			#Ifdef USE_VORPLE;
 			VorpleCloseHTMLTag();
-			#Endif; ! USE_VORPLE;
 
 			new_line;
 			print "Nota del ";
@@ -351,9 +345,7 @@ ChoiceSetItem	MenuReiniciar
 		append_choice_set false,
 		final_choice true,
 		reaction [;
-			#Ifdef USE_VORPLE;
 			VorpleClearCommandHistory();
-			#Endif; ! USE_VORPLE;
 			@restart;
 		],
 ;

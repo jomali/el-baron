@@ -68,11 +68,9 @@
 !!
 !!------------------------------------------------------------------------------
 !!	<>	Información bibliográfica
-!!	<>	Control de las extensiones utilizadas por la obra
 !!	<>	Definiciones generales
 !!	<>	Definiciones de la librería Inform
 !!	<>	Configuración de la extensión 'choiceSets'
-!!	<>	Configuración de la extensión 'hyperlinks'
 !!	<>	Configuración de la librería de mensajes 'SpanishLM'
 !!	<>	Configuración de la extensión 'textStyles'
 !!------------------------------------------------------------------------------
@@ -93,36 +91,9 @@ Constant Checking 0;
 Release 1;
 
 !!------------------------------------------------------------------------------
-!!	Control de las extensiones utilizadas por la obra
-!!------------------------------------------------------------------------------
-
-!! Descomentar para compilar la versión Web/Móvil:
-Constant VERSION_WEB_MOBILE;
-
-#Ifndef VERSION_WEB_MOBILE;
-!! Si no se está compilando para Web/Móvil, es que se compila para escritorio:
-Constant VERSION_DESKTOP;
-#Endif; ! VERSION_WEB_MOBILE;
-
-#Ifdef VERSION_WEB_MOBILE;
-!! Utilización de la interfaz Vorple:
-Constant USE_VORPLE;
-!! Se evita que Vorple reescriba las rutinas de Inform:
-Constant VORPLE_NO_REPLACES;
-#Ifnot; ! VERSION_DESKTOP;
-
-!! Utilización de hipervínculos Glk:
-Constant USE_HYPERLINKS;
-#Endif; ! VERSION_
-
-!! Utilización de reemplazos de rutinas por defecto de la librería:
-Constant USE_EXTENDED_LIBRARY;
-!! Utilización de mensajes personalizados de la librería:
-Constant USE_SPANISH_LM;
-
-!!------------------------------------------------------------------------------
 !!	Definiciones generales
 !!------------------------------------------------------------------------------
+
 
 !! Clases de objetos interactivos:
 Constant REMARKABLE_OBJECT 2;
@@ -138,17 +109,8 @@ Constant SIZE_L 2;
 !! Estilos de texto adicionales:
 Constant TEXT_STYLE_MENU = 11;
 
-!! Nombre del fichero de configuración:
-Constant CONFIG_FILE_NAME "baron.params";
-
-!! Referencias a los recursos multimedia en Máquina-Z:
-#Ifdef TARGET_ZCODE;
-!! TODO
-#Endif; ! TARGET_ZCODE;
-
-#Ifndef USE_EXTENDED_LIBRARY;
-Attribute described;
-#Endif; ! USE_EXTENDED_LIBRARY;
+!! Se evita que Vorple reescriba las rutinas de Inform:
+Constant VORPLE_NO_REPLACES;
 
 !!------------------------------------------------------------------------------
 !!	Definiciones de la librería Inform
@@ -163,15 +125,11 @@ Constant NO_PLACES;
 !! No se lleva conteo de puntuación:
 Constant NO_SCORE;
 
-#Ifdef USE_SPANISH_LM;
 !! Se omiten los mensajes por defecto de la librería:
 Constant SIN_MENSAJES;
-#Endif; ! USE_SPANISH_LM;
 
-#Ifdef USE_EXTENDED_LIBRARY;
 !! Se omiten las direcciones por defecto de la librería:
 Constant WITHOUT_DIRECTIONS;
-#Endif; ! USE_EXTENDED_LIBRARY;
 
 !!------------------------------------------------------------------------------
 !!	Configuración de la extensión 'choiceSets'
@@ -187,43 +145,20 @@ Constant CSET_OR "^";
 Constant CSET_NO_MSG "Listado de opciones vacío.";
 
 !!------------------------------------------------------------------------------
-!!	Configuración de la extensión 'hyperlinks'
-!!------------------------------------------------------------------------------
-
-#Ifdef USE_HYPERLINKS;
-!! Acción por defecto utilizada al seleccionar un hipervínculo:
-Global _hyperlinks_command = "";
-#Endif; ! USE_HYPERLINKS;
-
-!!------------------------------------------------------------------------------
 !!	Configuración de la librería de mensajes 'SpanishLM'
 !!------------------------------------------------------------------------------
 
-#Ifdef USE_SPANISH_LM;
-Constant PS1 ">";				! Inductor
+Constant PS1 ">"; ! Inductor
 
-Global FORMER__TX	= "tu antiguo ~yo~";
-Global YOURSELF__TX	= "ti mismo";
-Global CANTGO__TX	= "No puedes ir por ahí.";
-Global IS__TX		= " ves";
-Global ARE__TX		= " ves";
-Global IS2__TX		= "ves ";
-Global ARE2__TX		= "ves ";
-Global YOU__TX		= "Tú";
-Global PARTICULA_TE	= "te";
-#Ifnot;
-Default FIRST_PERSON_PRESENT	= 1;
-Default SECOND_PERSON_PRESENT	= 2;
-Default THIRD_PERSON_PRESENT	= 3;
-Default FIRST_PERSON_PAST		= 4;
-Default SECOND_PERSON_PAST		= 5;
-Default THIRD_PERSON_PAST		= 6;
-Default FIRST_PERSON_FUTURE		= 7;
-Default SECOND_PERSON_FUTURE	= 8;
-Default THIRD_PERSON_FUTURE		= 9;
-[ contigo; print "contigo"; ];
-[ IsPluralNoun; return false; ];
-#Endif; ! USE_SPANISH_LM;
+Global FORMER__TX = "tu antiguo ~yo~";
+Global YOURSELF__TX = "ti mismo";
+Global CANTGO__TX = "No puedes ir por ahí.";
+Global IS__TX = " ves";
+Global ARE__TX = " ves";
+Global IS2__TX = "ves ";
+Global ARE2__TX = "ves ";
+Global YOU__TX = "Tú";
+Global PARTICULA_TE = "te";
 
 !!------------------------------------------------------------------------------
 !!	Configuración de la extensión 'textStyles'
@@ -275,11 +210,8 @@ Constant TEXT_STYLE_PARSER_SUFIX "]";
 
 Replace BeforeSettingTextStyle;	! Lógica previa al cambiar de estilo de texto
 
-#Ifdef USE_SPANISH_LM;
 Replace ChangePlayer;			! Rutina para cambiar el objeto PC
-#Endif; ! USE_SPANISH_LM;
 
-#Ifdef USE_EXTENDED_LIBRARY;
 Replace Banner;					! Créditos generales de la aplicación
 Replace DrawStatusLine;			! Dibuja la barra de estado
 Replace ExamineSub;				! Rutina para la acción ##Examine
@@ -291,11 +223,8 @@ Replace LMode3Sub;				! Lookmode 3: Superbreve
 Replace LookSub;				! Rutina para la acción ##Look
 Replace PSN__;					! Rutina para imprimir nombre corto de un obj.
 Replace VersionSub;				! Créditos detallados de la aplicación
-#Endif; ! USE_EXTENDED_LIBRARY;
 
-#Ifdef USE_VORPLE;
 Replace MyVorplePrompt;			! Rutina que imprime el inductor en Vorple
-#Endif; ! USE_VORPLE;
 
 
 !!==============================================================================
@@ -316,15 +245,11 @@ Include "Parser.h";
 !! Selección de estilo de los textos:
 Include "textStyles.h";
 
-#Ifdef USE_SPANISH_LM;
 !! Mensajes de la librería:
 Include "SpanishLM.h";
-#Endif; ! USE_SPANISH_LM;
 
-#Ifdef USE_EXTENDED_LIBRARY;
 !! Personalizaciones a la librería:
 Include "baronLib.inf";
-#Endif; ! USE_EXTENDED_LIBRARY;
 
 !! Mensajes personalizados de la librería:
 Include "baronLangLM.inf";
@@ -373,16 +298,9 @@ Include "baronLangLM.inf";
 !!		la ejecución normal de la librería
 !!------------------------------------------------------------------------------
 [ HandleGlkEvent ev context abortres;
-	VorplePlaySoundEffect("input.mp3");
-
-	!! Gestión de los eventos de selección de hipervínculo:
-	#Ifdef USE_HYPERLINKS;
-	if (HandleHyperlinkEvent(ev, context, abortres)) {
-		return 2; ! finaliza el turno
-	}
-	#Endif; ! USE_HYPERLINKS
-
 	ev = context + abortres; ! (por evitar alertas del compilador)
+
+	VorplePlaySoundEffect("input.mp3");
 ];
 
 !!------------------------------------------------------------------------------
@@ -564,24 +482,29 @@ Include "baronLangLM.inf";
 !!
 !!------------------------------------------------------------------------------
 
-Include "arrays.h";				! Operaciones con arrays
-Include "capacities.h";			! Extensión a las reglas de capacidad
-Include "choiceSets.h";			! Sistema de selección de acciones sobre lista
-Include "pPreprocessor.h";		! Preprocesador del parser
-Include "shuffle.h";			! Barajeado de números aleatorios
+!! Funciones de utilidad para el trabajo con arrays:
+Include "arrays.h";
 
-#Ifdef USE_HYPERLINKS;
-Include	"hyperlinks.h";			! Rutinas de apoyo para el uso de hipervínculos
-#Endif; ! USE_HYPERLINKS;
+!! Extensión a las reglas de capacidad de los contenedores:
+Include "capacities.h";
 
-Include "VerbLib.h";			! Define cómo trabajan las acciones
+!! Sistema de selección de acciones sobre inventario de opciones:
+Include "choiceSets.h";
 
-#Ifdef USE_VORPLE;
+!! Preprocesador del parser:
+Include "pPreprocessor.h";
+
+!! Barajeado de números aleatorios:
+Include "shuffle.h";
+
+!! Definición del modo en que trabajan las acciones:
+Include "VerbLib.h";
+
+!! Funciones de utilidad para la capa de conexión con el intérprete JavaScript:
 Include "vorple-command-prompt-control.h";
 Include "vorple-hyperlinks.h";
 Include "vorple-multimedia.h";
 Include "vorple-screen-effects.h";
-#Endif; ! USE_VORPLE;
 
 
 !!==============================================================================
@@ -643,10 +566,8 @@ Include "vorple-screen-effects.h";
 !!		normalmente
 !!	@version 2020/05/31
 !!------------------------------------------------------------------------------
-#Ifdef TEXT_STYLES;
 [ BeforeSettingTextStyle previous_style next_style
 	applied_styles i;
-	#Ifdef USE_VORPLE;
 	if (isVorpleSupported()) {
 		!! Finaliza los estilos aplicados anteriormente:
 		if (previous_style == TEXT_STYLE_REVERSED) {
@@ -693,12 +614,9 @@ Include "vorple-screen-effects.h";
 				VorpleStyle(STYLE_GREEN_LETTERS);
 		}
 	}
-	#Endif; ! USE_VORPLE;
-	previous_style = next_style + applied_styles + i;
 	!! Continúa con la ejecución normal de 'SetTextStyle()':
 	return false;
 ];
-#Endif; ! TEXT_STYLES;
 
 !!------------------------------------------------------------------------------
 !! Inicializaciones del relato. Esta rutina es obligatoria y, entre otras
@@ -709,83 +627,25 @@ Include "vorple-screen-effects.h";
 !!		ejecución normal de la aplicación, o 2 para suprimir la impresión de
 !!		los créditos, que de otra manera se imprimirían inmediatamente después
 !!		de llamar a la rutina
-!!	@version 2019/06/18
+!!	@version 2025/05/18
 !!------------------------------------------------------------------------------
-[ Initialise
-	previous_style;
-	!! Por evitar advertencia del compilador en VERSION_WEB_MOBILE:
-	previous_style = 0;
-	
+[ Initialise;
 	Utils.clear_window();
 
-	!! Inicializaciones para la VM Glulx ---------------------------------------
+	!! Inicializaciones para la VM Glulx
 	Utils.initialise_glulx();
 
-	!! Comprobación de los ficheros de configuración ---------------------------
-	#Ifdef TARGET_GLULX;
-	#Ifdef VERSION_DESKTOP;
-	!! XXX - Permite inicializar un fichero 'garglk.ini' (descomentar):
-	!! if (Utils.write_garglk_configuration_file() == 1) {
-	!! 	print "Se acaba de escribir correctamente el fichero de
-	!! 	configuración ", (stressed) "~garglk.ini~", " en tu equipo. Es
-	!! 	necesario volver a iniciar la aplicación.";
-	!! 	new_line;
-	!! 	quit;
-	!! }
-	#Endif; ! VERSION_DESKTOP;
-	#Endif; ! TARGET_GLULX;
-
-	!! Configuración de los sistemas de hipervínculos y palabras destacadas ----
-	#Ifdef TARGET_GLULX;
-	!! Hipervínculos:
+	!! Configuración del sistema de hipervínculos:
 	Utils.set_hyperlinks_status(REMARKABLE_OBJECT, true);
 	Utils.set_hyperlinks_status(DIRECTION_OBJECT, true);
 	Utils.set_hyperlinks_status(CHOICE_OBJECT, true);
 	Utils.set_hyperlinks_status(OTHER_OBJECT, true);
-	!! Palabras destacadas:
-	#Ifdef VERSION_WEB_MOBILE;
+
+	!! Configuración del sistema de palabras destacadas:
 	Utils.set_highlight_style(REMARKABLE_OBJECT, TEXT_STYLE_NOTE);
 	Utils.set_highlight_style(DIRECTION_OBJECT, TEXT_STYLE_QUOTE);
 	Utils.set_highlight_style(CHOICE_OBJECT, TEXT_STYLE_NOTE);
 	Utils.set_highlight_style(OTHER_OBJECT, TEXT_STYLE_NOTE);
-	#Ifnot; ! VERSION_DESKTOP;
-	Utils.set_highlight_style(REMARKABLE_OBJECT, TEXT_STYLE_NOTE);
-	Utils.set_highlight_style(DIRECTION_OBJECT, TEXT_STYLE_QUOTE);
-	Utils.set_highlight_style(CHOICE_OBJECT, TEXT_STYLE_IMPORTANT);
-	Utils.set_highlight_style(OTHER_OBJECT, TEXT_STYLE_UPRIGHT);
-	#Ifdef CONFIG_FILE_NAME;
-	if (~~Utils.read_configuration_file(CONFIG_FILE_NAME)) {
-		print "Es posible experimentar ";
-		previous_style = Utils.set_text_style(TEXT_STYLE_HEADER);
-		print (string) Story;
-		Utils.set_text_style(previous_style);
-		print " simplemente haciendo ~clic~ con el ratón sobre las palabras ",
-		(note) "destacadas", " que vayas encontrando. ¿Quieres activar esta
-		funcionalidad?";
-		new_line;
-		new_line;
-		print (parser) "Teclea: SÍ / NO", " > ";
-		if (YesOrNo()) {
-			print (parser) "Hipervínculos activados.";
-		} else {
-			Utils.set_hyperlinks_status(REMARKABLE_OBJECT, false);
-			Utils.set_hyperlinks_status(DIRECTION_OBJECT, false);
-			Utils.set_hyperlinks_status(CHOICE_OBJECT, false);
-			Utils.set_hyperlinks_status(OTHER_OBJECT, false);
-			print (parser) "Hipervínculos desactivados.";
-		}
-		new_line;
-		new_line;
-		print "Puedes cambiar la configuración anterior en cualquier momento
-		tecleando la instrucción ~HIPERVÍNCULOS~.";
-		new_line;
-		new_line;
-		print (parser) "Pulsa una tecla.";
-		Utils.clear_window();
-	}
-	#Endif; ! CONFIG_FILE_NAME;
-	#Endif; ! VERSION_
-	#Endif; ! TARGET_GLULX;
 
 	!! Inicializaciones de la obra ---------------------------------------------
 
@@ -844,8 +704,6 @@ Include "vorple-screen-effects.h";
 !!		contrario
 !!	@version 2024/03/30
 !!------------------------------------------------------------------------------
-#Ifdef TARGET_GLULX;
-#Ifdef USE_VORPLE;
 [ MyVorplePrompt;
 	if (Utils.on_press_intro ~= 0) {
 		VorpleExecuteJavaScriptCommand(BuildCommand("
@@ -862,8 +720,6 @@ Include "vorple-screen-effects.h";
 	#Endif; ! PS1;
 	return false;
 ];
-#Endif; ! USE_VORPLE;
-#Endif; ! TARGET_GLULX;
 
 !!------------------------------------------------------------------------------
 !! Permite cambiar el verbo que imprime el sistema al hacer al usuario
@@ -932,11 +788,9 @@ Verb meta 'pressAnyKey.verb' * -> PressIntro;
 [ PressIntroSub
 	callback;
 	if (Utils.on_press_intro ~= 0) {
-		#Ifdef USE_VORPLE;
 		VorpleExecuteJavaScriptCommand(BuildCommand("
 			ifjs.clearLastInput();
 		"));
-		#Endif; ! USE_VORPLE
 
 		callback = Utils.on_press_intro;
 		Utils.on_press_intro = 0;

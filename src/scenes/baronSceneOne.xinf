@@ -52,9 +52,7 @@
 
 [ FinalEscena1Citas;
 	Utils.print_horizontal_rule();
-	#Ifdef USE_VORPLE;
 	VorpleOpenHTMLTag("div", "right-aligned-text");
-	#Endif; ! USE_VORPLE;
 
 	new_line;
 	print (stressed) "Chi l'anima mi lacera?^
@@ -72,9 +70,7 @@
 	Música: Wolfgang A. Mozart^";
 	new_line;
 	
-	#Ifdef USE_VORPLE;
 	VorpleCloseHTMLTag();
-	#Endif; ! USE_VORPLE;
 
 	new_line;
   print "Un tono estridente y discorde rompe dos veces el silencio de la noche, despertándote de un sueño intranquilo.
