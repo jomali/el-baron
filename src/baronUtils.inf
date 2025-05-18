@@ -11,9 +11,9 @@
 !!								J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
-!!	Plataforma:		Máquina-Z/Glulx
+!!	Plataforma:		Glulx-Vorple
 !!	Versión:			0.1
-!!	Fecha:				2024/10/30
+!!	Fecha:				2025/05/17
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -33,7 +33,7 @@
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2006, Victor Gijsbers
-!!	Copyright (c) 2024, J. Francisco Martín
+!!	Copyright (c) 2019-2025, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -66,8 +66,6 @@
 !!	- set_grammatical_inflection
 !!	- set_highlight_style
 !!	- set_hyperlinks_status
-!!	- set_status_bar_alignment
-!!	- set_status_bar_contents
 !!	- set_text_style
 !!	- start_scene
 !!	- website_hyperlink
@@ -1015,45 +1013,7 @@ Object Utils
 			!! Retorna el estado previo:
 			return result;
 		],
-		!!----------------------------------------------------------------------
-		!! Establece la alineación de los contenidos de la barra de estado.
-		!!
-		!!	@param {integer} alignment - Código numérico que representa la
-		!!		alineación: {0 - izquierda; 1 - centro; 2 - derecha}
-		!!	@returns {boolean} Verdadero si se está utilizando una barra de
-		!!		estado modificable. Falso en caso contrario
-		!!	@version 1.1 - 2022/08/07
-		!!----------------------------------------------------------------------
-		set_status_bar_alignment [ alignment
-			result;
-			#Ifdef USE_GWINDOWS;
-			StatusBar.set_alignment(alignment);
-			result = true;
-			#Endif; ! USE_GWINDOWS;
-			!! Por evitar advertencias del compilador si no USE_GWINDOWS:
-			alignment = 0;
-			return result;
-		],
-		!!----------------------------------------------------------------------
-		!! Establece los contenidos de la barra de estado.
-		!!
-		!!	@param {String} contents - Cadena de texto que se desea imprimir en
-		!!		la barra de estado. 0 si se desea imprimir el nombre de la
-		!!		localidad actual del usuario
-		!!	@returns {boolean} Verdadero si se está utilizando una barra de
-		!!		estado modificable. Falso en caso contrario
-		!!	@version 1.1 - 2022/08/07
-		!!----------------------------------------------------------------------
-		set_status_bar_contents [ contents
-			result;
-			#Ifdef USE_GWINDOWS;
-			StatusBar.set_contents(contents);
-			result = true;
-			#Endif; ! USE_GWINDOWS;
-			!! Por evitar advertencias del compilador si no USE_GWINDOWS:
-			contents = 0;
-			return result;
-		],
+
 		!!----------------------------------------------------------------------
 		!! Establece el estilo de texto utilizado por la obra.
 		!!

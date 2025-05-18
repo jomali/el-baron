@@ -72,7 +72,6 @@
 !!	<>	Definiciones generales
 !!	<>	Definiciones de la librería Inform
 !!	<>	Configuración de la extensión 'choiceSets'
-!!	<>	Configuración de la interfaz gráfica con 'GWindows'
 !!	<>	Configuración de la extensión 'hyperlinks'
 !!	<>	Configuración de la librería de mensajes 'SpanishLM'
 !!	<>	Configuración de la extensión 'textStyles'
@@ -113,8 +112,7 @@ Constant VORPLE_NO_REPLACES;
 #Ifnot; ! VERSION_DESKTOP;
 !! Utilización del gestor de audio:
 Constant USE_DAMUSIX;
-!! Utilización de la librería GWindows:
-Constant USE_GWINDOWS;
+
 !! Utilización de hipervínculos Glk:
 Constant USE_HYPERLINKS;
 #Endif; ! VERSION_
@@ -189,58 +187,6 @@ Constant CSET_MSG2 "";
 Constant CSET_COMMA "^";
 Constant CSET_OR "^";
 Constant CSET_NO_MSG "Listado de opciones vacío.";
-
-!!------------------------------------------------------------------------------
-!!	Configuración de la interfaz gráfica con 'GWindows'
-!!------------------------------------------------------------------------------
-
-#Ifdef TARGET_GLULX;
-#Ifdef USE_GWINDOWS;
-Constant GUICONFIG_MARGIN_COLOR $202020; ! #202020
-Object	GUIConfig "(GUI Configuration)"
- with	!!----------------------------------------------------------------------
-		graphic_window_flag true,	! estado de las ventanas gráficas
-		status_bar_height 1,		! altura de la barra de estado (en filas)
-		!!----------------------------------------------------------------------
-		!! Configuración por defecto A. Ancho de ventana >= threshold_A
-		graphic_width_A 0 0,	! (px)
-		margin_A 0 0,		 	! (%)
-		padding_A 0 0 8 0,		! (px)
-		threshold_A 0,			! (px)
-		!! Configuración por defecto B. Ancho de ventana >= threshold_B
-		graphic_width_B 0 0,	! (px)
-		margin_B 0 6,			! (%)
-		padding_B 0 0 8 0,		! (px)
-		threshold_B 460,		! (px)
-		!! Configuración por defecto C. Ancho de ventana >= threshold_C
-		graphic_width_C 0 0,	! (px)
-		margin_C 0 12,			! (%)
-		padding_C 0 0 8 0,		! (px)
-		threshold_C 660,		! (px)
-		!! Configuración por defecto D. Ancho de ventana >= threshold_D
-		graphic_width_D 80 80,	! (px)
-		margin_D 10 10,			! (%)
-		padding_D 40 40 40 40,		! (px)
-		threshold_D 900,		! (px)
-		!! Configuración por defecto E. Ancho de ventana >= threshold_E
-		graphic_width_E 0 0,	! (px)
-		margin_E 0 22,			! (%)
-		padding_E 0 0 8 0,		! (px)
-		threshold_E 1050,		! (px)
-		!! Configuración por defecto F. Ancho de ventana >= threshold_F
-		graphic_width_F 0 0,	! (px)
-		margin_F 0 25,			! (%)
-		padding_F 0 0 8 0,		! (px)
-		threshold_F 1224,		! (px)
-		!! Configuración por defecto G. Ancho de ventana >= threshold_G
-		graphic_width_G 0 0,	! (px)
-		margin_G 0 30,			! (%)
-		padding_G 0 0 8 0,		! (px)
-		threshold_G 1400,		! (px)
-;
-#Ifnot;
-#Endif; ! USE_GWINDOWS;
-#Endif; ! TARGET_GLULX;
 
 !!------------------------------------------------------------------------------
 !!	Configuración de la extensión 'hyperlinks'
@@ -360,24 +306,15 @@ Replace MyVorplePrompt;			! Rutina que imprime el inductor en Vorple
 !!
 !!------------------------------------------------------------------------------
 
-#Ifdef TARGET_GLULX;
-#Ifdef USE_GWINDOWS;
-!! GWindows: Definiciones generales:
-Include "gwindefs.h";
-#Endif; ! USE_GWINDOWS;
-#Endif; ! TARGET_GLULX;
-
-#Ifdef TARGET_GLULX;
-#Ifdef USE_VORPLE;
 !! Funcionalidades básicas de Vorple UI:
 Include "vorple.h";
+
 !! Manipulación del inductor y del historial de comandos:
 Include "vorple-command-prompt-control.h";
-#Endif; ! USE_VORPLE;
-#Endif; ! TARGET_GLULX;
 
 !! Decodifica la entrada del teclado:
 Include "Parser.h";
+
 !! Selección de estilo de los textos:
 Include "textStyles.h";
 
@@ -393,11 +330,6 @@ Include "baronLib.inf";
 
 !! Mensajes personalizados de la librería:
 Include "baronLangLM.inf";
-
-#Ifdef USE_GWINDOWS;
-!! GWindows: Window Class Framework:
-Include "gwincls.h";
-#Endif; ! USE_GWINDOWS;
 
 
 !!==============================================================================
@@ -442,25 +374,8 @@ Include "gwincls.h";
 !!		entradas de caracter). Cualquier otro valor de retorno continuará con
 !!		la ejecución normal de la librería
 !!------------------------------------------------------------------------------
-#Ifdef TARGET_GLULX;
-#Ifdef USE_GWINDOWS;
-[ GWindowsGlkEvent ev context abortres;
- 	return HandleGlkEventExe(ev, context, abortres);
-];
-#Ifnot;
 [ HandleGlkEvent ev context abortres;
- 	return HandleGlkEventExe(ev, context, abortres);
-];
-#Endif; ! USE_GWINDOWS;
-[ HandleGlkEventExe ev context abortres;
-	#Ifdef USE_VORPLE;
 	VorplePlaySoundEffect("input.mp3");
-	#Endif; ! USE_VORPLE;
-
-	!! Gestión de efecto de 'fade' en Damusix en tiempo real:
-	#Ifdef USE_DAMUSIX;
-	Damusix.NotificarFade(ev);
-	#Endif; ! USE_DAMUSIX;
 
 	!! Gestión de los eventos de selección de hipervínculo:
 	#Ifdef USE_HYPERLINKS;
@@ -471,40 +386,6 @@ Include "gwincls.h";
 
 	ev = context + abortres; ! (por evitar alertas del compilador)
 ];
-#Endif; ! TARGET_GLULX;
-
-!!------------------------------------------------------------------------------
-!! 'IdentifyGlkObject()' permite conocer qué objetos Glk existen; útil para
-!! gestionar las directivas RESTORE, RESTART y UNDO puesto que, tras utilizar
-!! estas entradas, las variables globales con objetos Glk pueden contener
-!! valores desfasados y erróneos.
-!!
-!!	@param {integer} phase - Código numérico indicando la fase en la que se
-!!		invoca a la rutina. Toma los valores: 0, 1 o 2
-!!	@param {integer} type - 0, 1 o 2 para ventanas, 'streams' y 'filerefs',
-!!		respectivamente
-!!	@param {Object} ref
-!!	@param {integer} rock
-!!------------------------------------------------------------------------------
-#Ifdef TARGET_GLULX;
-#Ifdef USE_GWINDOWS;
-[ GWindowsGlkIdentify phase type ref rock;
-	return IdentifyGlkObjectExe(phase, type, ref, rock);
-];
-#Ifnot;
-[ IdentifyGlkObject phase type ref rock;
-	return IdentifyGlkObjectExe(phase, type, ref, rock);
-];
-#Endif; ! USE_GWINDOWS;
-[ IdentifyGlkObjectExe phase type ref rock;
-	!! Se identifican todos los objetos de sonido gestionados por Damusix:
-	#Ifdef USE_DAMUSIX;
-	Damusix.IdentificarSonidos(phase);
-	#Endif; ! USE_DAMUSIX;
-
-	phase = type + ref + rock; ! (por evitar alertas del compilador)
-];
-#Endif; ! TARGET_GLULX;
 
 !!------------------------------------------------------------------------------
 !! El punto de entrada 'InitGlkWindow()' es invocado por la librería cuando
@@ -563,28 +444,15 @@ Include "gwincls.h";
 !!	@param {integer} winrock
 !!	@returns {integer}
 !!------------------------------------------------------------------------------
-#Ifdef TARGET_GLULX;
-#Ifdef USE_GWINDOWS;
-[ InitGWindows;
-	!! Inicializaciones de la interfaz gráfica GWindows:
-	Active_UI = rootUI;
-	Main_GWindow = textWindow;
-	return InitGlkWindowExe(GG_MAINWIN_ROCK);
-];
-#Ifnot;
-[ InitGlkWindow winrock;
-	return InitGlkWindowExe(winrock);
-];
-#Endif; ! USE_GWINDOWS;
-[ InitGlkWindowExe winrock
+[ InitGlkWindow winrock
 	wintype;
 	if (winrock == GG_MAINWIN_ROCK) {
 		!! [0:wintype_AllTypes, 1:wintype_Pair, 2:wintype_Blank,
 		!! 3:wintype_TextBuffer, 4:wintype_TextGrid, 5:wintype_Graphics]
 		wintype = 0;
 
-	    !! Sugerencias de aspecto de 'textStyles':
-	    InitialiseStyleHints(winrock, wintype);
+		!! Sugerencias de aspecto de 'textStyles':
+		InitialiseStyleHints(winrock, wintype);
 
 		!! Sugerencias de aspecto del estilo HEADER:
 		#Ifdef HEADER_STYLE_BOLD;
@@ -686,10 +554,10 @@ Include "gwincls.h";
 		glk($00B0, 3, 10, 8, USR2_STYLE_BGC);
 		#Endif; ! USR2_STYLE_BGC
 	}
-    !! Se continúa con el proceso normal de la librería:
-    return false;
+	
+	!! Se continúa con el proceso normal de la librería:
+	return false;
 ];
-#Endif; ! TARGET_GLULX;
 
 
 !!==============================================================================
@@ -701,15 +569,6 @@ Include "gwincls.h";
 #Ifdef USE_DAMUSIX;
 Include "damusix.h";			! Administrador unificado de sonido en GLULX
 #Endif; ! USE_DAMUSIX;
-
-#Ifdef USE_GWINDOWS;
-Include "gwindows.h";			! GWindows: Reemplazos de la librería
-Include "gWindowsGUI.h";		! Interfaz gráfica adaptativa con GWindows
-#Endif; ! USE_GWINDOWS;
-
-#Ifdef TARGET_GLULX;
-Include "baron.bli";			! Recursos multimedia de la aplicación
-#Endif; ! TARGET_GLULX;
 
 Include "arrays.h";				! Operaciones con arrays
 Include "capacities.h";			! Extensión a las reglas de capacidad
@@ -936,9 +795,6 @@ Include "vorple-screen-effects.h";
 	#Endif; ! TARGET_GLULX;
 
 	!! Inicializaciones de la obra ---------------------------------------------
-
-	!! Contenidos de la barra de estado centrados en pantalla:
-	Utils.set_status_bar_alignment(1); ! 0=left; 1=center; 2=right
 
 	!! Narrador en pasado y segunda persona
 	Utils.set_grammatical_inflection(SECOND_PERSON_PRESENT);
