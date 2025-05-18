@@ -43,12 +43,13 @@
 !!	- center_align_start
 !!	- clear_hyperlinks
 !!	- clear_window
+!!	- enable_audio
+!!	- is_audio_enabled
+!!	- print_horizontal_rule
 !!	- reset_highlights
 
 !!	- check_object_capacity
 !!	- create_vorple_hiperlink
-!!	- fade_in
-!!	- fade_out
 !!	- get_grammatical_inflection
 !!	- get_highlight_style
 !!	- get_hyperlinks_status
@@ -56,9 +57,6 @@
 !!	- get_top_holder
 !!	- initialize_glulx
 !!	- is_compass_enabled
-!!	- play_sfx
-!!	- press_any_key
-!!	- print_horizontal_rule
 !!	- print_spanish_nominative_pronoun
 !!	- read_configuration_file
 !!	- restart
@@ -108,28 +106,28 @@ Object Utils
 			VorpleOpenHTMLTag("div", "center-aligned-text");
 		],
 
-		!!----------------------------------------------------------------------
+		!!--------------------------------------------------------------------------
 		!! Si es compilación para Vorple, deshabilita todos los hipervínculos 
 		!! impresos hasta el momento.
 		!!
 		!!	@dependency ifjs.js
 		!!	@dependency vorple.h
 		!!	@version 2025/05/18
-		!!----------------------------------------------------------------------
+		!!--------------------------------------------------------------------------
 		clear_hyperlinks [;
 			VorpleExecuteJavaScriptCommand(BuildCommand("
 				ifjs.clearHyperlinks();
 			"));
 		],
 
-		!!----------------------------------------------------------------------
+		!!--------------------------------------------------------------------------
 		!! Elimina los contenidos de todas las ventanas de la interfaz.
 		!!
 		!!	@returns {boolean} Verdadero
 		!!	@dependency ifjs.js
 		!!	@dependency vorple.h
 		!!	@version 2025/05/18
-		!!----------------------------------------------------------------------
+		!!--------------------------------------------------------------------------
 		clear_window [;
 			VorpleExecuteJavaScriptCommand(BuildCommand("
 				ifjs.clearScreen();
@@ -137,7 +135,34 @@ Object Utils
 			return true;
 		],
 
-		!!----------------------------------------------------------------------
+		!!--------------------------------------------------------------------------
+		!! Habilita o deshabilita la reproducción de audio.
+		!!
+		!!	@returns {boolean} Verdadero
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2025/05/18
+		!!--------------------------------------------------------------------------
+		enable_audio [;
+			!! TODO
+			return true;
+		],
+
+		!!--------------------------------------------------------------------------
+		!! Indica si la reproducción de audio está habilitada o no.
+		!!
+		!!	@returns {boolean} Verdadero si la reproducción de audio está
+		!!		habilitada. Falso en caso contrario
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2025/05/18
+		!!--------------------------------------------------------------------------
+		is_audio_enabled [;
+			!! TODO
+			return false;
+		],
+
+		!!--------------------------------------------------------------------------
 		!! Define la función dada como `callback` a ejecutar cuando el usuario
 		!! pulse la tecla INTRO. Para reconocer la entrada del usuario y
 		!! ejecutar el `callback` es necesario añadir lógica adicional en las 
@@ -159,10 +184,11 @@ Object Utils
 		!! Además se introduce una línea de gramática para la nueva acción
 		!! `pressAnyKey.verb`.
 		!!
+		!!	@returns {boolean} Verdadero
 		!!	@dependency ifjs.js
 		!!	@dependency vorple.h
 		!!	@version 2025/05/18
-		!!----------------------------------------------------------------------
+		!!--------------------------------------------------------------------------
 		press_intro_to_continue [ callback;
 			self.on_press_intro = callback;
 			
@@ -175,6 +201,22 @@ Object Utils
 		on_press_intro 0,
 
 		!!----------------------------------------------------------------------
+		!! Imprime una regla horizontal a modo de separador.
+		!!
+		!!	@returns {boolean} Verdadero
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2025/05/18
+		!!----------------------------------------------------------------------
+		print_horizontal_rule [;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.printHorizontalRule();
+			"));
+			new_line;
+			return true;
+		],
+
+		!!--------------------------------------------------------------------------
 		!! Si es compilación para Vorple, simula el evento de haber dejado de 
 		!! pulsar una de las teclas configuradas para resaltar palabras clave, 
 		!! de modo que se asegura que después de ejecutar una acción las 
@@ -183,7 +225,7 @@ Object Utils
 		!!	@dependency ifjs.js
 		!!	@dependency vorple.h
 		!!	@version 2023/03/26
-		!!----------------------------------------------------------------------
+		!!--------------------------------------------------------------------------
 		reset_highlights [;
 			#Ifdef USE_VORPLE;
 			VorpleExecuteJavaScriptCommand(BuildCommand("
@@ -249,182 +291,6 @@ Object Utils
 			#Endif; ! USE_VORPLE;
 			item = alternative = 0; ! (por evitar alertas del compilador)
 			return true;
-		],
-		!!----------------------------------------------------------------------
-		!! Realiza un efecto de subida de volumen gradual de un recurso de
-		!! audio. Permite especificar si el efecto se realiza en tiempo real
-		!! —por defecto— o deteniendo la aplicación mientras se produce. En
-		!! caso de que el recurso no se encontrase en reproducción, se inicia
-		!! antes con un volumen del 0%. Si no se especifica el tiempo del
-		!! efecto, la subida de volumen es inmediata.
-		!!
-		!! Debe tenerse en cuenta que no pueden lanzarse dos efectos de 'fade'
-		!! al mismo tiempo —el temporizador Glk sólo puede ser utilizado por
-		!! una operación en un momento dado—. Si ya hay un efecto en ejecución,
-		!! los nuevos efectos no se lanzan; los nuevos sonidos se reproducirán
-		!! directamente con el volumen final, sin subidas o bajadas graduales
-		!! de volumen.
-		!!
-		!! Las funcionalidades multimedia sólo son soportadas en Glulx.
-		!!
-		!!	@param {Sound} track - El recurso de audio sobre el que se lanza
-		!!		el efecto. Si el recurso no estaba en reproducción primero se
-		!!		inicia con un volumen del 0%
-		!!	@param {integer} [volume=-1] - Volumen final en tanto por ciento
-		!!		con el que finaliza el efecto. -1 para indicar el volumen
-		!!		global de la aplicación. Si el volumen actual es mayor que
-		!!		'volume', retorna sin hacer nada
-		!!	@param {integer} [fade_time=0] - Milisegundos que dura el efecto de
-		!!		'fade-in' desde el volumen actual del recurso de audio hasta
-		!!		el especificado por 'volume'
-		!!	@param {boolean} [simple_fade_in=false] - Por defecto el efecto se
-		!!		realiza en tiempo real, pero si se invoca con este parámetro
-		!!		activado (verdadero), la aplicación se detiene mientras se
-		!!		lleva a cabo el 'fade-in'
-		!!	@returns {boolean} Verdadero si la versión compilada utiliza
-		!!		recursos multimedia y se lanza el efecto con éxito. Falso en
-		!!		caso contrario
-		!!	@version 1.0
-		!!----------------------------------------------------------------------
-		fade_in [ track volume fade_time simple_fade_in
-			result js_track;
-			!! FIXME - si el volumen pasado como parámetro < volumen actual
-			!! FIXME - simple_fade_in
-			result = false;
-			#Ifdef TARGET_GLULX;
-
-			#Ifdef USE_DAMUSIX;
-			if (volume == 0) {
-				volume = -1;
-			}
-			if (fade_time == 0 || Damusix.EnFade()) {
-				Damusix.Volumen(track, volume);
-				if (~~Damusix.SonandoDeFondo(track)) {
-					Damusix.Tocar(track);
-				}
-			} else {
-				if (~~Damusix.SonandoDeFondo(track)) {
-					Damusix.Volumen(track, 0);
-					Damusix.Tocar(track);
-				}
-				Damusix.FadeIn(track, fade_time, volume);
-			}
-			result = true;
-			#Endif; ! USE_DAMUSIX;
-
-			#Ifdef USE_VORPLE;
-			if (isVorpleSupported()) {
-				switch (track) {
-					!! TODO
-					!! SFX_WIND:
-					!! 	js_track = "jsWindSFX";
-					!! 	VorpleExecuteJavaScriptCommand("
-					!! 		var jsWindSFX = new Howl({
-					!! 			src: ['resources/audio/bdvictor_wheat-in-the-wind.ogg'],
-					!! 			loop: true,
-					!! 			volume: 1.0
-					!! 		});
-					!! 	");
-					!! 	VorpleExecuteJavaScriptCommand(BuildCommand("
-					!! 		", js_track, ".volume(0);
-					!! 		", js_track, ".play();
-					!! 		result = ", js_track, ".fade(0.0, 1.0, 100);
-					!! 		console.log('Fade-in: ' + result);
-					!! 	"));
-				}
-				result = true;
-			} else {
-				result = false;
-			}
-			#Endif; ! USE_VORPLE;
-
-			#Endif; ! TARGET_GLULX;
-			!! (por evitar alertas del compilador)
-			track = volume + fade_time + simple_fade_in + js_track;
-			return result;
-		],
-		!!----------------------------------------------------------------------
-		!! Realiza un efecto de bajada de volumen gradual de un recurso de
-		!! audio. Permite especificar si el efecto se realiza en tiempo real
-		!! —por defecto— o deteniendo la aplicación mientras se produce, y si
-		!! debe reproducirse un nuevo recurso de audio una vez finalizado el
-		!! efecto.
-		!!
-		!! Debe tenerse en cuenta que no pueden lanzarse dos efectos de 'fade'
-		!! al mismo tiempo —el temporizador Glk sólo puede ser utilizado por
-		!! una operación en un momento dado—. Si ya hay un efecto en ejecución,
-		!! los nuevos efectos no se lanzan; los nuevos sonidos se reproducirán
-		!! directamente con el volumen final, sin subidas o bajadas graduales
-		!! de volumen.
-		!!
-		!! Las funcionalidades multimedia sólo son soportadas en Glulx.
-		!!
-		!!	@param {Sound} track - El recurso de audio sobre el que se lanza
-		!!		el efecto
-		!!	@param {integer} [volume=0] - Volumen final en tanto por ciento con
-		!!		el que finaliza el efecto. Si el volumen final es 0, la
-		!!		reproducción se detiene automáticamente. Si el volumen actual
-		!!		es inferior que 'volume', retorna sin hacer nada
-		!!	@param {integer} [fade_time=0] - Milisegundas que dura el efecto de
-		!!		'fade-out' desde el volumen actual del recurso de audio hasta
-		!!		el especificado por 'volume'
-		!!	@param {boolean} [simple_fade_in=false] - Por defecto el efecto se
-		!!		realiza en tiempo real, pero si se invoca con este parámetro
-		!!		activado (verdadero), la aplicación se detiene mientras se
-		!!		lleva a cabo el 'fade-out'
-		!!	@param {Sound} [post_track=0] - Recurso de audio a reproducir tras
-		!!		efectuar el efecto de 'fade-out' sobre 'track'
-		!!	@returns {boolean} Verdadero si la versión compilada utiliza
-		!!		recursos multimedia y se lanza el efecto con éxito. Falso en
-		!!		caso contrario
-		!!	@version 4.1
-		!!----------------------------------------------------------------------
-		fade_out [ track volume fade_time simple_fade_out post_track
-			result js_track;
-			result = false;
-			#Ifdef TARGET_GLULX;
-
-			#Ifdef USE_DAMUSIX;
-			if (Damusix.QueVolumen(track) > 0) {
-				if (fade_time == 0 || Damusix.EnFade()) {
-					if (volume == 0) Damusix.Parar(track);
-					else Damusix.Volumen(track, volume);
-					if (post_track) Damusix.Tocar(post_track);
-				} else {
-					if (simple_fade_out) {
-						Damusix.SimpleFadeOut(track, fade_time, volume);
-						if (post_track) Damusix.Tocar(post_track);
-					} else {
-						Damusix.FadeOut(track, fade_time, volume, post_track);
-					}
-				}
-				result = true;
-			}
-			#Endif; ! USE_DAMUSIX;
-
-			#Ifdef USE_VORPLE;
-			if (isVorpleSupported()) {
-				switch (track) {
-					!! TODO
-					!! SFX_WIND:		js_track = "jsWindSFX";
-				}
-				!! VorpleExecuteJavaScriptCommand(BuildCommand("
-				!! 	if (", js_track, ".playing()) {
-				!! 		result = ", js_track, ".fade(1.0, 0.0, 200);
-				!! 		console.log('Fade out: ' + result);
-				!! 	}
-				!! "));
-				result = true;
-			} else {
-				result = false;
-			}
-			#Endif; ! USE_VORPLE;
-
-			#Endif; ! TARGET_GLULX;
-			!! (por evitar alertas del compilador)
-			track = volume + fade_time + simple_fade_out + post_track
-				+ js_track;
-			return result;
 		],
 		!!----------------------------------------------------------------------
 		!! Retorna el código numérico de la flexión gramatical actual utilizada
@@ -557,16 +423,6 @@ Object Utils
 			ListenHyperlinkEvents();
 			#Endif; ! USE_HYPERLINKS;
 
-			!! Inicializa los recursos multimedia:
-			#Ifdef USE_DAMUSIX;
-			!!	Damusix.AsignarCanal(
-			!!		SONIDO,
-			!!		CANAL [0-9],
-			!!		VOLUMEN [0-100],
-			!!		REPETICIONES (-1 para repeticiones infinitas)
-			!!	);
-			#Endif; ! USE_DAMUSIX;
-
 			!! Comprueba el soporte multimedia del intérprete:
 			#Ifdef VERSION_DESKTOP;
 			if (~~glk($0004, 6, 0)			! glk_gestalt(gestalt_Graphics, 0)
@@ -583,7 +439,6 @@ Object Utils
 				new_line;
 				print (parser) "Pulsa una tecla.";
 				new_line;
-				self.press_any_key();
 				self.clear_window();
 			}
 			#Endif; ! VERSION_DESKTOP;
@@ -606,7 +461,6 @@ Object Utils
 				new_line;
 				print (parser) "Pulsa una tecla.";
 				new_line;
-				self.press_any_key();
 				self.clear_window();
 			}
 			#Endif; ! USE_VORPLE;
@@ -624,104 +478,6 @@ Object Utils
 		!!----------------------------------------------------------------------
 		is_compass_enabled [;
 			return self.compass_mode;
-		],
-		!!----------------------------------------------------------------------
-		!! Reproduce un efecto de audio. En Damusix se utiliza uno de los
-		!! canales virtuales.
-		!!
-		!! Las funcionalidades multimedia sólo son soportadas en Glulx.
-		!!
-		!!	@param {Sound} sound - Recurso de audio
-		!!	@param {integer} [volume=100] - Volumen en tanto por ciento con el
-		!!		que se reproduce el recurso de audio 'sound'
-		!!	@returns {boolean} Verdadero si la versión compilada utiliza
-		!!		recursos multimedia. Falso en caso contrario
-		!!	@version 2.0
-		!!----------------------------------------------------------------------
-		play_sfx [ sound volume
-			result;
-			!! FIXME - gestionar correctamente el valor de result
-			result = false;
-			#Ifdef TARGET_GLULX;
-
-			#Ifdef USE_DAMUSIX;
-			if (volume == 0) {
-				volume = 100;
-			}
-			Damusix.TocarV(sound, volume);
-			#Endif; ! USE_DAMUSIX;
-
-			#Ifdef USE_VORPLE;
-			result = self.fade_in(sound);
-			#Endif; ! USE_VORPLE;
-
-			#Endif; ! TARGET_GLULX;
-			sound = volume = 0; ! (por evitar alertas del compilador)
- 			return result;
-		],
-		!!----------------------------------------------------------------------
-		!! Espera una pulsación de tecla del usuario antes de continuar.
-		!!
-		!!	@param {string} [txt=0] - Mensaje opcional. Si se especifica uno la
-		!!		rutina lo imprime con el estilo de texto reservado para
-		!!		mensajes de la aplicación seguido de un salto de línea, antes
-		!!		de iniciar la espera de pulsación de tecla
-		!!	@param {integer} [delay=0] - Si 'delay' >= 0 la obra continúa con
-		!!		la ejecución tras esperar una cantidad 'delay' de décimas de
-		!!		segundo, aún si el usuario no ha pulsado ninguna tecla
-		!!	@returns {char} Caracter introducido por el usuario
-		!!	@version 1.0 - 2019/03/21
-		!!----------------------------------------------------------------------
-		press_any_key [ txt delay
-			previous_style result;
-			if (txt ~= 0 && metaclass(txt) == String) {
-				previous_style = self.set_text_style(TEXT_STYLE_PARSER);
-				print (string) TEXT_STYLE_PARSER_PREFIX;
-				print (string) txt;
-				print (string) TEXT_STYLE_PARSER_SUFIX;
-				self.set_text_style(previous_style);
-				new_line;
-			}
-			#Ifdef USE_DAMUSIX;
-			if (Damusix.EnFade()) delay = 0;
-			#Endif; ! USE_DAMUSIX;
-			if (delay > 0) result = KeyDelay(delay);
-			else result = KeyCharPrimitive();
-			return result;
-		],
-		!!----------------------------------------------------------------------
-		!! Imprime el separador "* * *" con estilo monoespaciado y seguido de
-		!! un salto de línea. Si se compila para plataformas de escritorio se
-		!! centra en pantalla, en otro caso se alinea a la izquierda.
-		!!
-		!!	@returns {boolean} Verdadero
-		!!	@dependency arrays.h
-		!!	@version 2024/10/07
-		!!----------------------------------------------------------------------
-		print_horizontal_rule [
-			length previous_style txt;
-			length = 0;
-			txt = "____";
-			previous_style = self.set_text_style(TEXT_STYLE_MONOSPACED);
-			#Ifdef VERSION_DESKTOP;
-			PrintToBuffer(utility_array_a, INPUT_BUFFER_LEN, txt);
-			length = utility_array_a->(WORDSIZE-1);
-			spaces (ScreenWidth()-1-length) / 2;
-			PrintCharacterArray(utility_array_a);
-			#Ifnot; ! VERSION_WEB_MOBILE;
-
-			#Ifdef USE_VORPLE;
-			VorpleExecuteJavaScriptCommand(BuildCommand("
-				ifjs.printHorizontalRule();
-			"));
-			#Ifnot;
-			print (string) txt;
-			new_line;
-			#Endif; ! USE_VORPLE;
-			#Endif; ! VERSION_
-			self.set_text_style(previous_style);
-			new_line;
-			return true;
 		],
 
 		!! XXX

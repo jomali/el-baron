@@ -67,38 +67,39 @@
 !! ##Audio / ##AudioOn / ##AudioOff
 !!------------------------------------------------------------------------------
 
-#Ifdef TARGET_GLULX;
-#Ifdef USE_DAMUSIX;
 Verb meta 'audio' 'music' 'musica' 'sonido' 'sonidos'
-	*								-> Audio
-	* 'on' / 'si'					-> AudioOn
-	* 'encendido' / 'activado'		-> AudioOn
-	* 'off' / 'no'					-> AudioOff
-	* 'apagado' / 'desactivado'		-> AudioOff
+	* -> Audio
+	* 'on' / 'si' -> AudioOn
+	* 'encendido' / 'activado' -> AudioOn
+	* 'off' / 'no' -> AudioOff
+	* 'apagado' / 'desactivado' -> AudioOff
 ;
 VerboIrregular "establecer la reproducción de audio" with imperativo
 	'audio' 'music' 'musica' 'sonido' 'sonidos';
 
 [ AudioSub;
-	if (Damusix.HayAudio()) <<AudioOff>>;
-	else <<AudioOn>>;
+	if (Utils.is_audio_enabled()) {
+		<<AudioOff>>;
+	} else {
+		<<AudioOn>>;
+	}
 ];
 
 [ AudioOnSub;
-	if (Damusix.HayAudio())
+	if (Utils.is_audio_enabled()) {
 		print_ret (parser) "La reproducción de audio ya estaba activada.";
-	Damusix.ActivarAudio();
+	}
+	Utils.enable_audio(true);
 	print_ret (parser) "Reproducción de audio activada.";
 ];
 
 [ AudioOffSub;
-	if (~~Damusix.HayAudio())
+	if (~~Utils.is_audio_enabled()) {
 		print_ret (parser) "La reproducción de audio ya estaba desactivada.";
-	Damusix.DesactivarAudio();
+	}
+	Utils.enable_audio(false);
 	print_ret (parser) "Reproducción de audio desactivada.";
 ];
-#Endif; ! USE_DAMUSIX;
-#Endif; ! TARGET_GLULX;
 
 !!------------------------------------------------------------------------------
 !! ##ConfigureHighlights
@@ -163,7 +164,7 @@ VerboIrregular "establecer configuración de palabras resaltadas"
 		print (string) TEXT_STYLE_PARSER_SUFIX;
 		Utils.set_text_style(previous_style);
 		i = 0;
-		switch (Utils.press_any_key()) {
+		switch (KeyCharPrimitive()) {
 			32, -6: ! INTRO/ESPACIO
 				done = true;
 			'1':
@@ -267,7 +268,7 @@ VerboIrregular "establecer configuración de hipervínculos"
 		print "Pulsa @<<", (string) txt, "@>> para aceptar.";
 		print (string) TEXT_STYLE_PARSER_SUFIX;
 		Utils.set_text_style(previous_style);
-		switch (Utils.press_any_key()) {
+		switch (KeyCharPrimitive()) {
 			32, -6: ! INTRO/ESPACIO
 				done = true;
 			'1':

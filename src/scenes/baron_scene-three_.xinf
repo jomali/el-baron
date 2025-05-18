@@ -147,11 +147,11 @@ Character	BosqueLoba "loba" Limbo
 				!! TODO - revisar
 				print "This plan is madness; but then again, so is the whole undertaking. You take a run up until you are only a few steps away from the she-wolf--who recoils from your sudden approach--and then you jump forward, jump upward, expecting any moment to feel her sharp teeth tear into you from beneath...";
 				new_line;
-				Utils.press_any_key();
+				! Utils.press_any_key();
 				new_line;
 				print "...but no. You land on her far side, face-first in the snow, but immediately recover your footing and start running. Behind you angry howls resound through the dark forest, and you hear the sound of soft paws running, but you don't look back--your entire being is focussed on what is in front of you, on how you can get there as quickly as possible.";
 				new_line;
-				Utils.press_any_key();
+				! Utils.press_any_key();
 				new_line;
 				print "How long do you sustain your sprint? Minutes? Hours? You have no idea--but when you turn around, exhausted and breathing heavily, the wolf is nowhere to be seen. You are safe, for now.";
 				new_line;
@@ -177,7 +177,7 @@ Character	BosqueLoba "loba" Limbo
 				4:
 					!! TODO - revisar
 					print "Awe-struck and afraid, you only stand and stare. As a spring suddenly released, the she-wolf jumps forward, knocking you to the ground. Before you can so much as cry out she is on top of you, her sharp teeth searching for your throat, finding it, sinking into it, and with a quickly rising sense of horror you feel how your windpipe is torn to pieces, how warm, sweet blood flows over your tongue and out of your mouth, how you gasp for breath like a fish out of water, how the teeth of the starved young wolf tear open your belly, how it feasts on your steaming entrails while its mother laps up the blood coming from your mouth and throat, and how, finally, everything turns black...";
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					StopDaemon(self);
 					move self to Limbo;
 					Baron.become_lycanthrope();
@@ -226,7 +226,7 @@ Character	BosqueLoba "loba" Limbo
 					move self to Limbo;
 					print "You lift your head and a howl bursts forth that sounds exactly like the lament of a wolf. You howl--and put your soul in it. You never knew that so much pain and so much sorrow were hidden in your heart; but now the tones of your grief sound through the night, crystal clear and each distinct. After a moment of astonished silence, the she-wolf follows your example, and together you howl a heart-breaking duet.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "After an eternity, you fall silent. The she-wolf regards you for a moment, then nods her head a single time, and disappears into the snow-covered woods.";
 					if (parent(BosqueLobezno) == CaminoBosque) {
@@ -251,7 +251,7 @@ Character	BosqueLoba "loba" Limbo
 				16:
 					print "Now that she is calm, you can just walk past the wolf. She looks at you as you go away, but shows no intention of following you.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "When you can no longer see her in the darkness, her lonely howling breaks the silence of the night.
 					^^
@@ -340,7 +340,7 @@ Item	BosqueLobezno "lobezno" Limbo
 				3:
 					print "~Come here, little wolf,~ you say softly while you sink to your knees. With sweet words and calming gestures you are able to approach the small animal, which is still in shock because of his mother's death.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "~I am very sorry, small one, but this is for the best,~ you whisper. With a sudden move you grab his head and break his little neck. The small body goes limp immediately; a whimper escapes from its mouth--but then he is silent and the light in his eyes goes out.
 					^^
@@ -362,7 +362,7 @@ Item	BosqueLobezno "lobezno" Limbo
 				11:
 					print "You lift your head and a howl bursts forth that sounds exactly like the lament of a wolf. You howl--and put your soul in it. You never knew that so much pain and so much sorrow were hidden in your heart; but now the tones of your grief sound through the night, crystal clear and each distinct. After a moment of astonished silence, the young wolf follows your example, and together you lament his mother's death.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "After an eternity you fall silent. The little wolf looks at you--in his eyes only sorrow. Once more he glances at the lifeless body of his mother, then he turns around and disappears into the snow-covered forest.";
 				12:
@@ -370,7 +370,7 @@ Item	BosqueLobezno "lobezno" Limbo
 				13:
 					print "~Come here, little wolf,~ you say softly while you sink to your knees. With sweet words and calming gestures you are able to approach the small animal, which is still in shock because of his mother's death.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "~I am very sorry, small one, but this is for the best,~ you whisper. With a sudden move you grab his head and break his little neck. The small body goes limp immediately; a whimper escapes from its mouth--but then he is silent and the light in his eyes goes out.
 					^^
@@ -579,7 +579,7 @@ AdjacentRoom	DirLindesBosque "camino"
 							^^
 							No, pequeño. Nada que comer.";
 							new_line;
-							Utils.press_any_key();
+							! Utils.press_any_key();
 							new_line;
 							Utils.print_horizontal_rule();
 							new_line;
@@ -687,7 +687,7 @@ AdjacentRoom	-> CaminoBosque3Camino "camino"
 			Enter:
 				print "Un copo de nieve suelto se posa con suavidad en tu mejilla. Te frontas la cara con el antebrazo y empiezas a caminar colina abajo…";
 				new_line;
-				Utils.press_any_key();
+				! Utils.press_any_key();
 				new_line;
 				self.AdjacentRoom::before();
 				return true;

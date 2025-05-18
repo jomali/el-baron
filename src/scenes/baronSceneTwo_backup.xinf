@@ -568,28 +568,28 @@ HeavyItem	-> DormitorioBaronArmario "armario"
 					print ". Te llama la atención uno de ellos, de un color blanco impoluto, colgado al fondo y casi invisible entre los demás. Sólo al apartar un par de faldas a rayas descubres que se trata del vestido de novia de Gilda. Dejas que tu mano palpe el suave paño y cierras los ojos un momento mientras los recuerdos de la boda desfilan claramente por tu mente como si todo hubiera ocurrido el día anterior…";
 					new_line;
 					previous_style = Utils.set_text_style(TEXT_STYLE_STRESSED);
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "Entras andando en la plaza mayor con el corazón palpitándote fuertemente en el pecho, incómodo en el traje gris que has comprado exclusivamente para el día de hoy —te sientes como un impostor que llevara el uniforme de otra persona—. Prácticamente el pueblo entero se ha reunido ya ante la puerta de la iglesia, hasta el punto que te cuesta un instante alcanzar a distinguir a tus padres y a los padres de Gilda entre la multitud.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "Antes de continuar te detienes para enderezar la flor roja en el ojal del bolsillo de la chaqueta y, entonces, alguien mira en tu dirección y grita tu nombre. Todo el mundo se da la vuelta y comienza a aplaudir y a vociferar con alegría. De inmediato sientes cómo la sangre te sube a la cara hasta que tus mejillas se tornan del mismo color bermellón que el adorno del bolsillo.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "Odias ser el centro de atención. Odias las muchedumbres y pasar por el trance de las obligaciones sociales, y por eso prefieres estar la mayor parte del tiempo solo, vagando por el bosque o encerrado en tu taller tallando madera. Pero pasar tanto tiempo solo presenta sus propios inconvenientes; ya has estado cerca de ser consumido por el negro vacío de la soledad en varias ocasiones. Es preferible encontrar una persona a la que poder amar, junto a la que sentirte seguro e inmune ante las amarguras de la vida. Y ese sueño está a punto de hacerse realidad.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					print "¡Por fin! Resplandeciente como el sol de primavera, Gilda camina hacia ti con su largo cabello pajizo agitándose rebelde tras ella a pesar del esmerado peinado, y con su sonrisa fácil iluminándole el rostro. Parece una princesa en su vestido de novia blanco; una joven más bella, más pura y más inocente de lo que este mundo merece albergar en su interior. Y camina hacia ti. Con ojos llenos de amor y de ternura.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					new_line;
 					!! TODO - estilo diálogos
 					print "—Sí, quiero —dice sin mirar ya al capellán, con sus ojos almendrados clavados en los tuyos. Tomas su suave mano entre tus manos ásperas y callosas y, con toda la delicadeza de la que eres capaz, le colocas el anillo en el dedo. Ella hace lo propio, y después inclináis las cabezas la una hacia la otra hasta que vuestros labios se unen para sellar el pacto de amor eterno con más fuerza de la que ninguna palabra podría hacerlo jamás. La gente irrumpe en vítores y aplausos para ya no escuchas nada más, embriagado por la emoción pura tras haber unido tu destino al de Gilda.";
 					new_line;
-					Utils.press_any_key();
+					! Utils.press_any_key();
 					Utils.set_text_style(previous_style);
 					new_line;
 					print "Abres los ojos y tu mente regresa frente a los vestidos y los montones ordenados de ropa";
@@ -1517,11 +1517,11 @@ Item	-> -> AlbumFotos
 						new_line;
 						previous_style
 							= Utils.set_text_style(TEXT_STYLE_STRESSED);
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						new_line;
 						print "Durante meses has estado trabajando en secreto en la construcción de una gran casa de muñecas para su cuarto cumpleaños. Tres plantas comunicadas por escaleras de delicadas barandillas, con puertas y ventanas que se pueden abrir y cerrar, muebles de toda clase y muñecas de madera con las caras esmeradamente talladas para que hagan su hogar de aquel lugar en miniatura. Gilda se ha encargado de tejer coloridas cortinas, sábanas, alfombras y ropa para las muñecas. Y ahora el hermoso resultado de todo aquel trabajo aguarda en una esquina de la habitación, envuelto en papel brillante, y María corre a por él y rasga ansiosa el envoltorio. Grita por la sorpresa. Luego estudia la casa de muñecas maravillada durante largo rato, abriendo las puertas, probando diferentes lugares para las muñecas, corriendo y descorriendo las cortinas. Finalmente se da la vuelta con una gran sonrisa y corre a darte las gracias entre risas de felicidad.";
 						new_line;
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						Utils.set_text_style(previous_style);
 						new_line;
 						print "Los ecos de aquella risa resuenan aún en tus oídos, después de tantos años.";
@@ -1531,12 +1531,12 @@ Item	-> -> AlbumFotos
 						new_line;
 						previous_style
 							= Utils.set_text_style(TEXT_STYLE_STRESSED);
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						new_line;
 						!! TODO - diálogos
 						print "Es pleno verano y los tres habéis salido de excursión por el bosque. María, de siete años de edad, corre algo adelantada mientras vosotros lleváis la cesta con la comida entre los dos, disfrutando del paseo. —¡Papá! —exclama de pronto desde algún lugar entre los árboles, a vuestra izquierda. —¡Corre, ven a ver!—. Gilda pone los ojos en blanco y agarra el asa con las dos manos para que puedas internarte en el bosque. La encuentras a unos treinta pasos del sendero, inmóvil junto a una buddleja tan repleta de mariposas que apenas puedes llegar a distinguir sus flores púrpura. —¡Mira papá! —exclama, y salta hacia el arbusto. Todas las mariposas emprenden el vuelo y, por un instante, ella es un ángel envuelto en una nube de alas blancas.";
 						new_line;
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						Utils.set_text_style(previous_style);
 						new_line;
 						print "Hay otras fotos en el [self](álbum).";
@@ -1548,7 +1548,7 @@ Item	-> -> AlbumFotos
 						!! TODO - diálogos
 						print "Es medio año más tarde, en el momento más frío del invierno. Has salido a montar en trineo con María, aprovechando la espesa capa de nieve que se ha formado sobre el pueblo durante los últimos días. —Me duelen las manos —se queja María, poco después de haber cruzado el cerro del campesino—. Están tan frías.— Con delicadeza, coges sus pequeñas manos entre las tuyas y las frotas para calentárselas, mientras te inclinas hacia adelante y besas su frente helada.";
 						new_line;
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						Utils.set_text_style(previous_style);
 						new_line;
 						print "Hay otras fotos en el [self](álbum).";

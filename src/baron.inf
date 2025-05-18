@@ -110,8 +110,6 @@ Constant USE_VORPLE;
 !! Se evita que Vorple reescriba las rutinas de Inform:
 Constant VORPLE_NO_REPLACES;
 #Ifnot; ! VERSION_DESKTOP;
-!! Utilización del gestor de audio:
-Constant USE_DAMUSIX;
 
 !! Utilización de hipervínculos Glk:
 Constant USE_HYPERLINKS;
@@ -566,10 +564,6 @@ Include "baronLangLM.inf";
 !!
 !!------------------------------------------------------------------------------
 
-#Ifdef USE_DAMUSIX;
-Include "damusix.h";			! Administrador unificado de sonido en GLULX
-#Endif; ! USE_DAMUSIX;
-
 Include "arrays.h";				! Operaciones con arrays
 Include "capacities.h";			! Extensión a las reglas de capacidad
 Include "choiceSets.h";			! Sistema de selección de acciones sobre lista
@@ -787,7 +781,6 @@ Include "vorple-screen-effects.h";
 		new_line;
 		new_line;
 		print (parser) "Pulsa una tecla.";
-		Utils.press_any_key();
 		Utils.clear_window();
 	}
 	#Endif; ! CONFIG_FILE_NAME;

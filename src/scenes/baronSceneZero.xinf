@@ -115,7 +115,7 @@ Character Baron "protagonista" Limbo
 			!! TODO - revisar
 			print "La cálida y dulce sangre se derrama por tu lengua. Arrancas trozos de carne del cuerpo y los devoras con ávidez. Tu hijo empieza a alimentarse también de la presa, el primer bocado que prueba esta semana aparte de medio vole. Te giras hacia él y lames su pelaje. Él aúlla contentedly, y después continúa comiendo. No conoce otros peligros y se imagina que está a salvo.";
 			new_line;
-			Utils.press_any_key();
+			! Utils.press_any_key();
 			new_line;
 			!! TODO - revisar
 			print "Pero tú sabes más. Mientras el cazador siga viviendo en la gran casa de piedra ninguno de los dos estaréis a salvo. Y ahora que esta comida inesperada te ha dado nuevas fuerzas es el momento de ir y enfrentarte a él.";

@@ -279,11 +279,11 @@ Item	-> -> AlbumFotos
 						new_line;
 						previous_style
 							= Utils.set_text_style(TEXT_STYLE_STRESSED);
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						new_line;
 						print "Durante meses has estado trabajando en secreto en la construcción de una gran casa de muñecas para su cuarto cumpleaños. Tres plantas comunicadas por escaleras de delicadas barandillas, con puertas y ventanas que se pueden abrir y cerrar, muebles de toda clase y muñecas de madera con las caras esmeradamente talladas para que hagan su hogar de aquel lugar en miniatura. Gilda se ha encargado de tejer coloridas cortinas, sábanas, alfombras y ropa para las muñecas. Y ahora el hermoso resultado de todo aquel trabajo aguarda en una esquina de la habitación, envuelto en papel brillante, y María corre a por él y rasga ansiosa el envoltorio. Grita por la sorpresa. Luego estudia la casa de muñecas maravillada durante largo rato, abriendo las puertas, probando diferentes lugares para las muñecas, corriendo y descorriendo las cortinas. Finalmente se da la vuelta con una gran sonrisa y corre a darte las gracias entre risas de felicidad.";
 						new_line;
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						Utils.set_text_style(previous_style);
 						new_line;
 						print "Los ecos de aquella risa resuenan aún en tus oídos, después de tantos años.";
@@ -293,12 +293,12 @@ Item	-> -> AlbumFotos
 						new_line;
 						previous_style
 							= Utils.set_text_style(TEXT_STYLE_STRESSED);
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						new_line;
 						!! TODO - diálogos
 						print "Es pleno verano y los tres habéis salido de excursión por el bosque. María, de siete años de edad, corre algo adelantada mientras vosotros lleváis la cesta con la comida entre los dos, disfrutando del paseo. —¡Papá! —exclama de pronto desde algún lugar entre los árboles, a vuestra izquierda. —¡Corre, ven a ver!—. Gilda pone los ojos en blanco y agarra el asa con las dos manos para que puedas internarte en el bosque. La encuentras a unos treinta pasos del sendero, inmóvil junto a una buddleja tan repleta de mariposas que apenas puedes llegar a distinguir sus flores púrpura. —¡Mira papá! —exclama, y salta hacia el arbusto. Todas las mariposas emprenden el vuelo y, por un instante, ella es un ángel envuelto en una nube de alas blancas.";
 						new_line;
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						Utils.set_text_style(previous_style);
 						new_line;
 						print "Hay otras fotos en el [self](álbum).";
@@ -310,7 +310,7 @@ Item	-> -> AlbumFotos
 						!! TODO - diálogos
 						print "Es medio año más tarde, en el momento más frío del invierno. Has salido a montar en trineo con María, aprovechando la espesa capa de nieve que se ha formado sobre el pueblo durante los últimos días. —Me duelen las manos —se queja María, poco después de haber cruzado el cerro del campesino—. Están tan frías.— Con delicadeza, coges sus pequeñas manos entre las tuyas y las frotas para calentárselas, mientras te inclinas hacia adelante y besas su frente helada.";
 						new_line;
-						Utils.press_any_key();
+						! Utils.press_any_key();
 						Utils.set_text_style(previous_style);
 						new_line;
 						print "Hay otras fotos en el [self](álbum).";
