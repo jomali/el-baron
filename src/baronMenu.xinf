@@ -11,9 +11,9 @@
 !!								J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
-!!	Plataforma:		Máquina-Z/Glulx
-!!	Versión:			0.1
-!!	Fecha:				2024/10/30
+!!	Plataforma:		Glulx-Vorple
+!!	Versión:			1.0
+!!	Fecha:				2025/05/17
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -33,12 +33,12 @@
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2006, Victor Gijsbers
-!!	Copyright (c) 2024, J. Francisco Martín
+!!	Copyright (c) 2019-2025, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 
-!! @MenuInicial
-Object MenuInicial
+!! @MenuInicio
+Object MenuInicio
 	has
 		light male,
 	with
@@ -48,17 +48,143 @@ Object MenuInicial
 		],
 		gender G_MASCULINO,
 		!!
-		description [;
-			Utils.erase_window();
-			print "
-			^^
-			**ADVERTENCIA**
-			^^
-			Los contenidos de esta obra no son apropiados para un público infantil. La edad mínima recomendada para experimentar el relato es de **quince años**.";
+		react_before [;
+			CSETSelected:
+				return false;
+			default:
+				return self.description();
+		],
+		description [
+			avoid_choice_set_inventory;
+			avoid_choice_set_inventory = true;
+			ChoiceSetManager.start(MenuInicial, avoid_choice_set_inventory);
+
+			Utils.clear_window();
 			new_line;
-			return Utils.press_intro_to_continue(Storyteller.start_scene_1);
+
+			Utils.center_align_start();
+			new_line;
+			print (strong) Story, "^";
+			new_line;
+			print "Una historia interactiva de *Victor Gijsbers*^";
+			print "Adaptación de *J. Francisco Martín*^";
+			new_line;
+			Utils.center_align_end();
+			Utils.print_horizontal_rule();
+
+			new_line;
+			PRT__("Empezar", 0, DIRECTION_OBJECT);
+			print " la historia";
+			new_line;
+
+			new_line;
+			PRT__("Preámbulo", 0, REMARKABLE_OBJECT);
+			print " del autor";
+			new_line;
+			print "Nota sobre la ";
+			PRT__("adaptación", 0, REMARKABLE_OBJECT);
+			print ".";
+			new_line;
+
+			new_line;
+			PRT__("Índice", 0, REMARKABLE_OBJECT);
+			print " de escenas";
+			new_line;
+			PRT__("Cargar", 0, REMARKABLE_OBJECT);
+			print " una partida guardada";
+			new_line;
+			return true;
 		],
 ;
+
+ChoiceSet	MenuInicial "(Opciones del menú)"
+	with
+		fixed true,
+		initial_action [;
+			self.add_choice(MenuAdaptacion);
+			self.add_choice(MenuAutor);
+		],
+		goBack [;
+			<<Look>>;
+		],
+;
+
+ChoiceSetItem MenuAdaptacion
+	with
+		entry [;
+			PRT__("Adaptación", 0, REMARKABLE_OBJECT);
+			return true;
+		],
+		keys 'adaptacion' 'nota',
+		!!
+		append_choice_set false,
+		final_choice false,
+		persistent true,
+		reaction [;
+			print "^^
+			**NOTA SOBRE LA ADAPTACIÓN**
+			^^
+			La presente adaptación se toma algunas licencias sobre el material original. Además de llevar a cabo una traducción libre de los textos desde el inglés al castellano, se han introducido diversas modificaciones sobre la obra de Victor Gijsbers como la adición de hipervínculos, cambios en el modo en que se llevan a cabo las conversaciones, la redistribución de algunas localidades o la reinterpretación de ciertas escenas y descripciones, entre otros.
+			^^
+			Todas estas modificaciones se han añadido intentando enriquecer la experiencia final al tiempo que se procuraba ser respetuoso con el material de partida. A pesar de ello, es inevitable que el nuevo punto de vista arrojado sobre la obra difiera en algunos aspectos con la visión del autor original. Cualquier posible error o incongruencia en el tratamiento de símbolos y temas de la historia son, sin duda, responsabilidad del adaptador.
+			^^
+			Se continúa trabajando en la adaptación, sin embargo el desarrollo se lleva a cabo de forma interrumpida y el avance es lento. Esto hace imposible dar un estimación sobre su fecha de finalización. Si deseas experimentar la obra al completo la mejor opción es acudir al original de Victor Gijsbers en inglés: ";
+			VorpleLinkWebsite("https://ifdb.org/viewgame?id=weac28l51hiqfzxz", false);
+			new_line;
+			return Utils.press_intro_to_continue(MenuRaiz.goBack);
+		],
+;
+
+ChoiceSetItem	MenuAutor
+	with
+		entry [;
+			PRT__("Preámbulo", 0, REMARKABLE_OBJECT);
+			return true;
+		],
+		keys 'autor' 'preambulo',
+		!!
+		append_choice_set false,
+		final_choice false,
+		persistent true,
+		reaction [;
+			print "^^
+			**NOTA DEL AUTOR**^
+			**Elecciones temáticas en lugar de desafíos lógicos**
+			^^
+			**El Barón** no es un videojuego en el sentido tradicional de la palabra; no cuenta con puzzles o desafíos lógicos que resolver, no hay sistema de puntuación, no se puede ganar ni perder. Es, de forma literal, una *ficción interactiva* antes que un juego de texto. El objetivo de la obra es que el usuario explore su universo ficticio y los temas que se le plantean del modo más inmersivo posible.
+			^^
+			Hay varias cuestiones de las que el usuario debe ser consciente mientras experimenta la narración. En primer lugar, no es posible llevar la historia a un estado en el que resulte imposible completarla. Tampoco es posible llegar a un final repentino antes de que la historia haya alcanzado su final real. Además, la narración ha sido diseñada de tal modo que casi todas las acciones con sentido en el contexto de la ficción la hacen avanzar; no hay ningún obstáculo real en el camino hasta el final. Lo que se plantea no es si el usuario alcanzará el final de la historia, sino cómo lo hará.
+			^^
+			La cuestión que aquella persona que experimente la obra debe estar planteándose no es; ¿esta acción me ayudará a finalizar la historia? sino, ¿creo que esta acción es apropiada, bella, perturbardora o de algún modo interesante desde un punto de vista temático? Si en el transcurso de la historia el protagonista se encuentra con un hacha, por ejemplo, puede cogerlo o no cogerlo; en cualquier caso la historia avanzará hasta alcanzar su final. La elección es temática: ¿quieres experimentar una historia en la que el personaje protagonista se enfrenta a sus conflictos con un arma en la mano, o más bien una en el que el protagonista obtiene lo que busca desarmado?
+			^^
+			La narración cuenta con varios encuentros clave que pueden ser resueltos de muchas maneras diferentes. Las decisiones que tome el usuario durante estos encuentros tendrán un impacto importante en el significado de la historia. De esto último es de lo que se trata **El Barón**: el usuario entra en escena como un agente creativo que interactúa con los temas planteados, seleccionando símbolos y acciones a través de los que puede expresarse y reflejar sus propias preferencias y experiencia personal.";
+			new_line;
+			return Utils.press_intro_to_continue(MenuRaiz.goBack);
+		],
+;
+
+!! @MenuInicial
+! Object MenuInicial
+! 	has
+! 		light male,
+! 	with
+! 		short_name [;
+! 			print "";
+! 			return true;
+! 		],
+! 		gender G_MASCULINO,
+! 		!!
+! 		description [;
+! 			Utils.clear_window();
+! 			print "
+! 			^^
+! 			**ADVERTENCIA**
+! 			^^
+! 			Los contenidos de esta obra no son apropiados para un público infantil. La edad mínima recomendada para experimentar el relato es de **quince años**.";
+! 			new_line;
+! 			return Utils.press_intro_to_continue(Storyteller.start_scene_1);
+! 		],
+! ;
 
 !! @MenuFinal
 Object MenuFinal
@@ -188,57 +314,6 @@ ChoiceSetItem MenuElecciones
 		],
 ;
 
-ChoiceSetItem MenuAdaptacion
- with	entry [;
-			print "Leer notas sobre la ";
-			PRT__("adaptación", 0, REMARKABLE_OBJECT);
-			return true;
-		],
-		keys 'adaptacion' 'notas',
-		!!------------------
-		append_choice_set false,
-		final_choice false,
-		persistent true,
-		reaction [;
-			print "**NOTA DE LA ADAPTACIÓN**
-			^^
-			La presente adaptación se toma algunas licencias sobre el material original. Además de llevar a cabo una traducción libre de los textos desde el inglés al castellano, se han introducido diversas modificaciones sobre la obra de Victor Gijsbers como la adición de hipervínculos, cambios en el modo en que se llevan a cabo las conversaciones, la redistribución de algunas localidades o la reinterpretación de ciertas escenas y descripciones, entre otros.
-			^^
-			Todas estas modificaciones se han añadido intentando enriquecer la experiencia final al tiempo que se procuraba ser respetuoso con el material de partida. A pesar de ello, es inevitable que el nuevo punto de vista arrojado sobre la obra difiera en algunos aspectos con la visión del autor original. Cualquier posible error o incongruencia en el tratamiento de símbolos y temas de la historia son, sin duda, responsabilidad del adaptador.
-			^^
-			Se continúa trabajando en la adaptación, sin embargo el desarrollo se lleva a cabo de forma interrumpida y el avance es lento. Esto hace imposible dar un estimación sobre su fecha de finalización. Si deseas experimentar la obra al completo la mejor opción es acudir al original de Victor Gijsbers en inglés: ";
-			VorpleLinkWebsite("https://ifdb.org/viewgame?id=weac28l51hiqfzxz", false);
-			new_line;
-			return Utils.press_intro_to_continue(MenuRaiz.goBack);
-		],
-;
-
-ChoiceSetItem	MenuAutor
- with	entry [;
-			PRT__("Epílogo", 0, REMARKABLE_OBJECT);
-			return true;
-		],
-		keys 'autor',
-		!!------------------
-		append_choice_set false,
-		final_choice false,
-		persistent true,
-		reaction [;
-			print "**NOTA DEL AUTOR**^
-			**Elecciones temáticas en lugar de desafíos lógicos**
-			^^
-			**El Barón** no es un videojuego en el sentido tradicional de la palabra; no cuenta con puzzles o desafíos lógicos que resolver, no hay sistema de puntuación, no se puede ganar ni perder. Es, de forma literal, una *ficción interactiva* antes que un juego de texto. El objetivo de la obra es que el usuario explore su universo ficticio y los temas que se le plantean del modo más inmersivo posible.
-			^^
-			Hay varias cuestiones de las que el usuario debe ser consciente mientras experimenta la narración. En primer lugar, no es posible llevar la historia a un estado en el que resulte imposible completarla. Tampoco es posible llegar a un final repentino antes de que la historia haya alcanzado su final real. Además, la narración ha sido diseñada de tal modo que casi todas las acciones con sentido en el contexto de la ficción la hacen avanzar; no hay ningún obstáculo real en el camino hasta el final. Lo que se plantea no es si el usuario alcanzará el final de la historia, sino cómo lo hará.
-			^^
-			La cuestión que aquella persona que experimente la obra debe estar planteándose no es; ¿esta acción me ayudará a finalizar la historia? sino, ¿creo que esta acción es apropiada, bella, perturbardora o de algún modo interesante desde un punto de vista temático? Si en el transcurso de la historia el protagonista se encuentra con un hacha, por ejemplo, puede cogerlo o no cogerlo; en cualquier caso la historia avanzará hasta alcanzar su final. La elección es temática: ¿quieres experimentar una historia en la que el personaje protagonista se enfrenta a sus conflictos con un arma en la mano, o más bien una en el que el protagonista obtiene lo que busca desarmado?
-			^^
-			La narración cuenta con varios encuentros clave que pueden ser resueltos de muchas maneras diferentes. Las decisiones que tome el usuario durante estos encuentros tendrán un impacto importante en el significado de la historia. De esto último es de lo que se trata **El Barón**: el usuario entra en escena como un agente creativo que interactúa con los temas planteados, seleccionando símbolos y acciones a través de los que puede expresarse y reflejar sus propias preferencias y experiencia personal.";
-			new_line;
-			return Utils.press_intro_to_continue(MenuRaiz.goBack);
-		],
-;
-
 ChoiceSetItem	MenuReiniciar
 	with
 		entry [;
@@ -271,7 +346,7 @@ ChoiceSetItem	MenuReiniciar
 ! 		append_choice_set false,
 ! 		final_choice true,
 ! 		reaction [;
-! 			!! utils.erase_window();
+! 			!! utils.clear_window();
 ! 			PlayerTo(Abismo);
 ! 			new_line;
 ! 			return true;

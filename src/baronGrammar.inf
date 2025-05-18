@@ -120,7 +120,7 @@ VerboIrregular "establecer configuración de palabras resaltadas"
 	txt = "INTRO";
 	Utils.set_status_bar_contents("Resaltado");
 	while (~~done) {
-		Utils.erase_window();
+		Utils.clear_window();
 		new_line;
 		print "Los nombres de los distintos objetos interactivos presentes en la obra se pueden imprimir con un estilo de texto resaltado para facilitar su identificación. Introduce el número de una clase de objeto para rotar entre los distintos estilos de resaltado disponibles:";
 		new_line;
@@ -196,7 +196,7 @@ VerboIrregular "establecer configuración de palabras resaltadas"
 			Utils.set_highlight_style(i, highlight_code);
 		}
 	}
-	Utils.erase_window();
+	Utils.clear_window();
 	Utils.write_configuration_file(CONFIG_FILE_NAME);
 	Utils.set_status_bar_contents(0);
 	<<Look>>;
@@ -234,7 +234,7 @@ VerboIrregular "establecer configuración de hipervínculos"
 	txt = "INTRO";
 	Utils.set_status_bar_contents("Hipervínculos");
 	while (~~done) {
-		Utils.erase_window();
+		Utils.clear_window();
 		new_line;
 		print "La obra permite interactuar con los distintos objetos presentes
 		en el mundo utilizando un sistema de hipervínculos (haciendo ~clic~ con
@@ -281,7 +281,7 @@ VerboIrregular "establecer configuración de hipervínculos"
 		}
 		Utils.set_hyperlinks_status(i, ~~Utils.get_hyperlinks_status(i));
 	}
-	Utils.erase_window();
+	Utils.clear_window();
 	Utils.write_configuration_file(CONFIG_FILE_NAME);
 	Utils.set_status_bar_contents(0);
 	<<Look>>;

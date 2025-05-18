@@ -74,7 +74,7 @@ Object Storyteller "(Narrador)"
 			move Armadura to Baron;
 			move Percunos to Baron;
 			give Armadura worn;
-			utils.erase_window();
+			utils.clear_window();
 			new_line;
 			new_line;
 			new_line;

@@ -39,12 +39,14 @@
 !!
 !!	Interfaz del objeto `Utils`:
 !!
+!!	- center_align_end
+!!	- center_align_start
 !!	- clear_hyperlinks
+!!	- clear_window
 !!	- reset_highlights
 
 !!	- check_object_capacity
 !!	- create_vorple_hiperlink
-!!	- erase_window
 !!	- fade_in
 !!	- fade_out
 !!	- get_grammatical_inflection
@@ -83,21 +85,60 @@ Global _tempDestination = 0;
 
 Object Utils
 	with
+
+		!!--------------------------------------------------------------------------
+		!! Cierra nodo para alinear texto en el centro.
+		!! IMPORTANTE: Se debe utilizar siempre junto con `center_align_start`.
+		!!
+		!!	@dependency ifjs.css
+		!!	@dependency vorple.h
+		!!	@version 2025/05/17
+		!!--------------------------------------------------------------------------
+		center_align_end [;
+			VorpleCloseHTMLTag();
+		],
+
+		!!--------------------------------------------------------------------------
+		!! Abre nodo para alinear texto en el centro.
+		!! IMPORTANTE: Se debe utilizar siempre junto con `center_align_end`.
+		!!
+		!!	@dependency ifjs.css
+		!!	@dependency vorple.h
+		!!	@version 2025/05/17
+		!!--------------------------------------------------------------------------
+		center_align_start [;
+			VorpleOpenHTMLTag("div", "center-aligned-text");
+		],
+
 		!!----------------------------------------------------------------------
 		!! Si es compilación para Vorple, deshabilita todos los hipervínculos 
 		!! impresos hasta el momento.
 		!!
 		!!	@dependency ifjs.js
 		!!	@dependency vorple.h
-		!!	@version 2023/02/19
+		!!	@version 2025/05/18
 		!!----------------------------------------------------------------------
 		clear_hyperlinks [;
-			#Ifdef USE_VORPLE;
 			VorpleExecuteJavaScriptCommand(BuildCommand("
 				ifjs.clearHyperlinks();
 			"));
-			#Endif; ! USE_VORPLE;
 		],
+
+		!!----------------------------------------------------------------------
+		!! Elimina los contenidos de todas las ventanas de la interfaz.
+		!!
+		!!	@returns {boolean} Verdadero
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2025/05/18
+		!!----------------------------------------------------------------------
+		clear_window [;
+			VorpleExecuteJavaScriptCommand(BuildCommand("
+				ifjs.clearScreen();
+			"));
+			return true;
+		],
+
 		!!----------------------------------------------------------------------
 		!! Define la función dada como `callback` a ejecutar cuando el usuario
 		!! pulse la tecla INTRO. Para reconocer la entrada del usuario y
@@ -120,20 +161,21 @@ Object Utils
 		!! Además se introduce una línea de gramática para la nueva acción
 		!! `pressAnyKey.verb`.
 		!!
-		!!	@version 2024/10/05
+		!!	@dependency ifjs.js
+		!!	@dependency vorple.h
+		!!	@version 2025/05/18
 		!!----------------------------------------------------------------------
 		press_intro_to_continue [ callback;
 			self.on_press_intro = callback;
 			
-			#Ifdef USE_VORPLE;
 			VorpleExecuteJavaScriptCommand(BuildCommand("
 				ifjs.saveHistoryLength();
 			"));
-			#Endif; ! USE_VORPLE
 
 			return true;
 		],
 		on_press_intro 0,
+
 		!!----------------------------------------------------------------------
 		!! Si es compilación para Vorple, simula el evento de haber dejado de 
 		!! pulsar una de las teclas configuradas para resaltar palabras clave, 
@@ -208,31 +250,6 @@ Object Utils
 			}
 			#Endif; ! USE_VORPLE;
 			item = alternative = 0; ! (por evitar alertas del compilador)
-			return true;
-		],
-		!!----------------------------------------------------------------------
-		!! Elimina los contenidos de todas las ventanas de la interfaz.
-		!!
-		!!	@returns {boolean} Verdadero
-		!!	@version 1.0 - 2019/07/15
-		!!----------------------------------------------------------------------
-		erase_window [;
-			#Ifdef USE_VORPLE;
-			VorpleExecuteJavaScriptCommand(BuildCommand("
-				ifjs.clearScreen();
-			"));
-			#Ifnot;
-		  #Ifdef TARGET_ZCODE;
-		  @erase_window -1;
-		  #Ifnot; ! TARGET_GLULX
-		  if (gg_quotewin) {
-				glk($0024, gg_quotewin, 0); ! close_window
-				gg_quotewin = 0;
-		  }
-		  glk($002A, gg_mainwin); ! window_clear
-		  if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
-		  #Endif;
-			#Endif; ! USE_VORPLE;
 			return true;
 		],
 		!!----------------------------------------------------------------------
@@ -569,7 +586,7 @@ Object Utils
 				print (parser) "Pulsa una tecla.";
 				new_line;
 				self.press_any_key();
-				self.erase_window();
+				self.clear_window();
 			}
 			#Endif; ! VERSION_DESKTOP;
 
@@ -592,7 +609,7 @@ Object Utils
 				print (parser) "Pulsa una tecla.";
 				new_line;
 				self.press_any_key();
-				self.erase_window();
+				self.clear_window();
 			}
 			#Endif; ! USE_VORPLE;
 

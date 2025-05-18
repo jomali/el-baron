@@ -8,11 +8,11 @@
 !!==============================================================================
 !!
 !!	Archivo:		baron_scene-three.xinf
-!!	Autor(es):		Victor Gijsbers
-!!					J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Autor(es):	Victor Gijsbers
+!!							J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:			ES (Español)
 !!	Sistema:		Inform-INFSP 6
-!!	Plataforma:		Máquina-Z/Glulx
+!!	Plataforma:	Glulx-Vorple
 !!	Versión:		0.0
 !!	Fecha:			2020/01/XX
 !!
@@ -411,7 +411,7 @@ Outdoors	Mirador "El mirador de la loma"
 		],
 		initial [;
 			!! Baron.become_lycanthrope();
-			!! Utils.erase_window(); !! FIXME
+			!! Utils.clear_window(); !! FIXME
 			if (self hasnt visited) {
 				if (Baron.is_a_wolf()) {
 					give MiradorCastillo female;

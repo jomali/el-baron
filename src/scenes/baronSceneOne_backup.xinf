@@ -1,7 +1,7 @@
 
 [ EndSceneOne
 	obj previous_style;
-	Utils.erase_window();
+	Utils.clear_window();
 
 	!! Actualizaciones de estado:
 	StopDaemon(Baron);
@@ -18,7 +18,7 @@
 		new_line;
 		VersionSub();
 		Utils.press_any_key();
-		Utils.erase_window();
+		Utils.clear_window();
 
 		!! Recapitulación de decisiones del usuario:
 		new_line;
@@ -67,7 +67,7 @@
 		print "Versión en castellano por J. Francisco Martín.^";
 		new_line;
 		Utils.press_any_key();
-		Utils.erase_window();
+		Utils.clear_window();
 		new_line;
 		print (stressed) "Chi l'anima mi lacera?^
 		Chi m'agita le viscere?^
@@ -84,7 +84,7 @@
 		Música: Wolfgang A. Mozart^";
 		new_line;
 		Utils.press_any_key();
-		Utils.erase_window();
+		Utils.clear_window();
 		new_line;
 		return PlayerTo(DormitorioBaron);
 	}

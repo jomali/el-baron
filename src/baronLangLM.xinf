@@ -12,7 +12,7 @@
 !!								J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:				ES (Español)
 !!	Sistema:			Inform-INFSP 6
-!!	Plataforma:		Máquina-Z/Glulx
+!!	Plataforma:		Glulx-Vorple
 !!	Versión:			0.1
 !!	Fecha:				2024/10/30
 !!
@@ -34,7 +34,7 @@
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2006, Victor Gijsbers
-!!	Copyright (c) 2024, J. Francisco Martín
+!!	Copyright (c) 2019-2025, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -95,31 +95,25 @@ Object	LibraryMessages
 	CommandsOff:
 		switch (lm_n) {
 			1:	print_ret (parser) "Grabación de órdenes finalizada.";
-			#Ifdef TARGET_GLULX;
 			2:	print_ret (parser) "Grabación de órdenes ya finalizada.";
-			#Endif; ! TARGET_
 		}
 
 	CommandsOn:
 		switch (lm_n) { ![6/11]
 			1:	print_ret (parser) "Grabación de órdenes activada.";
-			#Ifdef TARGET_GLULX;
 			2:	print_ret (parser) "Órdenes relanzadas.";
 			3:	print_ret (parser) "Grabación de órdenes ya activada.";
 			4:	print_ret (parser) "Fallo en la grabación de órdenes.";
-			#Endif; ! TARGET_
 		}
 
 	CommandsRead:
 		switch (lm_n) {
 			1:	print_ret (parser) "Reejecutando órdenes…";
-			#Ifdef TARGET_GLULX;
 			2:	print_ret (parser) "Las órdenes ya están siendo relanzadas.";
 			3:	print_ret (parser) "Fallo en la reejecución de órdenes:
 				grabación en curso.";
 			4:	print_ret (parser) "Fallo en la reejecución de órdenes.";
 			5:	print_ret (parser) "Reejecución de órdenes: fin del proceso.";
-			#Endif; ! TARGET_
 		}
 
 !!	FullScore: ! TODO - Mensaje del parser
@@ -190,14 +184,7 @@ Object	LibraryMessages
 				print_ret (parser) "Tu intérprete no puede @<<DESHACER@>>
 				acciones.";
 			7:
-				#Ifdef TARGET_ZCODE; ![6/11]
-				!! Otro error si el intérprete no tiene "undo", pero no había
-				!! sido detectado correctamente.
-				print_ret (parser) "@<<DESHACER@>> falló. (Puede que tu
-				intérprete no permita realizar esa acción).";
-				#Ifnot; ! TARGET_GLULX
 				print_ret (parser) "No puedes @<<DESHACER@>> más.";
-				#Endif; ! TARGET_
 			8:
 				!! Si el usuario no responde correctamente a la pregunta del
 				!! mensaje [Miscellany,5]

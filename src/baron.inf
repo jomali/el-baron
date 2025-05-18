@@ -17,7 +17,7 @@
 !!	Sistema:			Inform-INFSP 6
 !!	Plataforma:		Máquina-Z/Glulx
 !!	Versión:			0.1
-!!	Fecha:				2024/10/30
+!!	Fecha:				2025/XX/XX
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -37,7 +37,7 @@
 !!	EL BARÓN. En caso contrario, consulte <http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2006, Victor Gijsbers
-!!	Copyright (c) 2024, J. Francisco Martín
+!!	Copyright (c) 2019-2025, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -863,7 +863,7 @@ Include "vorple-screen-effects.h";
 	!! Por evitar advertencia del compilador en VERSION_WEB_MOBILE:
 	previous_style = 0;
 	
-	Utils.erase_window();
+	Utils.clear_window();
 
 	!! Inicializaciones para la VM Glulx ---------------------------------------
 	Utils.initialise_glulx();
@@ -929,7 +929,7 @@ Include "vorple-screen-effects.h";
 		new_line;
 		print (parser) "Pulsa una tecla.";
 		Utils.press_any_key();
-		Utils.erase_window();
+		Utils.clear_window();
 	}
 	#Endif; ! CONFIG_FILE_NAME;
 	#Endif; ! VERSION_
@@ -953,7 +953,7 @@ Include "vorple-screen-effects.h";
 	lookmode = 2;
 
 	!! Menú principal:
-	location = MenuInicial;
+	location = MenuInicio;
 
 	!! Se evita la impresión inicial del banner
 	return 2;
